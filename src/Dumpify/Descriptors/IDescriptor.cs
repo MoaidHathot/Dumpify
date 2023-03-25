@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Dumpify.Descriptors;
 
-internal interface IDescriptor
+public interface IDescriptor
 {
     Type Type { get; }
     string Name { get; }
-    int NestingLevel { get; }
 }
