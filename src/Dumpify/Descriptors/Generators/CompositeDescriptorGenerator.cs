@@ -9,7 +9,7 @@ namespace Dumpify.Descriptors.Generators;
 
 internal class CompositeDescriptorGenerator : IDescriptorGenerator
 {
-    private readonly Dictionary<RuntimeTypeHandle, IDescriptor> _descriptorsCache = new();
+    private readonly Dictionary<(RuntimeTypeHandle, PropertyInfo?), IDescriptor> _descriptorsCache = new();
 
     private readonly IDescriptorGenerator[] _generatorsChain = new IDescriptorGenerator[]
     {
@@ -22,7 +22,7 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
 
     public IDescriptor? Generate(Type type, PropertyInfo? propertyInfo)
     {
-        if (_descriptorsCache.TryGetValue(type.TypeHandle, out IDescriptor? cachedDescriptor))
+        if (_descriptorsCache.TryGetValue((type.TypeHandle, propertyInfo), out IDescriptor? cachedDescriptor))
         {
             return cachedDescriptor;
         }
@@ -34,7 +34,7 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
             throw new NotSupportedException($"Could not generate a Descriptor for type '{type.FullName}'");
         }
 
-        _descriptorsCache.Add(type.TypeHandle, generatedDescriptor);
+        _descriptorsCache.Add((type.TypeHandle, propertyInfo), generatedDescriptor);
 
         return generatedDescriptor;
     }

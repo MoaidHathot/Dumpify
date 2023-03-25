@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dumpify.Descriptors;
 
-internal record ObjectDescriptor(Type Type, PropertyInfo? ParentPropertyInfo, IEnumerable<IDescriptor> Properties) : IDescriptor
+internal record ObjectDescriptor(Type Type, PropertyInfo? PropertyInfo, IEnumerable<IDescriptor> Properties) : IDescriptor
 {
-    public string Name => ParentPropertyInfo?.Name ?? Type.Name;
+    public string Name => PropertyInfo?.Name ?? Type.Name;
 }
