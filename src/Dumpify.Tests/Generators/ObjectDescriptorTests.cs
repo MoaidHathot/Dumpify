@@ -34,4 +34,35 @@ public class ObjectDescriptorTests
         first.PropertyInfo.Should().BeSameAs(typeof(Person).GetProperty("FirstName"));
         last.PropertyInfo.Should().BeSameAs(typeof(Person).GetProperty("LastName"));
     }
+
+    [TestMethod]
+    public void CircularDependencyIsHandled()
+    {
+        var moaid = new PersonWithSignificantOther { FirstName = "Moaid", LastName = "Hathto" };
+        var haneeni = new PersonWithSignificantOther { FirstName = "Moaid", LastName = "Hathot" };
+
+        moaid.SignificantOther = haneeni;
+        haneeni.SignificantOther = moaid;
+
+        var generator = new CompositeDescriptorGenerator();
+
+        var descriptor = generator.Generate(moaid.GetType(), null);
+
+        descriptor.Should().BeOfType<ObjectDescriptor>();
+        descriptor!.PropertyInfo.Should().BeNull();
+
+        var objDescriptor = (ObjectDescriptor)descriptor;
+
+        objDescriptor.Properties.Should().NotBeNull();
+        objDescriptor.Properties.Count().Should().Be(3);
+
+        var first = objDescriptor.Properties.First();
+        var last = objDescriptor.Properties.Skip(1).First();
+        var other = objDescriptor.Properties.Last();
+
+        first.Should().BeOfType<SingleValueDescriptor>();
+        last.Should().BeOfType<SingleValueDescriptor>();
+        other.Should().BeOfType<ObjectDescriptor>();
+        other.Type.Should().Be(typeof(PersonWithSignificantOther));
+    }
 }

@@ -9,7 +9,7 @@ namespace Dumpify.Descriptors.Generators;
 
 internal class CompositeDescriptorGenerator : IDescriptorGenerator
 {
-    private readonly Dictionary<(RuntimeTypeHandle, PropertyInfo?), IDescriptor> _descriptorsCache = new();
+    private readonly Dictionary<(RuntimeTypeHandle, RuntimeTypeHandle?, string?), IDescriptor> _descriptorsCache = new();
 
     private readonly IDescriptorGenerator[] _generatorsChain = new IDescriptorGenerator[]
     {
@@ -17,15 +17,18 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
         new CustomValuesGenerator(),
         new KnownSingleValueGenerator(),
         new MultiValueGenerator(),
-        //new DefaultDescriptorGenerator(),
     };
 
     public IDescriptor? Generate(Type type, PropertyInfo? propertyInfo)
     {
-        if (_descriptorsCache.TryGetValue((type.TypeHandle, propertyInfo), out IDescriptor? cachedDescriptor))
+        var cacheKey = CreateCacheKey(type, propertyInfo);
+
+        if (_descriptorsCache.TryGetValue(cacheKey, out IDescriptor? cachedDescriptor))
         {
             return cachedDescriptor;
         }
+
+        _descriptorsCache.Add(cacheKey, new CircularDependencyDescriptor(type, propertyInfo, null));
 
         var generatedDescriptor = GenerateDescriptor(type, propertyInfo);
 
@@ -34,10 +37,18 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
             throw new NotSupportedException($"Could not generate a Descriptor for type '{type.FullName}'");
         }
 
-        _descriptorsCache.Add((type.TypeHandle, propertyInfo), generatedDescriptor);
+        if (_descriptorsCache.TryGetValue(cacheKey, out cachedDescriptor) && cachedDescriptor is CircularDependencyDescriptor stubDescriptor)
+        {
+            stubDescriptor.Descriptor = generatedDescriptor;
+        }
+
+        _descriptorsCache[cacheKey] = generatedDescriptor;
 
         return generatedDescriptor;
     }
+
+    (RuntimeTypeHandle, RuntimeTypeHandle?, string?) CreateCacheKey(Type type, PropertyInfo? propertyInfo)
+        => (type.TypeHandle, propertyInfo?.DeclaringType?.TypeHandle, propertyInfo?.Name);
 
     private IDescriptor? GenerateDescriptor(Type type, PropertyInfo? propertyInfo)
     { 

@@ -7,6 +7,9 @@ using System.Text.Json;
 var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
 var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
 
+moaid.Other = haneeni;
+haneeni.Other = moaid;
+
 var family = new Family
 {
     Parent1 = moaid,
@@ -20,7 +23,7 @@ var family = new Family
 
 var arr = new[] { 1, 2, 3, 4 };
 
-//moaid.Dump();
+moaid.Dump();
 //family.Dump();
 //arr.Dump();
 //((object)null).Dump();
@@ -33,6 +36,8 @@ public class Person
 {
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
+
+    public Person? Other { get; set; }
 }
 
 public class Family
