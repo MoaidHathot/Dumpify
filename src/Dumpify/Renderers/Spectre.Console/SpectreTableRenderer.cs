@@ -47,14 +47,15 @@ internal class SpectreTableRenderer : IRenderer
 
     private IRenderable RenderDescriptor(object? @object, IDescriptor? descriptor, in RendererConfig config, ObjectIDGenerator tracker)
     {
-        if(@object is not null && ObjectAlreadyRendered(@object, tracker))
+        if(@object is null)
         {
-            return RenderCircularDependency(@object, descriptor, config);
+            return RenderNull(descriptor, config);
         }
+
 
         return descriptor switch
         {
-            null => RenderNull(descriptor, config),
+            null => Markup.FromInterpolated($"[null descriptor] {@object}", new Style(foreground: Color.Yellow)),
             CircularDependencyDescriptor circularDescriptor => RenderDescriptor(@object, circularDescriptor.Descriptor, config, tracker),
             IgnoredDescriptor ignoredDescriptor => new Markup(Markup.Escape($"Ignored[{ignoredDescriptor.Name}]"), new Style(foreground: Color.DarkSlateGray1)),
             SingleValueDescriptor singleDescriptor => new Markup(Markup.Escape($"{@object ?? "[missing]"}")),
@@ -65,8 +66,13 @@ internal class SpectreTableRenderer : IRenderer
         };
     }
 
-    private IRenderable RenderObject(object? obj, ObjectDescriptor descriptor, in RendererConfig config, ObjectIDGenerator tracker)
+    private IRenderable RenderObject(object obj, ObjectDescriptor descriptor, in RendererConfig config, ObjectIDGenerator tracker)
     {
+        if(ObjectAlreadyRendered(obj, tracker))
+        {
+            return RenderCircularDependency(obj, descriptor, config);
+        }
+
         var table = new Table();
         table.Title = new TableTitle(Markup.Escape(descriptor.Type.ToString()));
 

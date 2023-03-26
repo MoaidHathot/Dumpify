@@ -23,8 +23,8 @@ var family = new Family
 var arr = new[] { 1, 2, 3, 4 };
 
 moaid.Dump();
-//family.Dump();
-//arr.Dump();
+family.Dump();
+arr.Dump();
 //((object)null).Dump();
 
 //var result = DumpConfig.Default.Generator.Generate(family.GetType(), null);
