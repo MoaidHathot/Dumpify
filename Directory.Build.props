@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<PropertyGroup>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<LangVersion>latest</LangVersion>
+		<Features>strict</Features>
+		<TargetFramework>net7.0</TargetFramework>
+		<nullable>enable</nullable>
+		<implicitUsings>enable</implicitUsings>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<PackageId>$(AssemblyName)</PackageId>
+		<RootNamespace>$(AssemblyName)</RootNamespace>
+		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
+		<BaseName>MoaidHathot.Dumpify</BaseName>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Product>Dumpify</Product>
+		<Authors>Moaid Hathot</Authors>
+		<Copyright>@ Moaid Hathot. All rights reserved.</Copyright>
+		<RepositoryUrl>https://github.com/MoaidHathot/Dumpify</RepositoryUrl>
+		<RepositoryBranch>main</RepositoryBranch>
+	</PropertyGroup>
+</Project>
