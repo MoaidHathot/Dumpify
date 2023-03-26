@@ -14,7 +14,7 @@ var family = new Family
     Parent1 = moaid,
     Parent2 = haneeni,
     FamilyId = 42,
-    ChildrenArray = new[] { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
+    ChildrenArray = new[] { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot", Other = new Person { FirstName = "Child22", LastName = "Hathot", Other = new Person { FirstName = "Child222", LastName = "Hathot" } } } },
     ChildrenList = new List<Person> { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
     ChildrenArrayList = new ArrayList { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
     FamilyType = typeof(Family),
@@ -22,8 +22,8 @@ var family = new Family
 
 var arr = new[] { 1, 2, 3, 4 };
 
-moaid.Dump();
-family.Dump();
+moaid.Dump(maxNestingLevel: 1);
+family.Dump(maxNestingLevel: 2);
 arr.Dump();
 //((object)null).Dump();
 

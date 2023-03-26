@@ -18,5 +18,5 @@ public class DumpConfig
     public IRenderer Renderer { get; set; } = new SpectreTableRenderer();
 
     public bool useDescriptors = true;
-    public int MaxNestingLevel { get; set; }
+    public int MaxNestingLevel { get; set; } = 7;
 }
