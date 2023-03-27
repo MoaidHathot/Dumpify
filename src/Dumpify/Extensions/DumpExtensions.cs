@@ -11,7 +11,7 @@ public static class DumpExtensions
         var rendererConfig = new RendererConfig
         {
             Label = label,
-            MaxNestingLevel = maxNestingLevel ?? defaultConfig.MaxNestingLevel,
+            MaxDepth = maxNestingLevel ?? defaultConfig.MaxNestingLevel,
         };
 
         var createDescriptor = useDescriptors ?? defaultConfig.useDescriptors;

@@ -21,7 +21,7 @@ public class SingleValueDescriptorTests
     [DataRow(typeof(Half))]
     public void ShouldBeSingleValueDescriptor(Type type)
     {
-        var generator = new CompositeDescriptorGenerator();
+        var generator = new CompositeDescriptorGenerator(new Dictionary<RuntimeTypeHandle, Func<object, Type, System.Reflection.PropertyInfo?, object>>());
         var descriptor = generator.Generate(type, null);
 
         descriptor.Should().BeOfType<SingleValueDescriptor>($"{type.FullName} is a single value", descriptor);
@@ -35,7 +35,7 @@ public class SingleValueDescriptorTests
     [DataRow(typeof(int[]))]
     public void ShouldNotBeSingleValueDescriptor(Type type)
     {
-        var generator = new CompositeDescriptorGenerator();
+        var generator = new CompositeDescriptorGenerator(new Dictionary<RuntimeTypeHandle, Func<object, Type, System.Reflection.PropertyInfo?, object>>());
         var descriptor = generator.Generate(type, null);
 
         descriptor.Should().NotBeOfType<SingleValueDescriptor>($"{type.FullName} is not a single value", descriptor);

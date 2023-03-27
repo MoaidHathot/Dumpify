@@ -11,13 +11,18 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
 {
     private readonly Dictionary<(RuntimeTypeHandle, RuntimeTypeHandle?, string?), IDescriptor> _descriptorsCache = new();
 
-    private readonly IDescriptorGenerator[] _generatorsChain = new IDescriptorGenerator[]
+    private readonly IDescriptorGenerator[] _generatorsChain;
+
+    public CompositeDescriptorGenerator(Dictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>> customDescriptorHandlers)
     {
-        new IgnoredValuesGenerator(),
-        new CustomValuesGenerator(),
-        new KnownSingleValueGenerator(),
-        new MultiValueGenerator(),
-    };
+        _generatorsChain = new IDescriptorGenerator[]
+        {
+            new IgnoredValuesGenerator(),
+            new CustomValuesGenerator(customDescriptorHandlers),
+            new KnownSingleValueGenerator(),
+            new MultiValueGenerator(),
+        };
+    }
 
     public IDescriptor? Generate(Type type, PropertyInfo? propertyInfo)
     {

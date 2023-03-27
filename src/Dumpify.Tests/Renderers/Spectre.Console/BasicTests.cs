@@ -17,10 +17,10 @@ public class BasicTests
     {
         var moaid = new PersonWithSignificantOther { FirstName = "Moaid", LastName = "Hathot" };
 
-        var generator = new CompositeDescriptorGenerator();
+        var generator = new CompositeDescriptorGenerator(new Dictionary<RuntimeTypeHandle, Func<object, Type, System.Reflection.PropertyInfo?, object>>());
         var descriptor = generator.Generate(moaid.GetType(), null);
 
-        var renderer = new SpectreTableRenderer();
+        var renderer = new SpectreConsoleTableRenderer();
 
         renderer.Render(moaid, descriptor, new RendererConfig() );
     }

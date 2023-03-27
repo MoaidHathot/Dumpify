@@ -9,5 +9,5 @@ namespace Dumpify.Renderers;
 public struct RendererConfig
 {
     public string? Label { get; init; }
-    public int? MaxNestingLevel { get; init; }
+    public int? MaxDepth { get; init; }
 }

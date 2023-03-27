@@ -15,6 +15,10 @@ One of my favorites LinqPad feature is its `.Dump()` extension methods and how c
 Either use `dotnet add package Dumpify` or `Install-Package Dumpify`
 
 # To do
+* Special handling for more known types:
+    * StringBuilder
+    * Multidimentional Array
+    * Arrays (optimization)
 * Improve Cache By decoupling the PropertyInfo from the Descriptors.
 * Rethink Generators caching keys.
 * Consider using Max Nesting for Descriptors

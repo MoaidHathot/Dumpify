@@ -18,6 +18,7 @@ var family = new Family
     ChildrenList = new List<Person> { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
     ChildrenArrayList = new ArrayList { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
     FamilyType = typeof(Family),
+    FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
 };
 
 var arr = new[] { 1, 2, 3, 4 };
@@ -51,4 +52,6 @@ public class Family
     public ArrayList? ChildrenArrayList { get; set; }
 
     public Type? FamilyType { get; set; }
+
+    public StringBuilder? FamilyNameBuilder { get; set; }
 }
