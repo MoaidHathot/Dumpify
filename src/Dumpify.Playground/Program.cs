@@ -6,8 +6,8 @@ using System.Text.Json;
 var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
 var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
 
-moaid.Other = haneeni;
-haneeni.Other = moaid;
+//moaid.Other = haneeni;
+//haneeni.Other = moaid;
 
 var family = new Family
 {
@@ -22,10 +22,12 @@ var family = new Family
 };
 
 var arr = new[] { 1, 2, 3, 4 };
+var arr2d = new int[2, 2];
 
-moaid.Dump(maxNestingLevel: 1);
-family.Dump(maxNestingLevel: 2);
+moaid.Dump(maxDepth: 2);
+//family.Dump(maxDepth: 2);
 arr.Dump();
+arr2d.Dump();
 //((object)null).Dump();
 
 //var result = DumpConfig.Default.Generator.Generate(family.GetType(), null);

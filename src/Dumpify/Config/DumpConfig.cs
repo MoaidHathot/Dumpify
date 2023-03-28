@@ -40,5 +40,5 @@ public class DumpConfig
 
 
     public bool useDescriptors = true;
-    public int MaxNestingLevel { get; set; } = 7;
+    public int MaxDepth { get; set; } = 7;
 }

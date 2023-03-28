@@ -4,14 +4,14 @@ namespace Dumpify;
 
 public static class DumpExtensions
 {
-    public static T? Dump<T>(this T? obj, string? label = null, int? maxNestingLevel = null, IRenderer? renderer = null, bool? useDescriptors = null)
+    public static T? Dump<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null)
     {
         var defaultConfig = DumpConfig.Default;
 
         var rendererConfig = new RendererConfig
         {
             Label = label,
-            MaxDepth = maxNestingLevel ?? defaultConfig.MaxNestingLevel,
+            MaxDepth = maxDepth ?? defaultConfig.MaxDepth,
         };
 
         var createDescriptor = useDescriptors ?? defaultConfig.useDescriptors;
