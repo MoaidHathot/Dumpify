@@ -27,7 +27,6 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
         }
 
         return RenderIEnumerable((IEnumerable)obj, descriptor, config, tracker, currentDepth);
-
     }
 
     private IRenderable RenderIEnumerable(IEnumerable obj, MultiValueDescriptor descriptor, in RendererConfig config, ObjectIDGenerator tracker, int currentDepth)
