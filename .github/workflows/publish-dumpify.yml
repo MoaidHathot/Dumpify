@@ -23,7 +23,7 @@ jobs:
       run: dotnet build ./src -c Release --no-restore
       
     - name: Create Nuget Package
-      run: dotnet pack -c Release /p:VersionNumber=${{github.event.release.tag_name}} /p:PackageReleaseNotes="See https://github.com/MoaidHathot/Dumpify/releases/tag/${{github.event.release.tag_name}}" ./src/Dumpify
+      run: dotnet pack -c Release /p:Version=${{github.event.release.tag_name}} /p:PackageReleaseNotes="See https://github.com/MoaidHathot/Dumpify/releases/tag/${{github.event.release.tag_name}}" ./src/Dumpify
     
     - name: Archive Nuget Package for Dumpify
       uses: actions/upload-artifact@v1
