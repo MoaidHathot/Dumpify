@@ -22,6 +22,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore ./src
     - name: Build
-      run: dotnet build ./src/Dumpify --no-restore
+      run: dotnet build ./src --no-restore
     - name: Test
       run: dotnet test ./src/Dumpify.Tests --no-build --verbosity normal
