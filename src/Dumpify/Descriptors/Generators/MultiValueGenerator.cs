@@ -12,27 +12,37 @@ internal class MultiValueGenerator : IDescriptorGenerator
 {
     public IDescriptor? Generate(Type type, PropertyInfo? propertyInfo)
     {
-        var enumerableList = new List<Type?>(2);
+        return type.IsArray switch
+        {
+            true => GenerateArrayDescriptor(type, propertyInfo),
+            _ => GenerateEnumerableDescriptor(type, propertyInfo),
+        };
+    }
+
+    private MultiValueDescriptor? GenerateArrayDescriptor(Type type, PropertyInfo? propertyInfo) 
+        => new MultiValueDescriptor(type, propertyInfo, type.GetElementType());
+
+    private MultiValueDescriptor? GenerateEnumerableDescriptor(Type type, PropertyInfo? propertyInfo)
+    {
+        bool isEnumerable = false;
 
         foreach(var i in type.GetInterfaces()) 
         {
             if(i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             {
-                enumerableList.Add(i.GenericTypeArguments[0]);
+                return new MultiValueDescriptor(type, propertyInfo, i.GenericTypeArguments[0]);
             }
             else if(i == typeof(IEnumerable))
             {
-                enumerableList.Add(null);
+                isEnumerable = true;
             }
         }
 
-        if(enumerableList.Count == 0)
+        if(isEnumerable is false)
         {
             return null;
         }
 
-        var genericParameterType = enumerableList.FirstOrDefault(t => t is not null);
-
-        return new MultiValueDescriptor(type, propertyInfo, genericParameterType);
+        return new MultiValueDescriptor(type, propertyInfo, null);
     }
 }

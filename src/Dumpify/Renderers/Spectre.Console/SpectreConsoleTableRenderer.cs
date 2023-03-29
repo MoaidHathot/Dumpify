@@ -55,7 +55,7 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
         }
 
         var table = new Table();
-        table.AddColumn(Markup.Escape($"{descriptor.ValuesType?.Name ?? ""}[]"));
+        table.AddColumn(Markup.Escape($"{descriptor.ValuesType?.Name ?? ""}[{obj.GetLength(0)}]"));
 
         for(var index = 0; index < obj.Length; ++index)
         {
@@ -82,7 +82,7 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
             var rows = obj.GetLength(0);
             var collumns = obj.GetLength(1);
 
-            table.Title = new TableTitle(Markup.Escape($"{descriptor.ValuesType?.Name ?? ""}[]"));
+            table.Title = new TableTitle(Markup.Escape($"{descriptor.ValuesType?.Name ?? ""}[{rows},{collumns}]"));
             table.AddColumn(new TableColumn(""));
 
             for (var col = 0; col < collumns; ++col)
