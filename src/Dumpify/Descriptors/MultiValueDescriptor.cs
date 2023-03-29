@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dumpify.Descriptors;
 
-internal record MultiValueDescriptor(Type Type, PropertyInfo? PropertyInfo, Type? ValuesType) : IDescriptor
+internal record MultiValueDescriptor(Type Type, PropertyInfo? PropertyInfo, Type? ElementsType) : IDescriptor
 {
     public string Name => PropertyInfo?.Name ?? Type.Name;
 }

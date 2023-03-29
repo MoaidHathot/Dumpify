@@ -32,11 +32,11 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
     private IRenderable RenderIEnumerable(IEnumerable obj, MultiValueDescriptor descriptor, in RendererConfig config, ObjectIDGenerator tracker, int currentDepth)
     {
         var table = new Table();
-        table.AddColumn(Markup.Escape($"IEnumerable<{descriptor.ValuesType?.Name ?? ""}>"));
+        table.AddColumn(Markup.Escape($"IEnumerable<{descriptor.ElementsType?.Name ?? ""}>"));
 
         foreach (var item in obj)
         {
-            var type = descriptor.ValuesType ?? item?.GetType();
+            var type = descriptor.ElementsType ?? item?.GetType();
             IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null) : null;
 
             var renderedItem = RenderDescriptor(item, itemsDescriptor, config, tracker, currentDepth);
@@ -55,13 +55,13 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
         }
 
         var table = new Table();
-        table.AddColumn(Markup.Escape($"{descriptor.ValuesType?.Name ?? ""}[{obj.GetLength(0)}]"));
+        table.AddColumn(Markup.Escape($"{descriptor.ElementsType?.Name ?? ""}[{obj.GetLength(0)}]"));
 
         for(var index = 0; index < obj.Length; ++index)
         {
             var item = obj.GetValue(index);
 
-            var type = descriptor.ValuesType ?? item?.GetType();
+            var type = descriptor.ElementsType ?? item?.GetType();
             IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null) : null;
 
             var renderedItem = RenderDescriptor(item, itemsDescriptor, config, tracker, currentDepth);
@@ -82,7 +82,7 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
             var rows = obj.GetLength(0);
             var collumns = obj.GetLength(1);
 
-            table.Title = new TableTitle(Markup.Escape($"{descriptor.ValuesType?.Name ?? ""}[{rows},{collumns}]"));
+            table.Title = new TableTitle(Markup.Escape($"{descriptor.ElementsType?.Name ?? ""}[{rows},{collumns}]"));
             table.AddColumn(new TableColumn(""));
 
             for (var col = 0; col < collumns; ++col)
@@ -98,7 +98,7 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
                 {
                     var item = obj.GetValue(row, col);
 
-                    var type = descriptor.ValuesType ?? item?.GetType();
+                    var type = descriptor.ElementsType ?? item?.GetType();
                     IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null) : null;
 
                     var renderedItem = RenderDescriptor(item, itemsDescriptor, config, tracker, currentDepth);
