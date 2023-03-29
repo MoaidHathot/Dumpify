@@ -6,15 +6,15 @@ using System.Text.Json;
 var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
 var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
 
-//moaid.Other = haneeni;
-//haneeni.Other = moaid;
+moaid.Spouse = haneeni;
+haneeni.Spouse = moaid;
 
 var family = new Family
 {
     Parent1 = moaid,
     Parent2 = haneeni,
     FamilyId = 42,
-    ChildrenArray = new[] { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot", Other = new Person { FirstName = "Child22", LastName = "Hathot", Other = new Person { FirstName = "Child222", LastName = "Hathot" } } } },
+    ChildrenArray = new[] { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot", Spouse = new Person { FirstName = "Child22", LastName = "Hathot", Spouse = new Person { FirstName = "Child222", LastName = "Hathot" } } } },
     ChildrenList = new List<Person> { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
     ChildrenArrayList = new ArrayList { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
     FamilyType = typeof(Family),
@@ -39,7 +39,7 @@ public class Person
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
 
-    public Person? Other { get; set; }
+    public Person? Spouse { get; set; }
 }
 
 public class Family
