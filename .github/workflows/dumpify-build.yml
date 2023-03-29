@@ -20,8 +20,8 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: Restore dependencies
-      run: dotnet ./src restore
+      run: dotnet /src restore
     - name: Build
-      run: dotnet build ./src/Dumpify --no-restore
+      run: dotnet build /src/Dumpify --no-restore
     - name: Test
-      run: dotnet test ./src/Dumpify.Tests --no-build --verbosity normal
+      run: dotnet test /src/Dumpify.Tests --no-build --verbosity normal
