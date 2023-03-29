@@ -32,6 +32,6 @@ jobs:
         path: "./src/Dumpify/bin/Release/Dumpify.${{github.event.release.tag_name}}.nupkg"
 
     - name: Publish Nuget Package
-      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.nuget_api_key }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push ./src/**/*.nupkg  --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.nuget_api_key }}
 
       
