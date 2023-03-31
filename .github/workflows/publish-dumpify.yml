@@ -23,7 +23,7 @@ jobs:
       run: dotnet build ./src -c Release --no-restore
       
     - name: Create Nuget Package
-      run: dotnet pack -c Release /p:VersionNumber=${{github.event.release.tag_name}} /p:PackageReleaseNotes="See https://github.com/MoaidHathot/Dumpify/releases/tag/${{github.event.release.tag_name}}" ./src/Dumpify
+      run: dotnet pack -c Release /p:Version=${{github.event.release.tag_name}} /p:PackageReleaseNotes="See https://github.com/MoaidHathot/Dumpify/releases/tag/${{github.event.release.tag_name}}" ./src/Dumpify
     
     - name: Archive Nuget Package for Dumpify
       uses: actions/upload-artifact@v1
@@ -32,6 +32,6 @@ jobs:
         path: "./src/Dumpify/bin/Release/Dumpify.${{github.event.release.tag_name}}.nupkg"
 
     - name: Publish Nuget Package
-      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.nuget_api_key }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push ./src/**/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
 
       
