@@ -51,7 +51,6 @@ internal abstract class RendererBase<TRenderable> : IRenderer
 
     private TRenderable RenderCustomDescriptor(object obj, CustomDescriptor customDescriptor, in RendererConfig config, ObjectIDGenerator tracker, int currentDepth)
     {
-
         if (!DumpConfig.Default.CustomDescriptorHandlers.TryGetValue(customDescriptor.Type.TypeHandle, out var valueFactory))
         {
             return RenderUnfamiliarCustomDescriptor(obj, customDescriptor, config);

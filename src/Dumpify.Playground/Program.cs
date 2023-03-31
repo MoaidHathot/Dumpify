@@ -6,8 +6,8 @@ using System.Text.Json;
 var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
 var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
 
-moaid.Spouse = haneeni;
-haneeni.Spouse = moaid;
+//moaid.Spouse = haneeni;
+//haneeni.Spouse = moaid;
 
 var family = new Family
 {
@@ -21,13 +21,34 @@ var family = new Family
     FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
 };
 
-var arr = new[] { 1, 2, 3, 4 };
-var arr2d = new int[2, 2];
 
-moaid.Dump(maxDepth: 2);
+new Dictionary<string, Person>
+{
+    ["Moaid"] = new Person { FirstName = "Moaid", LastName = "Hathot"},
+    ["Haneeni"] = new Person { FirstName = "Haneeni", LastName = "Shibli" },
+    ["Waseem"] = new Person { FirstName = "Waseem", LastName = "Hathot" },
+}.Dump();
+
+//var arr = new[] { 1, 2, 3, 4 };
+//var arr2d = new int[2, 2];
+
+
+//arr.Dump();
+//moaid.Dump();
+
+
 //family.Dump(maxDepth: 2);
-arr.Dump();
-arr2d.Dump();
+
+//Console.WriteLine(JsonSerializer.Serialize(moaid));
+
+
+//moaid.Dump();
+//arr2d.Dump();
+
+//moaid.Dump(maxDepth: 2);
+//family.Dump(maxDepth: 2);
+//arr.Dump();
+//arr2d.Dump();
 //((object)null).Dump();
 
 //var result = DumpConfig.Default.Generator.Generate(family.GetType(), null);
@@ -40,6 +61,8 @@ public class Person
     public required string LastName { get; set; }
 
     public Person? Spouse { get; set; }
+
+    public Type MType { get; } = typeof(int);
 }
 
 public class Family
