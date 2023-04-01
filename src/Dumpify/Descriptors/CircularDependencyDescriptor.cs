@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Dumpify.Descriptors;
+
 internal record CircularDependencyDescriptor(Type Type, PropertyInfo? PropertyInfo, IDescriptor? Descriptor) : IDescriptor
 {
     public string Name => PropertyInfo?.Name ?? Type.Name;

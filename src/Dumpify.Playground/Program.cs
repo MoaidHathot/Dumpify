@@ -6,7 +6,7 @@ using System.Text.Json;
 var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
 var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
 
-//moaid.Spouse = haneeni;
+moaid.Spouse = haneeni;
 //haneeni.Spouse = moaid;
 
 var family = new Family
@@ -24,10 +24,20 @@ var family = new Family
 
 new Dictionary<string, Person>
 {
-    ["Moaid"] = new Person { FirstName = "Moaid", LastName = "Hathot"},
+    ["Moaid"] = new Person { FirstName = "Moaid", LastName = "Hathot" },
     ["Haneeni"] = new Person { FirstName = "Haneeni", LastName = "Shibli" },
     ["Waseem"] = new Person { FirstName = "Waseem", LastName = "Hathot" },
 }.Dump();
+
+
+//new Dictionary<string, string>
+//{
+//    ["Moaid"] = "Hathot",
+//    ["Haneeni"] = "Shibli",
+//    ["Moaid1"] = "Hathot1",
+//    ["Haneeni1"] = "Shibli1",
+
+//}.Dump();
 
 //var arr = new[] { 1, 2, 3, 4 };
 //var arr2d = new int[2, 2];

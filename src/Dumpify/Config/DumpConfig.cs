@@ -3,12 +3,7 @@ using Dumpify.Descriptors.Generators;
 using Dumpify.Renderers;
 using Dumpify.Renderers.Json;
 using Dumpify.Renderers.Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dumpify;
 
@@ -23,7 +18,6 @@ public class DumpConfig
         Generator = new CompositeDescriptorGenerator(CustomDescriptorHandlers);
         Renderer = new SpectreConsoleTableRenderer();
     }
-
 
     public void AddCustomTypeHandler(Type type, Func<object, Type, PropertyInfo?, object> valueFactory)
     {

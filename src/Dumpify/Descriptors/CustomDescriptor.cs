@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Dumpify.Descriptors;
+
 internal record CustomDescriptor(Type Type, PropertyInfo? PropertyInfo) : IDescriptor
 {
     public string Name => PropertyInfo?.Name ?? Type.Name;
