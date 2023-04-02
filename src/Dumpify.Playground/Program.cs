@@ -21,13 +21,20 @@ var family = new Family
     FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
 };
 
+//new Dictionary<Person, string>
+//{
+//    [new Person { FirstName = "Moaid", LastName = "Hathot" }] = "Moaid Hathot",
+//    [new Person { FirstName = "Haneeni", LastName = "Shibli" }] = "Haneeni Shibli",
+//    [new Person { FirstName = "Waseem", LastName = "Hathot" }] = "Waseem Hathot",
+//}.Dump();
 
-new Dictionary<string, Person>
-{
-    ["Moaid"] = new Person { FirstName = "Moaid", LastName = "Hathot" },
-    ["Haneeni"] = new Person { FirstName = "Haneeni", LastName = "Shibli" },
-    ["Waseem"] = new Person { FirstName = "Waseem", LastName = "Hathot" },
-}.Dump();
+
+//new Dictionary<string, Person>
+//{
+//    ["Moaid"] = new Person { FirstName = "Moaid", LastName = "Hathot" },
+//    ["Haneeni"] = new Person { FirstName = "Haneeni", LastName = "Shibli" },
+//    ["Waseem"] = new Person { FirstName = "Waseem", LastName = "Hathot" },
+//}.Dump();
 
 
 //new Dictionary<string, string>
@@ -38,6 +45,23 @@ new Dictionary<string, Person>
 //    ["Haneeni1"] = "Shibli1",
 
 //}.Dump();
+
+//var ao = new
+//{
+//    DateTime = DateTime.Now,
+//    DateTimeUtc = DateTime.UtcNow,
+//    DateTimeOffset = DateTimeOffset.Now,
+//    DateOnly = DateOnly.FromDateTime(DateTime.Now),
+//    TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
+//    TimeSpan = TimeSpan.FromMicroseconds(30324),
+//};
+
+//var d = DumpConfig.Default.Generator.Generate(ao.GetType(), null);
+//d.Dump();
+
+//DumpConfig.Default.Generator.Generate(typeof(Family), null).Dump();
+
+//var arr = new[,,] { { { 1, 2, 4 } }, { { 3, 4, 6 } }, { {1, 2, 88 } } }.Dump();
 
 //var arr = new[] { 1, 2, 3, 4 };
 //var arr2d = new int[2, 2];
@@ -65,7 +89,7 @@ new Dictionary<string, Person>
 ;
 //JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
 
-public class Person
+public record class Person
 {
     public required string FirstName { get; set; }
     public required string LastName { get; set; }

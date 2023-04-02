@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Dumpify.Renderers;
 
-internal abstract class RendererBase<TRenderable> : IRenderer
+internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<TRenderable>
 {
-    protected readonly Dictionary<RuntimeTypeHandle, IList<CustomTypeRenderer<TRenderable>>> _customTypeRenderers;
+    protected readonly Dictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>> _customTypeRenderers;
 
-    public RendererBase(Dictionary<RuntimeTypeHandle, IList<CustomTypeRenderer<TRenderable>>>? customTypeRenderers)
+    public RendererBase(Dictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>>? customTypeRenderers)
     {
-        _customTypeRenderers = customTypeRenderers ?? new Dictionary<RuntimeTypeHandle, IList<CustomTypeRenderer<TRenderable>>>();
+        _customTypeRenderers = customTypeRenderers ?? new Dictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>>();
     }
 
     public void Render(object? obj, IDescriptor? descriptor, RendererConfig config)
@@ -30,7 +30,7 @@ internal abstract class RendererBase<TRenderable> : IRenderer
         PublishRenderables(renderable);
     }
 
-    protected TRenderable RenderDescriptor(object? @object, IDescriptor? descriptor, in RenderContext context)
+    public TRenderable RenderDescriptor(object? @object, IDescriptor? descriptor, in RenderContext context)
     {
         if (@object is null)
         {
@@ -55,14 +55,14 @@ internal abstract class RendererBase<TRenderable> : IRenderer
         };
     }
 
-    private TRenderable TryRenderCustomTypeDescriptor<TDescriptor>(object obj, TDescriptor descriptor, in RenderContext context, Func<object, TDescriptor, RenderContext, TRenderable> defaultRenderer) 
-        where TDescriptor: notnull, IDescriptor
+    private TRenderable TryRenderCustomTypeDescriptor<TDescriptor>(object obj, TDescriptor descriptor, in RenderContext context, Func<object, TDescriptor, RenderContext, TRenderable> defaultRenderer)
+        where TDescriptor : notnull, IDescriptor
     {
-        if(_customTypeRenderers.TryGetValue(descriptor.GetType().TypeHandle, out var renderList))
+        if (_customTypeRenderers.TryGetValue(descriptor.GetType().TypeHandle, out var renderList))
         {
             var renderer = renderList.FirstOrDefault(r => r.ShouldHandle(descriptor, obj));
 
-            if(renderer is not null)
+            if (renderer is not null)
             {
                 return renderer.Render(descriptor, obj, context);
             }
@@ -99,11 +99,11 @@ internal abstract class RendererBase<TRenderable> : IRenderer
 
     protected abstract void PublishRenderables(TRenderable renderable);
 
-    protected abstract TRenderable RenderNullValue(IDescriptor? descriptor, in RendererConfig config);
+    public abstract TRenderable RenderNullValue(IDescriptor? descriptor, in RendererConfig config);
 
     protected abstract TRenderable RenderUnfamiliarCustomDescriptor(object obj, CustomDescriptor descriptor, in RendererConfig config);
 
-    protected abstract TRenderable RenderExeededDepth(object obj, IDescriptor? descriptor, in RendererConfig config);
+    public abstract TRenderable RenderExeededDepth(object obj, IDescriptor? descriptor, in RendererConfig config);
     protected abstract TRenderable RenderCircularDependency(object @object, IDescriptor? descriptor, in RendererConfig config);
 
     protected abstract TRenderable RenderNullDescriptor(object obj);

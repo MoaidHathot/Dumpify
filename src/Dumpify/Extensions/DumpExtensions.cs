@@ -1,4 +1,6 @@
-﻿using Dumpify.Renderers;
+﻿using Dumpify.Descriptors;
+using Dumpify.Renderers;
+using System.Reflection;
 
 namespace Dumpify;
 
@@ -18,14 +20,56 @@ public static class DumpExtensions
 
         if(obj is null || createDescriptor is false)
         {
-            DumpConfig.Default.Renderer.Render(obj, null, rendererConfig);
+            RenderSafely(obj, null, rendererConfig);
             return obj;
         }
 
-        var descriptor = DumpConfig.Default.Generator.Generate(obj.GetType(), propertyInfo: null);
+        if(!TryGenerate(obj.GetType(), null, out var descriptor))
+        {
+            return obj;
+        }
 
-        DumpConfig.Default.Renderer.Render(obj, descriptor, rendererConfig);
+        RenderSafely(obj, descriptor, rendererConfig);
 
         return obj;
+
+        static bool TryGenerate(Type type, PropertyInfo? info, out IDescriptor? descriptor)
+        {
+            descriptor = null;
+
+            try
+            {
+                descriptor = DumpConfig.Default.Generator.Generate(type, propertyInfo: info);
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"[Failed to Generate descriptor for {typeof(T)} and Property: {info}]");
+
+#if DEBUG
+                Console.WriteLine(ex);
+#endif
+            }
+
+            return false;
+        }
+
+        static void RenderSafely(T? obj, IDescriptor? descriptor, RendererConfig config)
+        {
+            try
+            {
+
+                DumpConfig.Default.Renderer.Render(obj, descriptor, config);
+            }
+            catch (Exception ex) 
+            {
+                Console.WriteLine($"[Failed to Render {typeof(T)} - {obj}]");
+
+#if DEBUG
+                Console.WriteLine(ex);
+#endif
+            }
+        }
     }
 }

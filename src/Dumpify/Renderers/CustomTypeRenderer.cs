@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Dumpify.Renderers;
 
-internal class CustomTypeRenderer<TRenderable>
+internal class CustomTypeRenderer<TRenderable> : ICustomTypeRenderer<TRenderable>
 {
     public Type DescriptorType { get; init; }
 

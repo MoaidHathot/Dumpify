@@ -72,7 +72,9 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
     {
         var list = new List<IDescriptor>();
 
-        foreach(var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetIndexParameters().Length == 0))
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetIndexParameters().Length == 0);
+
+        foreach(var property in properties)
         {
             var descriptor = Generate(property.PropertyType, property);
 

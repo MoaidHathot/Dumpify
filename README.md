@@ -5,35 +5,35 @@ One of my favorites LinqPad feature is its `.Dump()` extension methods and how c
 
 # Features
 * Dump any object
-* Support for Array and IEnumerable
+* Support for Arrays and IEnumerables
 * Support for Custom descriptors
 * Support for max nesting levels
 * Configurable
 * Spectre.Console renderers
+* Special Handling for:
+    * Arrays
+    * MultiDimentional Arrays
+    * StringBuilder
+    * Dictionary<T, K>
 
 # How to use
 Either use `dotnet add package Dumpify` or `Install-Package Dumpify`
 
 # To do
-* Special handling for more known types:
-    * StringBuilder
-    * Multidimentional Array
-    * Arrays (optimization)
+* Custom Outputs
 * Improve Cache By decoupling the PropertyInfo from the Descriptors.
 * Rethink Generators caching keys.
 * Consider using Max Nesting for Descriptors
-* Better Styling
 * Refactor Renderers and make it better extendable
-* Add more tests + investigate acceptance tests
 * Better styling
 * Custom styling
 * Add more renderers
     * JavaScript's `console.log` style
 * Decouple from Spectre.Console    
 * Tests
-    * Visual (Render) Tests
-    * Tests for Nesting
     * More tests
+    * Visual (Render) Tests - consider acceptance tests
+    * Tests for Nesting
 
 # Disclaimer
 This project is inspired by LinqPad's Dump features, authored by Joseph Albahari.
