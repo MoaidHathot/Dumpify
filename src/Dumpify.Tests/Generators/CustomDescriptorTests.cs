@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Dumpify.Tests.Generators;
 
@@ -21,7 +17,18 @@ public class CustomDescriptorTests
     [DataRow(typeof(PropertyInfo))]
     public void ShouldBeCustomValueDescriptor(Type type)
     {
-        var generator = new CompositeDescriptorGenerator(new Dictionary<RuntimeTypeHandle, Func<object, Type, System.Reflection.PropertyInfo?, object>>());
+        var generator = new CompositeDescriptorGenerator(new Dictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>>());
+        var descriptor = generator.Generate(type, null);
+
+        descriptor.Should().BeOfType<CustomDescriptor>($"{type.FullName} is a custom value", descriptor);
+    }
+
+    [TestMethod]
+    [DataRow(typeof(BookStatus))]
+    public void EnumsShouldBeCustomValueDescriptor(Type type)
+    {
+
+        var generator = new CompositeDescriptorGenerator(new Dictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>>());
         var descriptor = generator.Generate(type, null);
 
         descriptor.Should().BeOfType<CustomDescriptor>($"{type.FullName} is a custom value", descriptor);

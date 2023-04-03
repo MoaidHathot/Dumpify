@@ -21,17 +21,12 @@ var family = new Family
 };
 
 
-// moaid.Dump();
+moaid.Dump();
 
-// new Repository { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
+//new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
+//new HashSet<string> { "Moaid", "Hathot", "shibli" }.Dump();
 
-new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
 
-public class Repository
-{
-    public required string Name { get; set; }
-    public required string Description { get; set; }
-}
 
 //new Dictionary<Person, string>
 //{
@@ -55,8 +50,13 @@ public class Repository
 //    ["Haneeni"] = "Shibli",
 //    ["Moaid1"] = "Hathot1",
 //    ["Haneeni1"] = "Shibli1",
-
 //}.Dump();
+
+TestE.First.Dump();
+var d = DumpConfig.Default.Generator.Generate(TestE.First.GetType(), null);
+d.Dump();
+
+public enum TestE { First, Second, Last };
 
 //var ao = new
 //{
@@ -98,7 +98,7 @@ public class Repository
 //((object)null).Dump();
 
 //var result = DumpConfig.Default.Generator.Generate(family.GetType(), null);
-;
+
 //JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
 
 public record class Person
@@ -107,6 +107,8 @@ public record class Person
     public required string LastName { get; set; }
 
     public Person? Spouse { get; set; }
+
+    public TestE TestEnum { get; set; } = TestE.Second;
 }
 
 public class Family
