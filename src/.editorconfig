@@ -238,3 +238,7 @@ dotnet_naming_style.require_underscore_prefix_and_camel_case.capitalization = ca
 dotnet_naming_rule.private_fields_must_begin_with_underscore_and_be_in_camel_case.symbols = private_fields
 dotnet_naming_rule.private_fields_must_begin_with_underscore_and_be_in_camel_case.style = require_underscore_prefix_and_camel_case
 dotnet_naming_rule.private_fields_must_begin_with_underscore_and_be_in_camel_case.severity = warning
+
+
+# CS0219: Variable is assigned but its value is never used
+dotnet_diagnostic.CS0219.severity = none
