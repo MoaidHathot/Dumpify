@@ -21,9 +21,11 @@ internal class CustomValuesGenerator : IDescriptorGenerator
         _customTypeHandlers.TryAdd(typeof(StringBuilder).TypeHandle, (obj, type, propertyInfo) => ((StringBuilder)obj).ToString());
         _customTypeHandlers.TryAdd(typeof(DateTime).TypeHandle, (obj, type, propertyInfo) => ((DateTime)obj).ToString());
         _customTypeHandlers.TryAdd(typeof(DateTimeOffset).TypeHandle, (obj, type, propertyInfo) => ((DateTimeOffset)obj).ToString());
+#if NET6_0_OR_GREATER
         _customTypeHandlers.TryAdd(typeof(DateOnly).TypeHandle, (obj, type, propertyInfo) => ((DateOnly)obj).ToString());
         _customTypeHandlers.TryAdd(typeof(TimeOnly).TypeHandle, (obj, type, propertyInfo) => ((TimeOnly)obj).ToString());
         _customTypeHandlers.TryAdd(typeof(TimeSpan).TypeHandle, (obj, type, propertyInfo) => ((TimeSpan)obj).ToString());
+#endif
     }
 
     public IDescriptor? Generate(Type type, PropertyInfo? propertyInfo)

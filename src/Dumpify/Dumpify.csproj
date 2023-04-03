@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+<PropertyGroup>
+	<TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
+</PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Spectre.Console" Version="0.46.0" />
   </ItemGroup>

@@ -5,7 +5,6 @@
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<LangVersion>latest</LangVersion>
 		<Features>strict</Features>
-		<TargetFramework>net7.0</TargetFramework>
 		<nullable>enable</nullable>
 		<implicitUsings>enable</implicitUsings>
 	</PropertyGroup>

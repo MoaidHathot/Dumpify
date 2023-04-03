@@ -1,13 +1,12 @@
 ﻿using Dumpify;
 using System.Collections;
 using System.Text;
-using System.Text.Json;
 
 var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
 var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
 
 moaid.Spouse = haneeni;
-//haneeni.Spouse = moaid;
+haneeni.Spouse = moaid;
 
 var family = new Family
 {
@@ -20,6 +19,19 @@ var family = new Family
     FamilyType = typeof(Family),
     FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
 };
+
+
+// moaid.Dump();
+
+// new Repository { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
+
+new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
+
+public class Repository
+{
+    public required string Name { get; set; }
+    public required string Description { get; set; }
+}
 
 //new Dictionary<Person, string>
 //{
@@ -95,8 +107,6 @@ public record class Person
     public required string LastName { get; set; }
 
     public Person? Spouse { get; set; }
-
-    public Type MType { get; } = typeof(int);
 }
 
 public class Family
