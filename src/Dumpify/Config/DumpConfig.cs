@@ -31,6 +31,8 @@ public class DumpConfig
     public IRenderer Renderer { get; set; }
 
 
-    public bool useDescriptors = true;
+    public bool UseDescriptors { get; set; } = true;
     public int MaxDepth { get; set; } = 7;
+    public bool ShowTypeNames { get; set; } = true;
+    public bool ShowHeaders { get; set; } = true;
 }

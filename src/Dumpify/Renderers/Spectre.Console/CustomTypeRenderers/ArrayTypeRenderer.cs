@@ -37,6 +37,11 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
         var table = new Table();
         table.AddColumn(Markup.Escape($"{mvd.ElementsType?.Name ?? ""}[{obj.GetLength(0)}]"));
 
+        if(context.Config.ShowHeaders is not true)
+        {
+            table.HideHeaders();
+        }
+
         for(var index = 0; index < obj.Length; ++index)
         {
             var item = obj.GetValue(index);
@@ -64,7 +69,11 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
         var rows = obj.GetLength(0);
         var collumns = obj.GetLength(1);
 
-        table.Title = new TableTitle(Markup.Escape($"{descriptor.ElementsType?.Name ?? ""}[{rows},{collumns}]"));
+        if(context.Config.ShowTypeNames is true)
+        {
+            table.Title = new TableTitle(Markup.Escape($"{descriptor.ElementsType?.Name ?? ""}[{rows},{collumns}]"));
+        }
+
         table.AddColumn(new TableColumn(""));
 
         for (var col = 0; col < collumns; ++col)

@@ -6,7 +6,7 @@ namespace Dumpify;
 
 public static class DumpExtensions
 {
-    public static T? Dump<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null)
+    public static T? Dump<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, bool? showTypeNames = null, bool? showHeaders = null)
     {
         var defaultConfig = DumpConfig.Default;
 
@@ -14,9 +14,11 @@ public static class DumpExtensions
         {
             Label = label,
             MaxDepth = maxDepth ?? defaultConfig.MaxDepth,
+            ShowTypeNames = showTypeNames ?? defaultConfig.ShowTypeNames,
+            ShowHeaders = showHeaders ?? defaultConfig.ShowHeaders
         };
 
-        var createDescriptor = useDescriptors ?? defaultConfig.useDescriptors;
+        var createDescriptor = useDescriptors ?? defaultConfig.UseDescriptors;
 
         if(obj is null || createDescriptor is false)
         {

@@ -10,4 +10,6 @@ public struct RendererConfig
 {
     public string? Label { get; init; }
     public int? MaxDepth { get; init; }
+    public bool? ShowTypeNames { get; init; }
+    public bool? ShowHeaders { get; init; }
 }

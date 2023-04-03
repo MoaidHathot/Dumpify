@@ -23,6 +23,11 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
         table.AddColumn("Key");
         table.AddColumn("Value");
 
+        if(context.Config.ShowHeaders is not true)
+        {
+            table.HideHeaders();
+        }
+
         var dictionary = (IDictionary)obj;
 
         Type? keyType = null;
@@ -55,8 +60,12 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
         {
             title = $"{title}<{keyType.Name}, {valueType.Name}>";
         }
+        
+        if(context.Config.ShowTypeNames is true)
+        {
 
-        table.Title = new TableTitle(Markup.Escape(title));
+            table.Title = new TableTitle(Markup.Escape(title));
+        }
 
         return table.Collapse();
     }

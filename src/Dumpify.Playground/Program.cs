@@ -21,7 +21,9 @@ var family = new Family
 };
 
 
-moaid.Dump();
+//moaid.Dump();
+
+new { Name = "MyBook", Author = new { FirstName = "Moaid", LastName = "Hathot", Address = new { Email = "moaid@test.com" } } }.Dump(maxDepth: -1, showTypeNames: false, showHeaders: false);
 
 //new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
 //new HashSet<string> { "Moaid", "Hathot", "shibli" }.Dump();
@@ -52,9 +54,9 @@ moaid.Dump();
 //    ["Haneeni1"] = "Shibli1",
 //}.Dump();
 
-TestE.First.Dump();
-var d = DumpConfig.Default.Generator.Generate(TestE.First.GetType(), null);
-d.Dump();
+//TestE.First.Dump();
+//var d = DumpConfig.Default.Generator.Generate(TestE.First.GetType(), null);
+//d.Dump();
 
 public enum TestE { First, Second, Last };
 

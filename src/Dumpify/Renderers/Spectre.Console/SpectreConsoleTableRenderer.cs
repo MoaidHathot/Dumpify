@@ -41,6 +41,11 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
         var table = new Table();
         table.AddColumn(Markup.Escape($"IEnumerable<{descriptor.ElementsType?.Name ?? ""}>"));
 
+        if(context.Config.ShowHeaders is not true)
+        {
+            table.HideHeaders();
+        }
+
         foreach (var item in obj)
         {
             var type = descriptor.ElementsType ?? item?.GetType();
@@ -62,11 +67,21 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
         }
 
         var table = new Table();
-        table.Title = new TableTitle(Markup.Escape(descriptor.Type.ToString()));
+
+        if (context.Config.ShowTypeNames is true)
+        {
+            table.Title = new TableTitle(Markup.Escape(descriptor.Type.ToString()));
+        }
 
         table.Collapse();
+
         table.AddColumn("Name");
         table.AddColumn("Value");
+
+        if(context.Config.ShowHeaders is not true)
+        {
+            table.HideHeaders();
+        }
 
         foreach (var property in descriptor.Properties)
         {
