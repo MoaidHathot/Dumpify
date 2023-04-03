@@ -43,7 +43,17 @@ moaid.Dump();
 Either use `dotnet add package Dumpify` or `Install-Package Dumpify`
 
 # To do
+* Before next release
+	* Eliminating Race Conditions
+	* Better handling of Anonymous Object naming
+	* Better handling of ObjectDescriptors without properties (currently empty table)
+	* Better handling of MultiValueDescriptor property names
+	* Customizations
+		* Show Headers
+		* Show type names
+    * Refactory SpectureTableRenderer to share customization code
 * Custom Outputs
+* Live outputs
 * Improve Cache By decoupling the PropertyInfo from the Descriptors.
 * Rethink Generators caching keys.
 * Consider using Max Nesting for Descriptors
@@ -51,6 +61,7 @@ Either use `dotnet add package Dumpify` or `Install-Package Dumpify`
 * Better styling
 * Custom styling
 * Add more renderers
+    * re-introduce Json Renderers
     * JavaScript's `console.log` style
 * Decouple from Spectre.Console    
 * Tests
