@@ -35,7 +35,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
     private IRenderable RenderSingleDimentionArray(Array obj, MultiValueDescriptor mvd, RenderContext context)
     {
         var table = new Table();
-        table.AddColumn(Markup.Escape($"{mvd.ElementsType?.Name ?? ""}[{obj.GetLength(0)}]"));
+        table.AddColumn(new TableColumn(new Markup(Markup.Escape($"{mvd.ElementsType?.Name ?? ""}[{obj.GetLength(0)}]"), new Style(foreground: Color.DarkSlateGray3))));
 
         if(context.Config.ShowHeaders is not true)
         {
@@ -71,7 +71,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         if(context.Config.ShowTypeNames is true)
         {
-            table.Title = new TableTitle(Markup.Escape($"{descriptor.ElementsType?.Name ?? ""}[{rows},{collumns}]"));
+            table.Title = new TableTitle(Markup.Escape($"{descriptor.ElementsType?.Name ?? ""}[{rows},{collumns}]"), new Style(foreground: Color.DarkSlateGray3));
         }
 
         table.AddColumn(new TableColumn(""));

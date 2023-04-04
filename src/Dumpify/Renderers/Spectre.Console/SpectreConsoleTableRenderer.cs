@@ -41,7 +41,7 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
         var table = new Table();
 
         var typeName = descriptor.Type.GetGenericTypeName();
-        table.AddColumn(Markup.Escape(typeName));
+        table.AddColumn(new TableColumn(new Markup(Markup.Escape(typeName), new Style(foreground: Color.DarkSlateGray3))));
 
         foreach (var item in obj)
         {        
@@ -74,11 +74,11 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
 
         if (context.Config.ShowTypeNames is true)
         {
-            table.Title = new TableTitle(Markup.Escape(descriptor.Type.Name.ToString()));
+            table.Title = new TableTitle(Markup.Escape(descriptor.Type.Name.ToString()), new Style(foreground: Color.White));
         }
 
-        table.AddColumn("Name");
-        table.AddColumn("Value");
+        table.AddColumn(new TableColumn(new Markup("Name", new Style(foreground: Color.DarkSlateGray3))));
+        table.AddColumn(new TableColumn(new Markup("Value", new Style(foreground: Color.DarkSlateGray3))));
 
         if(context.Config.ShowHeaders is not true)
         {
@@ -111,7 +111,7 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
         => Markup.FromInterpolated($"null", new Style(foreground: Color.DarkSlateGray2));
 
     protected override IRenderable RenderSingleValueDescriptor(object obj, SingleValueDescriptor descriptor, RenderContext context) 
-        => new Markup(Markup.Escape($"{obj ?? "[missing]"}"));
+        => new Markup(Markup.Escape($"{obj ?? "[missing]"}"), new Style(foreground: Color.LightGoldenrod2));
 
     protected override IRenderable RenderUnfamiliarCustomDescriptor(object obj, CustomDescriptor descriptor, in RendererConfig config) 
         => new Markup(Markup.Escape($"[Unfamiliar {descriptor.Name}]"), new Style(foreground: Color.Orange3));

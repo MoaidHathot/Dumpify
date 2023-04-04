@@ -20,11 +20,14 @@ var family = new Family
     FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
 };
 
-family.Dump();
+//family.Dump();
+
+moaid.Dump();
 
 //new int[][] { new int[] { 1, 2, 3, 4 }, new int[] { 1, 2, 3, 4, 5 } }.Dump();
 
 //moaid.Dump(label: "Test");
+//moaid.Dump();
 
 //new { Name = "MyBook", Author = new { FirstName = "Moaid", LastName = "Hathot", Address = new { Email = "moaid@test.com" } } }.Dump(maxDepth: 7, showTypeNames: true, showHeaders: true);
 //moaid.Dump();

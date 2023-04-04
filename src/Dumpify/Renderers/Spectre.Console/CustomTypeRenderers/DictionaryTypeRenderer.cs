@@ -20,8 +20,8 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
         var table = new Table();
 
         var title = "Dictionary";
-        table.AddColumn("Key");
-        table.AddColumn("Value");
+        table.AddColumn(new TableColumn(new Markup("Key", new Style(foreground: Color.DarkSlateGray3))));
+        table.AddColumn(new TableColumn(new Markup("Value", new Style(foreground: Color.DarkSlateGray3))));
 
         if(context.Config.ShowHeaders is not true)
         {
@@ -63,8 +63,7 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
         
         if(context.Config.ShowTypeNames is true)
         {
-
-            table.Title = new TableTitle(Markup.Escape(title));
+            table.Title = new TableTitle(Markup.Escape(title), new Style(foreground: Color.DarkSlateGray3));
         }
 
         return table.Collapse();
