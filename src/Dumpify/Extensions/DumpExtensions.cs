@@ -1,4 +1,5 @@
 ﻿using Dumpify.Descriptors;
+using Dumpify.Extensions;
 using Dumpify.Renderers;
 using System.Reflection;
 
@@ -13,7 +14,7 @@ public static class DumpExtensions
         var rendererConfig = new RendererConfig
         {
             Label = label,
-            MaxDepth = maxDepth ?? defaultConfig.MaxDepth,
+            MaxDepth = maxDepth.MustBeGreaterThan(0) ?? defaultConfig.MaxDepth,
             ShowTypeNames = showTypeNames ?? defaultConfig.ShowTypeNames,
             ShowHeaders = showHeaders ?? defaultConfig.ShowHeaders
         };

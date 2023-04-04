@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,11 +10,11 @@ namespace Dumpify.Descriptors.Generators;
 
 internal class CompositeDescriptorGenerator : IDescriptorGenerator
 {
-    private readonly Dictionary<(RuntimeTypeHandle, RuntimeTypeHandle?, string?), IDescriptor> _descriptorsCache = new();
+    private readonly ConcurrentDictionary<(RuntimeTypeHandle, RuntimeTypeHandle?, string?), IDescriptor> _descriptorsCache = new();
 
     private readonly IDescriptorGenerator[] _generatorsChain;
 
-    public CompositeDescriptorGenerator(Dictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>> customDescriptorHandlers)
+    public CompositeDescriptorGenerator(ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>> customDescriptorHandlers)
     {
         _generatorsChain = new IDescriptorGenerator[]
         {
@@ -33,7 +34,7 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
             return cachedDescriptor;
         }
 
-        _descriptorsCache.Add(cacheKey, new CircularDependencyDescriptor(type, propertyInfo, null));
+        _descriptorsCache.TryAdd(cacheKey, new CircularDependencyDescriptor(type, propertyInfo, null));
 
         var generatedDescriptor = GenerateDescriptor(type, propertyInfo);
 
@@ -42,12 +43,15 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
             throw new NotSupportedException($"Could not generate a Descriptor for type '{type.FullName}'");
         }
 
-        if (_descriptorsCache.TryGetValue(cacheKey, out cachedDescriptor) && cachedDescriptor is CircularDependencyDescriptor stubDescriptor)
+        _descriptorsCache.AddOrUpdate(cacheKey, generatedDescriptor, (key, descriptor) =>
         {
-            stubDescriptor.Descriptor = generatedDescriptor;
-        }
+            if(descriptor is CircularDependencyDescriptor cdd)
+            {
+                cdd.Descriptor = generatedDescriptor;
+            }
 
-        _descriptorsCache[cacheKey] = generatedDescriptor;
+            return generatedDescriptor;
+        });
 
         return generatedDescriptor;
     }

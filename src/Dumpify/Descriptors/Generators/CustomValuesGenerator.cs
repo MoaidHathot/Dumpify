@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Spectre.Console;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,9 +12,9 @@ namespace Dumpify.Descriptors.Generators;
 
 internal class CustomValuesGenerator : IDescriptorGenerator
 {
-    private readonly Dictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>> _customTypeHandlers;
+    private readonly ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>> _customTypeHandlers;
 
-    public CustomValuesGenerator(Dictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>> customTypeHandlers)
+    public CustomValuesGenerator(ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>> customTypeHandlers)
     {
         _customTypeHandlers = customTypeHandlers;
 
@@ -21,16 +23,15 @@ internal class CustomValuesGenerator : IDescriptorGenerator
         _customTypeHandlers.TryAdd(typeof(PropertyInfo).TypeHandle, (obj, type, propertyInfo) =>
         {
             var property = ((PropertyInfo)obj);
-            return $"{property.PropertyType} {property.Name} {{ {(property.SetMethod is not null ? "set; " : "")}{(property.GetMethod is not null ? "get; " : "")}}}";
+            return $"{property.PropertyType.Name} {property.Name} {{ {(property.SetMethod is not null ? "set; " : "")}{(property.GetMethod is not null ? "get; " : "")}}}";
         });
 
         _customTypeHandlers.TryAdd(typeof(MethodInfo).TypeHandle, (obj, type, propertyInfo) =>
         {
             var method = ((MethodInfo)obj);
 
-            return $"{method.ReturnType} {method.Name}({string.Join(", ", method.GetParameters().Select(p => $"{p.ParameterType} {p.Name}"))})";
+            return $"{method.ReturnType.Name} {method.Name}({string.Join(", ", method.GetParameters().Select(p => $"{p.ParameterType} {p.Name}"))})";
         });
-
 
         _customTypeHandlers.TryAdd(typeof(ConstructorInfo).TypeHandle, (obj, type, propertyInfo) =>
         {
@@ -39,12 +40,10 @@ internal class CustomValuesGenerator : IDescriptorGenerator
             return $"Constructor {ctor.Name}({string.Join(", ", ctor.GetParameters().Select(p => $"{p.ParameterType} {p.Name}"))})";
         });
 
-
         _customTypeHandlers.TryAdd(typeof(Enum).TypeHandle, (obj, type, e) =>
         {
             return $"{type.Name}{e}";
         });
-
 
         _customTypeHandlers.TryAdd(typeof(StringBuilder).TypeHandle, (obj, type, propertyInfo) => ((StringBuilder)obj).ToString());
         _customTypeHandlers.TryAdd(typeof(DateTime).TypeHandle, (obj, type, propertyInfo) => ((DateTime)obj).ToString());

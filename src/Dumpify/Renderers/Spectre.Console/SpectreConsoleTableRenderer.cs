@@ -1,15 +1,18 @@
 ﻿using Dumpify.Descriptors;
+using Dumpify.Extensions;
 using Dumpify.Renderers.Spectre.Console.CustomTypeRenderers;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace Dumpify.Renderers.Spectre.Console;
 
 internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
 {
     public SpectreConsoleTableRenderer()
-        : base(new Dictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<IRenderable>>>())
+        : base(new ConcurrentDictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<IRenderable>>>())
     {
         AddCustomTypeDescriptor(new DictionaryTypeRenderer(this));
         AddCustomTypeDescriptor(new ArrayTypeRenderer(this));
@@ -17,14 +20,11 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
 
     private void AddCustomTypeDescriptor(ICustomTypeRenderer<IRenderable> handler)
     {
-        if(!_customTypeRenderers.TryGetValue(handler.DescriptorType.TypeHandle, out var renderersList)) 
-        { 
-            renderersList = new List<ICustomTypeRenderer<IRenderable>>();
-
-            _customTypeRenderers.Add(handler.DescriptorType.TypeHandle, renderersList);
-        }
-
-        renderersList.Add(handler);
+        _customTypeRenderers.AddOrUpdate(handler.DescriptorType.TypeHandle, new List<ICustomTypeRenderer<IRenderable>>() { handler }, (k, list) =>
+        {
+            list.Add(handler);
+            return list;
+        });
     }
 
     protected override void PublishRenderables(IRenderable renderable)
@@ -39,25 +39,29 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
     private IRenderable RenderIEnumerable(IEnumerable obj, MultiValueDescriptor descriptor, RenderContext context)
     {
         var table = new Table();
-        table.AddColumn(Markup.Escape($"IEnumerable<{descriptor.ElementsType?.Name ?? ""}>"));
 
-        if(context.Config.ShowHeaders is not true)
-        {
-            table.HideHeaders();
-        }
+        var typeName = descriptor.Type.GetGenericTypeName();
+        table.AddColumn(Markup.Escape(typeName));
 
         foreach (var item in obj)
-        {
+        {        
             var type = descriptor.ElementsType ?? item?.GetType();
+
             IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null) : null;
 
             var renderedItem = RenderDescriptor(item, itemsDescriptor, context);
             table.AddRow(renderedItem);
         }
 
+        if (context.Config.ShowHeaders is not true)
+        {
+            table.HideHeaders();
+        }
+
         table.Collapse();
         return table;
     }
+
 
     protected override IRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext context)
     {
@@ -70,10 +74,8 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
 
         if (context.Config.ShowTypeNames is true)
         {
-            table.Title = new TableTitle(Markup.Escape(descriptor.Type.ToString()));
+            table.Title = new TableTitle(Markup.Escape(descriptor.Type.Name.ToString()));
         }
-
-        table.Collapse();
 
         table.AddColumn("Name");
         table.AddColumn("Value");

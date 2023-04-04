@@ -1,18 +1,22 @@
-﻿using Dumpify.Descriptors.Generators;
+﻿using Dumpify.Extensions;
+using Dumpify.Descriptors.Generators;
 using Dumpify.Renderers;
 using Dumpify.Renderers.Spectre.Console;
 using System.Reflection;
+using System.Collections.Concurrent;
 
 namespace Dumpify;
 
 public class DumpConfig
 {
+    private int _maxDepth = 7;
+
     public static DumpConfig Default { get; } = new DumpConfig();
-    internal Dictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>> CustomDescriptorHandlers { get; }
+    internal ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>> CustomDescriptorHandlers { get; }
 
     public DumpConfig()
     {
-        CustomDescriptorHandlers = new Dictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>>();
+        CustomDescriptorHandlers = new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>>();
         Generator = new CompositeDescriptorGenerator(CustomDescriptorHandlers);
         Renderer = new SpectreConsoleTableRenderer();
     }
@@ -24,15 +28,15 @@ public class DumpConfig
 
     public void RemoveCustomTypeHandler(Type type)
     {
-        CustomDescriptorHandlers.Remove(type.TypeHandle);
+        CustomDescriptorHandlers.TryRemove(type.TypeHandle, out _);
     }
 
     public IDescriptorGenerator Generator { get; set; }
     public IRenderer Renderer { get; set; }
 
+    public int MaxDepth { get => _maxDepth; set => _maxDepth = value.MustBeGreaterThan(0); }
 
     public bool UseDescriptors { get; set; } = true;
-    public int MaxDepth { get; set; } = 7;
     public bool ShowTypeNames { get; set; } = true;
     public bool ShowHeaders { get; set; } = true;
 }

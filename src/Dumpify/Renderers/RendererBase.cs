@@ -1,5 +1,6 @@
 ﻿using Dumpify.Descriptors;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -10,11 +11,11 @@ namespace Dumpify.Renderers;
 
 internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<TRenderable>
 {
-    protected readonly Dictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>> _customTypeRenderers;
+    protected readonly ConcurrentDictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>> _customTypeRenderers;
 
-    public RendererBase(Dictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>>? customTypeRenderers)
+    public RendererBase(ConcurrentDictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>>? customTypeRenderers)
     {
-        _customTypeRenderers = customTypeRenderers ?? new Dictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>>();
+        _customTypeRenderers = customTypeRenderers ?? new ConcurrentDictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>>();
     }
 
     public void Render(object? obj, IDescriptor? descriptor, RendererConfig config)

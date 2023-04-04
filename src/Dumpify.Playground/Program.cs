@@ -20,10 +20,20 @@ var family = new Family
     FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
 };
 
+family.Dump();
 
+//new int[][] { new int[] { 1, 2, 3, 4 }, new int[] { 1, 2, 3, 4, 5 } }.Dump();
+
+//moaid.Dump(label: "Test");
+
+//new { Name = "MyBook", Author = new { FirstName = "Moaid", LastName = "Hathot", Address = new { Email = "moaid@test.com" } } }.Dump(maxDepth: 7, showTypeNames: true, showHeaders: true);
 //moaid.Dump();
 
-new { Name = "MyBook", Author = new { FirstName = "Moaid", LastName = "Hathot", Address = new { Email = "moaid@test.com" } } }.Dump(maxDepth: -1, showTypeNames: false, showHeaders: false);
+//DumpConfig.Default.ShowTypeNames = false;
+//DumpConfig.Default.ShowHeaders = false;
+
+//DumpConfig.Default.Generator.Generate(new { Name = "MyBook", Author = new { FirstName = "Moaid", LastName = "Hathot", Address = new { Email = "moaid@test.com" } } }.GetType(), null).Dump();
+//moaid.Dump();
 
 //new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
 //new HashSet<string> { "Moaid", "Hathot", "shibli" }.Dump();
