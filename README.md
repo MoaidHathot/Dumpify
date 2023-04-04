@@ -44,16 +44,8 @@ Either use `dotnet add package Dumpify` or `Install-Package Dumpify`
 
 # To do
 * Before next release
-	* Validation checks
-		* Max depth is > 0 
-	* Eliminating Race Conditions
-	* Better handling of Anonymous Object naming
 	* Better handling of ObjectDescriptors without properties (currently empty table)
-	* Better handling of MultiValueDescriptor property names
 	* Better handling of array naming (int[][])
-	* Customizations
-		* Show Headers
-		* Show type names
       * Refactor SpectureTableRenderer to share customization code
 * Custom Outputs
 * Live outputs
