@@ -41,19 +41,29 @@ moaid.Dump();
 # How to use
 Either use `dotnet add package Dumpify` or `Install-Package Dumpify`
 
+# Features for the future 0.5.0 release
+* Consider making array's type name into a Table Title
+* JavaScript-style renderer
+* Consider disabling wrapping of Table titles
+* re-introduce labels
+
+# Features for the future 0.6.0 release
+* Better styling of Custom values
+	* Typeof(T) for example, Generic types, etc.
+* Better rendering of Delegates
+
 # To do
 * Custom Outputs
 * Live outputs
 * Improve Cache By decoupling the PropertyInfo from the Descriptors.
-* Rethink Generators caching keys.
+* Rethink Generators caching keys
 * Consider using Max Depth for Descriptors
 * Refactor Renderers and make it better extendable
-* Better styling
-* Custom styling
 * Add more renderers
     * re-introduce Json Renderers
     * JavaScript's `console.log` style
-* Decouple from Spectre.Console    
+    * CSharp Renderer
+* Decouple from Spectre.Console
 * Tests
     * More tests
     * Visual (Render) Tests - consider acceptance tests
@@ -66,7 +76,7 @@ Either use `dotnet add package Dumpify` or `Install-Package Dumpify`
 	* The current CustomDescriptorGenerator must generate a value
 	* Consider ValueTuple
 * Refactor SpectureTableRenderer to share customization code
-* Better handling of ObjectDescriptors without properties (currently empty table)
+* Consider changing the style/view of ObjectDescriptors without properties (currently empty table)
 
 # Disclaimer
 This project is inspired by LinqPad's Dump features, authored by Joseph Albahari.
