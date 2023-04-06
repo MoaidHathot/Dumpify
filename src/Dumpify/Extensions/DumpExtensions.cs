@@ -19,13 +19,15 @@ public static class DumpExtensions
             ShowTypeNames = showTypeNames ?? defaultConfig.ShowTypeNames,
             ShowHeaders = showHeaders ?? defaultConfig.ShowHeaders,
             ColorConfig = colors ?? defaultConfig.ColorConfig,
+            TableConfig = defaultConfig.TableConfig,
         };
 
         var createDescriptor = useDescriptors ?? defaultConfig.UseDescriptors;
+        renderer ??= defaultConfig.Renderer;
 
         if(obj is null || createDescriptor is false)
         {
-            RenderSafely(obj, null, rendererConfig);
+            RenderSafely(obj, renderer, null, rendererConfig);
             return obj;
         }
 
@@ -34,17 +36,17 @@ public static class DumpExtensions
             return obj;
         }
 
-        RenderSafely(obj, descriptor, rendererConfig);
+        RenderSafely(obj, renderer, descriptor, rendererConfig);
 
         return obj;
     }
 
-    private static void RenderSafely<T>(T? obj, IDescriptor? descriptor, RendererConfig config)
+    private static void RenderSafely<T>(T? obj, IRenderer renderer, IDescriptor? descriptor, RendererConfig config)
     {
         try
         {
 
-            DumpConfig.Default.Renderer.Render(obj, descriptor, config);
+            renderer.Render(obj, descriptor, config);
         }
         catch (Exception ex)
         {

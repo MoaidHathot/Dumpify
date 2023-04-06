@@ -42,4 +42,5 @@ public class DumpConfig
     public bool ShowHeaders { get; set; } = true;
 
     public ColorConfig ColorConfig { get; set; } = new ColorConfig();
+    public TableConfig TableConfig { get; } = new TableConfig();
 }

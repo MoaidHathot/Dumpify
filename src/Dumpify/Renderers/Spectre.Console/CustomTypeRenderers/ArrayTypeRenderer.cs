@@ -25,19 +25,27 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         return obj.Rank switch
         {
-            1 => RenderSingleDimentionArray(obj, mvd, context),
-            2 => RenderTwoDimentionalArray(obj, mvd, context),
+            1 => RenderSingleDimensionArray(obj, mvd, context),
+            2 => RenderTwoDimensionalArray(obj, mvd, context),
             > 2 => RenderHighRankArrays(obj, mvd, context),
             _ => throw new NotImplementedException($"Rendering Array of rank {obj.Rank}")
         };
     }
 
-    private IRenderable RenderSingleDimentionArray(Array obj, MultiValueDescriptor mvd, RenderContext context)
+    private IRenderable RenderSingleDimensionArray(Array obj, MultiValueDescriptor mvd, RenderContext context)
     {
         var table = new Table();
+
+        var showIndexes = context.Config.TableConfig.ShowArrayIndices;
+
+        if (showIndexes)
+        {
+            table.AddColumn(new TableColumn(new Markup("")));
+        }
+
         table.AddColumn(new TableColumn(new Markup(Markup.Escape($"{mvd.ElementsType?.Name ?? ""}[{obj.GetLength(0)}]"), new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()))));
 
-        if(context.Config.ShowHeaders is not true)
+        if(context.Config.ShowHeaders is not true || context.Config.ShowTypeNames is not true)
         {
             table.HideHeaders();
         }
@@ -50,14 +58,23 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
             IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null) : null;
 
             var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
-            table.AddRow(renderedItem);
+
+            if (showIndexes)
+            {
+                var renderedIndex = new Markup(index.ToString(), new Style(foreground: context.Config.ColorConfig.ColumnNameColor.ToSpectreColor()));
+                table.AddRow(renderedIndex, renderedItem);
+            }
+            else
+            {
+                table.AddRow(renderedItem);
+            }
         }
 
         table.Collapse();
         return table;
     }
 
-    private IRenderable RenderTwoDimentionalArray(Array obj, MultiValueDescriptor descriptor, RenderContext context)
+    private IRenderable RenderTwoDimensionalArray(Array obj, MultiValueDescriptor descriptor, RenderContext context)
     {
         if (obj.Rank != 2)
         {

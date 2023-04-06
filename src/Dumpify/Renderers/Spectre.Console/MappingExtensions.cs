@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Dumpify.Renderers.Spectre.Console;
+
 internal static class MappingExtensions
 {
     public static Color? ToSpectreColor(this DumpColor? color)

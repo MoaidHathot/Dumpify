@@ -46,7 +46,7 @@ stack.Dump();
 
 
 moaid.Dump(showHeaders: false, showTypeNames: false);
-//moaid.Dump();
+moaid.Dump();
 
 new int[][] { new int[] { 1, 2, 3, 4 }, new int[] { 1, 2, 3, 4, 5 } }.Dump();
 
@@ -62,9 +62,8 @@ new int[][] { new int[] { 1, 2, 3, 4 }, new int[] { 1, 2, 3, 4, 5 } }.Dump();
 //DumpConfig.Default.Generator.Generate(new { Name = "MyBook", Author = new { FirstName = "Moaid", LastName = "Hathot", Address = new { Email = "moaid@test.com" } } }.GetType(), null).Dump();
 //moaid.Dump();
 
-//new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
+new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
 //new HashSet<string> { "Moaid", "Hathot", "shibli" }.Dump();
-
 
 
 new Dictionary<Person, string>
@@ -83,13 +82,13 @@ new Dictionary<string, Person>
 }.Dump(colors: ColorConfig.NoColors);
 
 
-//new Dictionary<string, string>
-//{
-//    ["Moaid"] = "Hathot",
-//    ["Haneeni"] = "Shibli",
-//    ["Moaid1"] = "Hathot1",
-//    ["Haneeni1"] = "Shibli1",
-//}.Dump();
+new Dictionary<string, string>
+{
+   ["Moaid"] = "Hathot",
+   ["Haneeni"] = "Shibli",
+   ["Eren"] = "Yeager",
+   ["Mikasa"] = "Ackerman",
+}.Dump();
 
 //TestE.First.Dump();
 //var d = DumpConfig.Default.Generator.Generate(TestE.First.GetType(), null);
@@ -114,7 +113,13 @@ new Dictionary<string, Person>
 //var arr = new[,,] { { { 1, 2, 4 } }, { { 3, 4, 6 } }, { {1, 2, 88 } } }.Dump();
 
 var arr = new[] { 1, 2, 3, 4 }.Dump();
-var arr2d = new int[2, 2].Dump();
+var arr2d = new int[,] { {1, 2}, {3, 4} }.Dump();
+
+
+DumpConfig.Default.TableConfig.ShowArrayIndices = false;
+
+arr.Dump();
+arr2d.Dump();
 
 
 //arr.Dump();
