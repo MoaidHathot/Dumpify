@@ -19,12 +19,17 @@ One of my favorites [LinqPad](https://www.linqpad.net/) feature is its `.Dump()`
     * StringBuilder
     * System.Reflection types
     
+# How to Install
+Either run `dotnet add package Dumpify` or `Install-Package Dumpify`
+    
+ 
 # Examples:
 ```csharp
 new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
 
 ```
-![image](https://user-images.githubusercontent.com/8770486/229388747-897790be-45ee-4db2-a21a-137c564774af.png)
+![image](https://user-images.githubusercontent.com/8770486/230250399-b7778879-c24f-493e-9e77-e81f1f43e6db.png)
+
 
 Support nesting as well
 ```csharp
@@ -36,10 +41,30 @@ haneeni.Spouse = moaid;
 
 moaid.Dump();
 ```
-![image](https://user-images.githubusercontent.com/8770486/229388818-1ef54ad1-4779-4043-bf04-8ff1f0c7d605.png)
+![image](https://user-images.githubusercontent.com/8770486/230250311-715af695-8f73-4fea-935d-03c9293bb478.png)
 
-# How to use
-Either use `dotnet add package Dumpify` or `Install-Package Dumpify`
+Support for special types like arrays and Dictionaries
+```csharp
+var arr = new[] { 1, 2, 3, 4 }.Dump();
+```
+![image](https://user-images.githubusercontent.com/8770486/230250695-0d5bbef2-a1b5-43e9-a24f-9d28168bca72.png)
+
+```csharp
+var arr2d = new int[,] { {1, 2}, {3, 4} }.Dump();
+```
+![image](https://user-images.githubusercontent.com/8770486/230250735-66703e54-ce02-41c0-91b7-fcbee5f80ac3.png)
+
+```csharp
+new Dictionary<string, string>
+{
+   ["Moaid"] = "Hathot",
+   ["Haneeni"] = "Shibli",
+   ["Eren"] = "Yeager",
+   ["Mikasa"] = "Ackerman",
+}.Dump();
+```
+![image](https://user-images.githubusercontent.com/8770486/230250919-838357bf-b6c2-4a91-8702-b639050ebe1d.png)
+
 
 # Features for the future 0.5.0 release
 * Consider making array's type name into a Table Title
