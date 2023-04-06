@@ -1,5 +1,6 @@
 ﻿using Dumpify.Renderers;
 using Dumpify.Renderers.Spectre.Console;
+using Dumpify.Renderers.Spectre.Console.TableRenderer;
 using System.Collections.Concurrent;
 
 namespace Dumpify.Tests.Renderers.Spectre.Console;

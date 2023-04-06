@@ -4,10 +4,15 @@ namespace Dumpify.Renderers;
 
 public struct RendererConfig
 {
-    public string? Label { get; init; }
-    public int? MaxDepth { get; init; }
-    public bool? ShowTypeNames { get; init; }
-    public bool? ShowHeaders { get; init; }
-    public ColorConfig ColorConfig { get; init; }
-    public TableConfig TableConfig { get; init; }
+    public RendererConfig()
+    {
+    }
+
+    public string? Label { get; init; } = null;
+    public int? MaxDepth { get; init; } = null;
+    public bool? ShowTypeNames { get; init; } = null;
+    public bool? ShowHeaders { get; init; } = null;
+
+    public ColorConfig ColorConfig { get; init; } = ColorConfig.DefaultColors;
+    public TableConfig TableConfig { get; init; } = new TableConfig();
 }

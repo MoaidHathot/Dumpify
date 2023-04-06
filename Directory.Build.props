@@ -19,7 +19,11 @@
 	<PropertyGroup>
 		<Product>Dumpify</Product>
 		<Authors>Moaid Hathot</Authors>
+		<Title>Dumpify</Title>
+		<Owners>Moaid Hathot</Owners>
 		<Copyright>@ Moaid Hathot. All rights reserved.</Copyright>
+    <Description>A library that can dump any object to the console in a readable, structured way. No need for overriding `ToString`.</Description>
+    <Summary>Dumpify enable you to print objects in a structured ways to the Console</Summary>
 		<RepositoryUrl>https://github.com/MoaidHathot/Dumpify</RepositoryUrl>
 		<RepositoryBranch>main</RepositoryBranch>
 	</PropertyGroup>

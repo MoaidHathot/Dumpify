@@ -1,10 +1,11 @@
-﻿using Dumpify.Descriptors;
+﻿using Dumpify.Config;
+using Dumpify.Descriptors;
 using Dumpify.Extensions;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Runtime.CompilerServices;
 
-namespace Dumpify.Renderers.Spectre.Console.CustomTypeRenderers;
+namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 
 internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
 {
@@ -40,7 +41,7 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
 
             var renderedValue = value switch
             {
-                null => _handler.RenderNullValue(typeDescriptor, context.Config),
+                null => _handler.RenderNullValue(typeDescriptor, context),
                 not null => _handler.RenderDescriptor(value, typeDescriptor, context),
             };
 

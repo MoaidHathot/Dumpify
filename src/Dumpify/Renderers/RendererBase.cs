@@ -1,4 +1,5 @@
-﻿using Dumpify.Descriptors;
+﻿using Dumpify.Config;
+using Dumpify.Descriptors;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,36 +12,46 @@ namespace Dumpify.Renderers;
 
 internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<TRenderable>
 {
-    protected readonly ConcurrentDictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>> _customTypeRenderers;
+    private readonly ConcurrentDictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>> _customTypeRenderers;
 
-    public RendererBase(ConcurrentDictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>>? customTypeRenderers)
+    protected RendererBase(ConcurrentDictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>>? customTypeRenderers)
     {
         _customTypeRenderers = customTypeRenderers ?? new ConcurrentDictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>>();
+    }
+
+    protected void AddCustomTypeDescriptor(ICustomTypeRenderer<TRenderable> handler)
+    {
+        _customTypeRenderers.AddOrUpdate(handler.DescriptorType.TypeHandle, new List<ICustomTypeRenderer<TRenderable>>() { handler }, (k, list) =>
+        {
+            list.Add(handler);
+            return list;
+        });
     }
 
     public void Render(object? obj, IDescriptor? descriptor, RendererConfig config)
     {
         var idGenerator = new ObjectIDGenerator();
+        var context = new RenderContext(config, idGenerator, 0);
 
         var renderable = obj switch
         {
-            null => RenderNullValue(descriptor, config),
-            _ => RenderDescriptor(obj, descriptor, new RenderContext(config, idGenerator, 0)),
+            null => RenderNullValue(descriptor, context),
+            _ => RenderDescriptor(obj, descriptor, context),
         };
 
-        PublishRenderables(renderable);
+        PublishRenderables(renderable, context);
     }
 
-    public TRenderable RenderDescriptor(object? @object, IDescriptor? descriptor, in RenderContext context)
+    public TRenderable RenderDescriptor(object? @object, IDescriptor? descriptor, RenderContext context)
     {
         if (@object is null)
         {
-            return RenderNullValue(descriptor, context.Config);
+            return RenderNullValue(descriptor, context);
         }
 
         if (context.Config.MaxDepth is not null && context.CurrentDepth > context.Config.MaxDepth)
         {
-            return RenderExeededDepth(@object, descriptor, context.Config);
+            return RenderExceededDepth(@object, descriptor, context);
         }
 
         return descriptor switch
@@ -49,11 +60,21 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
             CircularDependencyDescriptor circularDescriptor => RenderDescriptor(@object, circularDescriptor.Descriptor, context),
             IgnoredDescriptor ignoredDescriptor => TryRenderCustomTypeDescriptor(@object, ignoredDescriptor, context, RenderIgnoredDescriptor),
             SingleValueDescriptor singleDescriptor => TryRenderCustomTypeDescriptor(@object, singleDescriptor, context, RenderSingleValueDescriptor),
-            ObjectDescriptor objDescriptor => TryRenderCustomTypeDescriptor(@object, objDescriptor, context, RenderObjectDescriptor),
+            ObjectDescriptor objDescriptor => TryRenderCustomTypeDescriptor(@object, objDescriptor, context, TryRenderObjectDescriptor),
             MultiValueDescriptor multiDescriptor => TryRenderCustomTypeDescriptor(@object, multiDescriptor, context, RenderMultiValueDescriptor),
             CustomDescriptor customDescriptor => TryRenderCustomTypeDescriptor(@object, customDescriptor, context, RenderCustomDescriptor),
             _ => RenderUnsupportedDescriptor(@object, descriptor, context),
         };
+    }
+
+    private TRenderable TryRenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext context)
+    {
+        if (ObjectAlreadyRendered(obj, context.ObjectTracker))
+        {
+            return RenderCircularDependency(obj, descriptor, context);
+        }
+
+        return RenderObjectDescriptor(obj, descriptor, context);
     }
 
     private TRenderable TryRenderCustomTypeDescriptor<TDescriptor>(object obj, TDescriptor descriptor, in RenderContext context, Func<object, TDescriptor, RenderContext, TRenderable> defaultRenderer)
@@ -76,36 +97,38 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
     {
         if (!DumpConfig.Default.CustomDescriptorHandlers.TryGetValue(customDescriptor.Type.TypeHandle, out var valueFactory))
         {
-            return RenderUnfamiliarCustomDescriptor(obj, customDescriptor, context.Config);
+            return RenderUnfamiliarCustomDescriptor(obj, customDescriptor, context);
         }
 
         var customValue = valueFactory(obj, customDescriptor.Type, customDescriptor.PropertyInfo);
 
         if (customValue is null)
         {
-            return RenderNullValue(customDescriptor, context.Config);
+            return RenderNullValue(customDescriptor, context);
         }
 
         var customValueDescriptor = DumpConfig.Default.Generator.Generate(customValue.GetType(), null);
 
+
+
         return RenderDescriptor(customValue, customValueDescriptor, context);
     }
 
-    protected bool ObjectAlreadyRendered(object @object, ObjectIDGenerator tracker)
+    private bool ObjectAlreadyRendered(object @object, ObjectIDGenerator tracker)
     {
         tracker.GetId(@object, out var firstTime);
 
         return firstTime is false;
     }
 
-    protected abstract void PublishRenderables(TRenderable renderable);
+    protected abstract void PublishRenderables(TRenderable renderable, RenderContext context);
 
-    public abstract TRenderable RenderNullValue(IDescriptor? descriptor, in RendererConfig config);
+    public abstract TRenderable RenderNullValue(IDescriptor? descriptor, RenderContext context);
 
-    protected abstract TRenderable RenderUnfamiliarCustomDescriptor(object obj, CustomDescriptor descriptor, in RendererConfig config);
+    protected abstract TRenderable RenderUnfamiliarCustomDescriptor(object obj, CustomDescriptor descriptor, RenderContext context);
 
-    public abstract TRenderable RenderExeededDepth(object obj, IDescriptor? descriptor, in RendererConfig config);
-    protected abstract TRenderable RenderCircularDependency(object @object, IDescriptor? descriptor, in RendererConfig config);
+    public abstract TRenderable RenderExceededDepth(object obj, IDescriptor? descriptor, RenderContext context);
+    protected abstract TRenderable RenderCircularDependency(object @object, IDescriptor? descriptor, RenderContext context);
 
     protected abstract TRenderable RenderNullDescriptor(object obj, RenderContext context);
     protected abstract TRenderable RenderIgnoredDescriptor(object obj, IgnoredDescriptor descriptor, RenderContext context);

@@ -1,7 +1,6 @@
 ﻿using Dumpify.Extensions;
 using Dumpify.Descriptors.Generators;
 using Dumpify.Renderers;
-using Dumpify.Renderers.Spectre.Console;
 using System.Reflection;
 using System.Collections.Concurrent;
 using Dumpify.Config;
@@ -13,24 +12,23 @@ public class DumpConfig
     private int _maxDepth = 7;
 
     public static DumpConfig Default { get; } = new DumpConfig();
+
     internal ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>> CustomDescriptorHandlers { get; }
 
-    public DumpConfig()
+    private DumpConfig()
     {
         CustomDescriptorHandlers = new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>>();
         Generator = new CompositeDescriptorGenerator(CustomDescriptorHandlers);
-        Renderer = new SpectreConsoleTableRenderer();
+        Renderer = Config.Renderers.TableRenderer;
+        ColorConfig = new ColorConfig();
+        TableConfig = new TableConfig();
     }
 
     public void AddCustomTypeHandler(Type type, Func<object, Type, PropertyInfo?, object> valueFactory)
-    {
-        CustomDescriptorHandlers[type.TypeHandle] = valueFactory;
-    }
+        => CustomDescriptorHandlers[type.TypeHandle] = valueFactory;
 
     public void RemoveCustomTypeHandler(Type type)
-    {
-        CustomDescriptorHandlers.TryRemove(type.TypeHandle, out _);
-    }
+        => CustomDescriptorHandlers.TryRemove(type.TypeHandle, out _);
 
     public IDescriptorGenerator Generator { get; set; }
     public IRenderer Renderer { get; set; }
@@ -41,6 +39,6 @@ public class DumpConfig
     public bool ShowTypeNames { get; set; } = true;
     public bool ShowHeaders { get; set; } = true;
 
-    public ColorConfig ColorConfig { get; set; } = new ColorConfig();
-    public TableConfig TableConfig { get; } = new TableConfig();
+    public ColorConfig ColorConfig { get; }
+    public TableConfig TableConfig { get; }
 }

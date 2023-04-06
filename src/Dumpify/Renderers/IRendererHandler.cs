@@ -4,7 +4,7 @@ namespace Dumpify.Renderers;
 
 internal interface IRendererHandler<TRenderable>
 {
-    TRenderable RenderDescriptor(object? @object, IDescriptor? descriptor, in RenderContext context);
-    TRenderable RenderNullValue(IDescriptor? descriptor, in RendererConfig config);
-    TRenderable RenderExeededDepth(object obj, IDescriptor? descriptor, in RendererConfig config);
+    TRenderable RenderDescriptor(object? @object, IDescriptor? descriptor, RenderContext context);
+    TRenderable RenderNullValue(IDescriptor? descriptor, RenderContext context);
+    TRenderable RenderExceededDepth(object obj, IDescriptor? descriptor, RenderContext context);
 }

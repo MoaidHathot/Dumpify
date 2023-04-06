@@ -67,10 +67,10 @@ new Dictionary<string, string>
 
 
 # Features for the future 0.5.0 release
-* Consider making array's type name into a Table Title
-* JavaScript-style renderer
+* Simple text renderer
 * Consider disabling wrapping of Table titles
 * re-introduce labels
+* Consier adding "" to string values.
 
 # Features for the future 0.6.0 release
 * Better styling of Custom values

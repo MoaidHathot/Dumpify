@@ -121,6 +121,9 @@ DumpConfig.Default.TableConfig.ShowArrayIndices = false;
 arr.Dump();
 arr2d.Dump();
 
+DumpConfig.Default.TableConfig.ShowArrayIndices = true;
+
+moaid.Dump();
 
 //arr.Dump();
 //moaid.Dump();

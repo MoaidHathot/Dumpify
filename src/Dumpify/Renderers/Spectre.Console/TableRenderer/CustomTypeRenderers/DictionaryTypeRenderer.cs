@@ -1,9 +1,10 @@
-﻿using Dumpify.Descriptors;
+﻿using Dumpify.Config;
+using Dumpify.Descriptors;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections;
 
-namespace Dumpify.Renderers.Spectre.Console.CustomTypeRenderers;
+namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
 {
     private readonly IRendererHandler<IRenderable> _handler;
@@ -51,7 +52,7 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
 
             var valueRenderable = value switch
             {
-                null => _handler.RenderNullValue(null, context.Config),
+                null => _handler.RenderNullValue(null, context),
                 not null => _handler.RenderDescriptor(value, DumpConfig.Default.Generator.Generate(value.GetType(), null), context),
             };
 

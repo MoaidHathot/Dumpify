@@ -1,5 +1,7 @@
-﻿using Dumpify.Renderers;
+﻿using Dumpify.Config;
+using Dumpify.Renderers;
 using Dumpify.Renderers.Spectre.Console;
+using Dumpify.Renderers.Spectre.Console.TableRenderer;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,7 +17,7 @@ public class RenderCircularDependencies
     [TestMethod]
     public void RenderCircularDependenciesWithoutCrashes()
     {
-        var moaid = new PersonWithSignificantOther { FirstName = "Moaid", LastName = "Hathto" };
+        var moaid = new PersonWithSignificantOther { FirstName = "Moaid", LastName = "Hathot" };
         var haneeni = new PersonWithSignificantOther { FirstName = "Moaid", LastName = "Hathot" };
 
         moaid.SignificantOther = haneeni;
