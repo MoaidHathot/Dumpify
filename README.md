@@ -10,15 +10,14 @@ One of my favorites [LinqPad](https://www.linqpad.net/) feature is its `.Dump()`
 * Support for Arrays and IEnumerables
 * Support for Custom descriptors
 * Support for max nesting levels
-* Support for circular dependencies
+* Support for circular dependencies and references
+* Support for styling and customizations
 * Configurable
 * Spectre.Console renderers
-* Special Handling for:
-    * Arrays
-    * MultiDimentional Arrays
+* Special Handling for types:
+    * Arrays, IEnumerables, Collections.
     * StringBuilder
-    * Dictionary<T, K>
-    * Reflection Types
+    * System.Reflection types
     
 # Examples:
 ```csharp
@@ -43,10 +42,6 @@ moaid.Dump();
 Either use `dotnet add package Dumpify` or `Install-Package Dumpify`
 
 # To do
-* Before next release
-	* Better handling of ObjectDescriptors without properties (currently empty table)
-	* Better handling of array naming (int[][])
-      * Refactor SpectureTableRenderer to share customization code
 * Custom Outputs
 * Live outputs
 * Improve Cache By decoupling the PropertyInfo from the Descriptors.
@@ -63,6 +58,15 @@ Either use `dotnet add package Dumpify` or `Install-Package Dumpify`
     * More tests
     * Visual (Render) Tests - consider acceptance tests
     * Tests for Nesting
+* Add support for include fields
+* Add support for include private members
+* Cache Spectre.Console styles and colors
+* More sync between Custom Descriptors and Custom Renderers
+	* Think how we can mark type's descriptor as needing special rendering.
+	* The current CustomDescriptorGenerator must generate a value
+	* Consider ValueTuple
+* Refactor SpectureTableRenderer to share customization code
+* Better handling of ObjectDescriptors without properties (currently empty table)
 
 # Disclaimer
 This project is inspired by LinqPad's Dump features, authored by Joseph Albahari.

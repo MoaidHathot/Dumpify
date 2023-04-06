@@ -40,6 +40,8 @@ public class TypeExtensionsTests
     [DataRow(typeof(StringBuilder), "StringBuilder")]
     [DataRow(typeof(Dictionary<string, long>), "Dictionary<String, Int64>")]
     [DataRow(typeof(Stack<int>), "Stack<Int32>")]
+    [DataRow(typeof(Dictionary<string, Dictionary<string, int>>), "Dictionary<String, Dictionary<String, Int32>>")]
+    [DataRow(typeof(Func<int>), "Func<Int32>")]
     public void GetGenericTypeNameReturnCorrectResults(Type type, string expectedName)
     {
         var result = type.GetGenericTypeName();

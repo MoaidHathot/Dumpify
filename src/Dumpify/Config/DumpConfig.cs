@@ -4,6 +4,7 @@ using Dumpify.Renderers;
 using Dumpify.Renderers.Spectre.Console;
 using System.Reflection;
 using System.Collections.Concurrent;
+using Dumpify.Config;
 
 namespace Dumpify;
 
@@ -39,4 +40,6 @@ public class DumpConfig
     public bool UseDescriptors { get; set; } = true;
     public bool ShowTypeNames { get; set; } = true;
     public bool ShowHeaders { get; set; } = true;
+
+    public ColorConfig ColorConfig { get; set; } = new ColorConfig();
 }

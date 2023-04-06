@@ -1,4 +1,5 @@
-﻿using Dumpify.Descriptors;
+﻿using Dumpify.Config;
+using Dumpify.Descriptors;
 using Dumpify.Extensions;
 using Dumpify.Renderers;
 using System.Reflection;
@@ -7,7 +8,7 @@ namespace Dumpify;
 
 public static class DumpExtensions
 {
-    public static T? Dump<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, bool? showTypeNames = null, bool? showHeaders = null)
+    public static T? Dump<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, bool? showTypeNames = null, bool? showHeaders = null, ColorConfig? colors = null)
     {
         var defaultConfig = DumpConfig.Default;
 
@@ -16,7 +17,8 @@ public static class DumpExtensions
             Label = label,
             MaxDepth = maxDepth.MustBeGreaterThan(0) ?? defaultConfig.MaxDepth,
             ShowTypeNames = showTypeNames ?? defaultConfig.ShowTypeNames,
-            ShowHeaders = showHeaders ?? defaultConfig.ShowHeaders
+            ShowHeaders = showHeaders ?? defaultConfig.ShowHeaders,
+            ColorConfig = colors ?? defaultConfig.ColorConfig,
         };
 
         var createDescriptor = useDescriptors ?? defaultConfig.UseDescriptors;
@@ -27,7 +29,7 @@ public static class DumpExtensions
             return obj;
         }
 
-        if(!TryGenerate(obj.GetType(), null, out var descriptor))
+        if(!TryGenerate<T>(obj.GetType(), null, out var descriptor))
         {
             return obj;
         }
@@ -35,44 +37,44 @@ public static class DumpExtensions
         RenderSafely(obj, descriptor, rendererConfig);
 
         return obj;
+    }
 
-        static bool TryGenerate(Type type, PropertyInfo? info, out IDescriptor? descriptor)
+    private static void RenderSafely<T>(T? obj, IDescriptor? descriptor, RendererConfig config)
+    {
+        try
         {
-            descriptor = null;
 
-            try
-            {
-                descriptor = DumpConfig.Default.Generator.Generate(type, propertyInfo: info);
-                return true;
-            }
-            catch (Exception ex)
-            {
-
-                Console.WriteLine($"[Failed to Generate descriptor for {typeof(T)} and Property: {info}]. {ex.Message}");
+            DumpConfig.Default.Renderer.Render(obj, descriptor, config);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[Failed to Render {typeof(T)} - {obj}]. {ex.Message}");
 
 #if DEBUG
-                Console.WriteLine(ex);
+            Console.WriteLine(ex);
 #endif
-            }
-
-            return false;
         }
+    }
 
-        static void RenderSafely(T? obj, IDescriptor? descriptor, RendererConfig config)
+    private static bool TryGenerate<T>(Type type, PropertyInfo? info, out IDescriptor? descriptor)
+    {
+        descriptor = null;
+
+        try
         {
-            try
-            {
+            descriptor = DumpConfig.Default.Generator.Generate(type, propertyInfo: info);
+            return true;
+        }
+        catch (Exception ex)
+        {
 
-                DumpConfig.Default.Renderer.Render(obj, descriptor, config);
-            }
-            catch (Exception ex) 
-            {
-                Console.WriteLine($"[Failed to Render {typeof(T)} - {obj}]. {ex.Message}");
+            Console.WriteLine($"[Failed to Generate descriptor for {typeof(T)} and Property: {info}]. {ex.Message}");
 
 #if DEBUG
-                Console.WriteLine(ex);
+            Console.WriteLine(ex);
 #endif
-            }
         }
+
+        return false;
     }
 }

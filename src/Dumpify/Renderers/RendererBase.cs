@@ -45,14 +45,14 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
 
         return descriptor switch
         {
-            null => RenderNullDescriptor(@object),
+            null => RenderNullDescriptor(@object, context),
             CircularDependencyDescriptor circularDescriptor => RenderDescriptor(@object, circularDescriptor.Descriptor, context),
             IgnoredDescriptor ignoredDescriptor => TryRenderCustomTypeDescriptor(@object, ignoredDescriptor, context, RenderIgnoredDescriptor),
             SingleValueDescriptor singleDescriptor => TryRenderCustomTypeDescriptor(@object, singleDescriptor, context, RenderSingleValueDescriptor),
             ObjectDescriptor objDescriptor => TryRenderCustomTypeDescriptor(@object, objDescriptor, context, RenderObjectDescriptor),
             MultiValueDescriptor multiDescriptor => TryRenderCustomTypeDescriptor(@object, multiDescriptor, context, RenderMultiValueDescriptor),
             CustomDescriptor customDescriptor => TryRenderCustomTypeDescriptor(@object, customDescriptor, context, RenderCustomDescriptor),
-            _ => RenderUnsupportedDescriptor(@object, descriptor),
+            _ => RenderUnsupportedDescriptor(@object, descriptor, context),
         };
     }
 
@@ -107,10 +107,10 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
     public abstract TRenderable RenderExeededDepth(object obj, IDescriptor? descriptor, in RendererConfig config);
     protected abstract TRenderable RenderCircularDependency(object @object, IDescriptor? descriptor, in RendererConfig config);
 
-    protected abstract TRenderable RenderNullDescriptor(object obj);
+    protected abstract TRenderable RenderNullDescriptor(object obj, RenderContext context);
     protected abstract TRenderable RenderIgnoredDescriptor(object obj, IgnoredDescriptor descriptor, RenderContext context);
     protected abstract TRenderable RenderSingleValueDescriptor(object obj, SingleValueDescriptor descriptor, RenderContext context);
-    protected abstract TRenderable RenderUnsupportedDescriptor(object obj, IDescriptor descriptor);
+    protected abstract TRenderable RenderUnsupportedDescriptor(object obj, IDescriptor descriptor, RenderContext context);
     protected abstract TRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext context);
     protected abstract TRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext context);
 }

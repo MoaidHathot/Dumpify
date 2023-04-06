@@ -1,4 +1,6 @@
 ﻿using Dumpify;
+using Dumpify.Config;
+using Spectre.Console;
 using System.Collections;
 using System.Text;
 
@@ -20,11 +22,33 @@ var family = new Family
     FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
 };
 
-//family.Dump();
+//DumpConfig.Default.ColorConfig.ColumnNameColor = System.Drawing.Color.MistyRose;
+//DumpConfig.Default.ColorConfig = new ColorConfig(System.Drawing.Color.DarkRed);
 
-moaid.Dump();
+System.Tuple.Create(10, 55, "hello").Dump();
+(10, "hello").Dump();
 
-//new int[][] { new int[] { 1, 2, 3, 4 }, new int[] { 1, 2, 3, 4, 5 } }.Dump();
+var f = () => 10;
+f.Dump();
+
+family.Dump();
+
+new HashSet<string> { "A", "B", "C", "A" }.Dump();
+
+var stack = new Stack<int>();
+stack.Push(1);
+stack.Push(2);
+stack.Push(3);
+stack.Push(4);
+stack.Push(5);
+
+stack.Dump();
+
+
+moaid.Dump(showHeaders: false, showTypeNames: false);
+//moaid.Dump();
+
+new int[][] { new int[] { 1, 2, 3, 4 }, new int[] { 1, 2, 3, 4, 5 } }.Dump();
 
 //moaid.Dump(label: "Test");
 //moaid.Dump();
@@ -43,20 +67,20 @@ moaid.Dump();
 
 
 
-//new Dictionary<Person, string>
-//{
-//    [new Person { FirstName = "Moaid", LastName = "Hathot" }] = "Moaid Hathot",
-//    [new Person { FirstName = "Haneeni", LastName = "Shibli" }] = "Haneeni Shibli",
-//    [new Person { FirstName = "Waseem", LastName = "Hathot" }] = "Waseem Hathot",
-//}.Dump();
+new Dictionary<Person, string>
+{
+    [new Person { FirstName = "Moaid", LastName = "Hathot" }] = "Moaid Hathot",
+    [new Person { FirstName = "Haneeni", LastName = "Shibli" }] = "Haneeni Shibli",
+    [new Person { FirstName = "Waseem", LastName = "Hathot" }] = "Waseem Hathot",
+}.Dump();
 
 
-//new Dictionary<string, Person>
-//{
-//    ["Moaid"] = new Person { FirstName = "Moaid", LastName = "Hathot" },
-//    ["Haneeni"] = new Person { FirstName = "Haneeni", LastName = "Shibli" },
-//    ["Waseem"] = new Person { FirstName = "Waseem", LastName = "Hathot" },
-//}.Dump();
+new Dictionary<string, Person>
+{
+    ["Moaid"] = new Person { FirstName = "Moaid", LastName = "Hathot" },
+    ["Haneeni"] = new Person { FirstName = "Haneeni", LastName = "Shibli" },
+    ["Waseem"] = new Person { FirstName = "Waseem", LastName = "Hathot" },
+}.Dump(colors: ColorConfig.NoColors);
 
 
 //new Dictionary<string, string>
@@ -71,7 +95,6 @@ moaid.Dump();
 //var d = DumpConfig.Default.Generator.Generate(TestE.First.GetType(), null);
 //d.Dump();
 
-public enum TestE { First, Second, Last };
 
 //var ao = new
 //{
@@ -81,7 +104,7 @@ public enum TestE { First, Second, Last };
 //    DateOnly = DateOnly.FromDateTime(DateTime.Now),
 //    TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
 //    TimeSpan = TimeSpan.FromMicroseconds(30324),
-//};
+//}.Dump();
 
 //var d = DumpConfig.Default.Generator.Generate(ao.GetType(), null);
 //d.Dump();
@@ -90,8 +113,8 @@ public enum TestE { First, Second, Last };
 
 //var arr = new[,,] { { { 1, 2, 4 } }, { { 3, 4, 6 } }, { {1, 2, 88 } } }.Dump();
 
-//var arr = new[] { 1, 2, 3, 4 };
-//var arr2d = new int[2, 2];
+var arr = new[] { 1, 2, 3, 4 }.Dump();
+var arr2d = new int[2, 2].Dump();
 
 
 //arr.Dump();
@@ -116,6 +139,7 @@ public enum TestE { First, Second, Last };
 
 //JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
 
+public enum TestE { First, Second, Last };
 public record class Person
 {
     public required string FirstName { get; set; }

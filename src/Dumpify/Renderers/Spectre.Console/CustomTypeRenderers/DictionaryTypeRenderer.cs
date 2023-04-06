@@ -19,9 +19,11 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
     {
         var table = new Table();
 
+        var colorConfig = context.Config.ColorConfig;
+
         var title = "Dictionary";
-        table.AddColumn(new TableColumn(new Markup("Key", new Style(foreground: Color.DarkSlateGray3))));
-        table.AddColumn(new TableColumn(new Markup("Value", new Style(foreground: Color.DarkSlateGray3))));
+        table.AddColumn(new TableColumn(new Markup("Key", new Style(foreground: colorConfig.ColumnNameColor.ToSpectreColor()))));
+        table.AddColumn(new TableColumn(new Markup("Value", new Style(foreground: colorConfig.ColumnNameColor.ToSpectreColor()))));
 
         if(context.Config.ShowHeaders is not true)
         {
@@ -63,7 +65,7 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
         
         if(context.Config.ShowTypeNames is true)
         {
-            table.Title = new TableTitle(Markup.Escape(title), new Style(foreground: Color.DarkSlateGray3));
+            table.Title = new TableTitle(Markup.Escape(title), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
         }
 
         return table.Collapse();

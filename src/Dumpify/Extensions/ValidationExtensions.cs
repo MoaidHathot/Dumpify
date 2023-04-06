@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,4 +28,13 @@ internal static class ValidationExtensions
 
         return value;
     }
+
+    public static T MustNotBeNull<T>(this T? value, string reason = "")
+        => value ?? throw new ArgumentNullException(nameof(value), $"Value should not be null. {(string.IsNullOrWhiteSpace(reason) ? "" : $"Reason: {reason}")}");
+
+    public static string MustNotBeNullOrWhiteSpace(this string? value)
+        => !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException($"String '{value}' should not be null, empty or whitespace");
+
+    public static string MustNotBeNullOrEmpty(this string? value)
+        => !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException($"String '{value}' should not be null or empty");
 }

@@ -16,6 +16,7 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
     {
         AddCustomTypeDescriptor(new DictionaryTypeRenderer(this));
         AddCustomTypeDescriptor(new ArrayTypeRenderer(this));
+        AddCustomTypeDescriptor(new TupleTypeRenderer(this));
     }
 
     private void AddCustomTypeDescriptor(ICustomTypeRenderer<IRenderable> handler)
@@ -41,7 +42,7 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
         var table = new Table();
 
         var typeName = descriptor.Type.GetGenericTypeName();
-        table.AddColumn(new TableColumn(new Markup(Markup.Escape(typeName), new Style(foreground: Color.DarkSlateGray3))));
+        table.AddColumn(new TableColumn(new Markup(Markup.Escape(typeName), new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()))));
 
         foreach (var item in obj)
         {        
@@ -72,13 +73,16 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
 
         var table = new Table();
 
+        var colorConfig = context.Config.ColorConfig;
+
         if (context.Config.ShowTypeNames is true)
         {
-            table.Title = new TableTitle(Markup.Escape(descriptor.Type.Name.ToString()), new Style(foreground: Color.White));
+            table.Title = new TableTitle(Markup.Escape(descriptor.Type.GetGenericTypeName()), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
         }
 
-        table.AddColumn(new TableColumn(new Markup("Name", new Style(foreground: Color.DarkSlateGray3))));
-        table.AddColumn(new TableColumn(new Markup("Value", new Style(foreground: Color.DarkSlateGray3))));
+        var columnColor = colorConfig.ColumnNameColor.ToSpectreColor();
+        table.AddColumn(new TableColumn(new Markup("Name", new Style(foreground: columnColor))));
+        table.AddColumn(new TableColumn(new Markup("Value", new Style(foreground: columnColor))));
 
         if(context.Config.ShowHeaders is not true)
         {
@@ -88,7 +92,7 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
         foreach (var property in descriptor.Properties)
         {
             var renderedValue = RenderDescriptor(property.PropertyInfo!.GetValue(obj), property, context with { CurrentDepth = context.CurrentDepth + 1});
-            table.AddRow(new Markup(Markup.Escape(property.Name)), renderedValue);
+            table.AddRow(new Markup(Markup.Escape(property.Name), new Style(foreground: colorConfig.PropertyNameColor.ToSpectreColor())), renderedValue);
         }
 
         table.Collapse();
@@ -96,26 +100,26 @@ internal class SpectreConsoleTableRenderer : RendererBase<IRenderable>
     }
 
     protected override IRenderable RenderCircularDependency(object @object, IDescriptor? descriptor, in RendererConfig config)
-        => new Markup(Markup.Escape("[Circular Dependency]"), new Style(foreground: Color.DarkSlateGray3));
+        => new Markup(Markup.Escape("[Circular Reference]"), new Style(foreground: config.ColorConfig.MetadataInfoColor.ToSpectreColor()));
 
     public override IRenderable RenderExeededDepth(object obj, IDescriptor? descriptor, in RendererConfig config)
-        => new Markup(Markup.Escape($"[Exceeded max depth {config.MaxDepth}]"), new Style(foreground: Color.DarkSlateGray3));
+        => new Markup(Markup.Escape($"[Exceeded max depth {config.MaxDepth}]"), new Style(foreground: config.ColorConfig.MetadataInfoColor.ToSpectreColor()));
 
     protected override IRenderable RenderIgnoredDescriptor(object obj, IgnoredDescriptor descriptor, RenderContext context)
-        => new Markup(Markup.Escape($"[Ignored {descriptor.Name}]"), new Style(foreground: Color.DarkSlateGray1));
+        => new Markup(Markup.Escape($"[Ignored {descriptor.Name}]"), new Style(foreground: context.Config.ColorConfig.IgnoredValueColor.ToSpectreColor()));
 
-    protected override IRenderable RenderNullDescriptor(object obj) 
-        => new Markup(Markup.Escape($"[null descriptor] {obj}"), new Style(foreground: Color.DarkCyan));
+    protected override IRenderable RenderNullDescriptor(object obj, RenderContext context) 
+        => new Markup(Markup.Escape($"[null descriptor] {obj}"), new Style(foreground: context.Config.ColorConfig.MetadataInfoColor.ToSpectreColor()));
 
     public override IRenderable RenderNullValue(IDescriptor? descriptor, in RendererConfig config) 
-        => Markup.FromInterpolated($"null", new Style(foreground: Color.DarkSlateGray2));
+        => Markup.FromInterpolated($"null", new Style(foreground: config.ColorConfig.NullValueColor.ToSpectreColor()));
 
     protected override IRenderable RenderSingleValueDescriptor(object obj, SingleValueDescriptor descriptor, RenderContext context) 
-        => new Markup(Markup.Escape($"{obj ?? "[missing]"}"), new Style(foreground: Color.LightGoldenrod2));
+        => new Markup(Markup.Escape($"{obj ?? "[missing]"}"), new Style(foreground: obj is not null ? context.Config.ColorConfig.PropertyValueColor?.ToSpectreColor() : context.Config.ColorConfig?.MetadataErrorColor.ToSpectreColor()));
 
     protected override IRenderable RenderUnfamiliarCustomDescriptor(object obj, CustomDescriptor descriptor, in RendererConfig config) 
-        => new Markup(Markup.Escape($"[Unfamiliar {descriptor.Name}]"), new Style(foreground: Color.Orange3));
+        => new Markup(Markup.Escape($"[Unfamiliar descriptor {descriptor.Name}]"), new Style(foreground: config.ColorConfig.MetadataErrorColor.ToSpectreColor()));
 
-    protected override IRenderable RenderUnsupportedDescriptor(object obj, IDescriptor descriptor) 
-        => new Markup(Markup.Escape($"[Unsupported {descriptor.GetType().Name} for {descriptor.Name}]"), new Style(foreground: Color.Red1));
+    protected override IRenderable RenderUnsupportedDescriptor(object obj, IDescriptor descriptor, RenderContext context) 
+        => new Markup(Markup.Escape($"[Unsupported {descriptor.GetType().Name} for {descriptor.Name}]"), new Style(foreground: context.Config.ColorConfig.MetadataErrorColor.ToSpectreColor()));
 }

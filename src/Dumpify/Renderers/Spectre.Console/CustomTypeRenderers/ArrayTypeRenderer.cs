@@ -35,7 +35,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
     private IRenderable RenderSingleDimentionArray(Array obj, MultiValueDescriptor mvd, RenderContext context)
     {
         var table = new Table();
-        table.AddColumn(new TableColumn(new Markup(Markup.Escape($"{mvd.ElementsType?.Name ?? ""}[{obj.GetLength(0)}]"), new Style(foreground: Color.DarkSlateGray3))));
+        table.AddColumn(new TableColumn(new Markup(Markup.Escape($"{mvd.ElementsType?.Name ?? ""}[{obj.GetLength(0)}]"), new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()))));
 
         if(context.Config.ShowHeaders is not true)
         {
@@ -69,21 +69,23 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
         var rows = obj.GetLength(0);
         var collumns = obj.GetLength(1);
 
+        var colorConfig = context.Config.ColorConfig;
+
         if(context.Config.ShowTypeNames is true)
         {
-            table.Title = new TableTitle(Markup.Escape($"{descriptor.ElementsType?.Name ?? ""}[{rows},{collumns}]"), new Style(foreground: Color.DarkSlateGray3));
+            table.Title = new TableTitle(Markup.Escape($"{descriptor.ElementsType?.Name ?? ""}[{rows},{collumns}]"), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
         }
 
         table.AddColumn(new TableColumn(""));
 
         for (var col = 0; col < collumns; ++col)
         {
-            table.AddColumn(new TableColumn(new Markup(col.ToString(), new Style(foreground: Color.DarkSeaGreen3))));
+            table.AddColumn(new TableColumn(new Markup(col.ToString(), new Style(foreground: colorConfig.ColumnNameColor.ToSpectreColor()))));
         }
 
         for (var row = 0; row < rows; ++row)
         {
-            var cells = new List<IRenderable>() { new Markup(row.ToString(), new Style(foreground: Color.DarkSlateGray3)) };
+            var cells = new List<IRenderable>() { new Markup(row.ToString(), new Style(foreground: colorConfig.ColumnNameColor.ToSpectreColor())) };
 
             for (var col = 0; col < collumns; ++col)
             {
