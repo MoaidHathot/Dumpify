@@ -1,54 +1,68 @@
 ﻿using Dumpify;
 using Dumpify.Config;
-using Spectre.Console;
 using System.Collections;
 using System.Text;
 
-var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
-var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
 
-moaid.Spouse = haneeni;
-haneeni.Spouse = moaid;
+//DumpConfig.Default.Renderer = Renderers.TextRenderer;
 
-var family = new Family
+//TestSingle();
+ShowEverything();
+
+#pragma warning disable CS8321
+void TestSingle()
+#pragma warning restore CS8321
 {
-    Parent1 = moaid,
-    Parent2 = haneeni,
-    FamilyId = 42,
-    ChildrenArray = new[] { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot", Spouse = new Person { FirstName = "Child22", LastName = "Hathot", Spouse = new Person { FirstName = "Child222", LastName = "Hathot" } } } },
-    ChildrenList = new List<Person> { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
-    ChildrenArrayList = new ArrayList { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
-    FamilyType = typeof(Family),
-    FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
-};
+    var descriptor = DumpConfig.Default.Generator.Generate(typeof(Family), null);
+    descriptor.Dump();
+}
 
-//DumpConfig.Default.ColorConfig.ColumnNameColor = System.Drawing.Color.MistyRose;
-//DumpConfig.Default.ColorConfig = new ColorConfig(System.Drawing.Color.DarkRed);
+#pragma warning disable CS8321
+void ShowEverything()
+#pragma warning restore CS8321
+{
+    var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
+    var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
 
-System.Tuple.Create(10, 55, "hello").Dump();
-(10, "hello").Dump();
+    moaid.Spouse = haneeni;
+    haneeni.Spouse = moaid;
 
-var f = () => 10;
-f.Dump();
+    var family = new Family
+    {
+        Parent1 = moaid,
+        Parent2 = haneeni,
+        FamilyId = 42,
+        ChildrenArray = new[] { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot", Spouse = new Person { FirstName = "Child22", LastName = "Hathot", Spouse = new Person { FirstName = "Child222", LastName = "Hathot" } } } },
+        ChildrenList = new List<Person> { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
+        ChildrenArrayList = new ArrayList { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
+        FamilyType = typeof(Family),
+        FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
+    };
 
-family.Dump();
+    System.Tuple.Create(10, 55, "hello").Dump();
+    (10, "hello").Dump();
 
-new HashSet<string> { "A", "B", "C", "A" }.Dump();
+    var f = () => 10;
+    f.Dump();
 
-var stack = new Stack<int>();
-stack.Push(1);
-stack.Push(2);
-stack.Push(3);
-stack.Push(4);
-stack.Push(5);
+    family.Dump();
 
-stack.Dump();
+    new HashSet<string> { "A", "B", "C", "A" }.Dump();
+
+    var stack = new Stack<int>();
+    stack.Push(1);
+    stack.Push(2);
+    stack.Push(3);
+    stack.Push(4);
+    stack.Push(5);
+
+    stack.Dump();
 
 
-moaid.Dump(showHeaders: false, showTypeNames: false);
-moaid.Dump();
+    moaid.Dump(showHeaders: false, showTypeNames: false);
+    moaid.Dump();
 
-new int[][] { new int[] { 1, 2, 3, 4 }, new int[] { 1, 2, 3, 4, 5 } }.Dump();
+    new int[][] { new int[] { 1, 2, 3, 4 }, new int[] { 1, 2, 3, 4, 5 } }.Dump();
 
 //moaid.Dump(label: "Test");
 //moaid.Dump();
@@ -62,36 +76,23 @@ new int[][] { new int[] { 1, 2, 3, 4 }, new int[] { 1, 2, 3, 4, 5 } }.Dump();
 //DumpConfig.Default.Generator.Generate(new { Name = "MyBook", Author = new { FirstName = "Moaid", LastName = "Hathot", Address = new { Email = "moaid@test.com" } } }.GetType(), null).Dump();
 //moaid.Dump();
 
-new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
+    new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
 //new HashSet<string> { "Moaid", "Hathot", "shibli" }.Dump();
 
 
-new Dictionary<Person, string>
-{
-    [new Person { FirstName = "Moaid", LastName = "Hathot" }] = "Moaid Hathot",
-    [new Person { FirstName = "Haneeni", LastName = "Shibli" }] = "Haneeni Shibli",
-    [new Person { FirstName = "Waseem", LastName = "Hathot" }] = "Waseem Hathot",
-}.Dump();
+    new Dictionary<Person, string> { [new Person { FirstName = "Moaid", LastName = "Hathot" }] = "Moaid Hathot", [new Person { FirstName = "Haneeni", LastName = "Shibli" }] = "Haneeni Shibli", [new Person { FirstName = "Waseem", LastName = "Hathot" }] = "Waseem Hathot", }.Dump();
 
 
-new Dictionary<string, Person>
-{
-    ["Moaid"] = new Person { FirstName = "Moaid", LastName = "Hathot" },
-    ["Haneeni"] = new Person { FirstName = "Haneeni", LastName = "Shibli" },
-    ["Waseem"] = new Person { FirstName = "Waseem", LastName = "Hathot" },
-}.Dump(colors: ColorConfig.NoColors);
+    new Dictionary<string, Person> { ["Moaid"] = new Person { FirstName = "Moaid", LastName = "Hathot" }, ["Haneeni"] = new Person { FirstName = "Haneeni", LastName = "Shibli" }, ["Waseem"] = new Person { FirstName = "Waseem", LastName = "Hathot" }, }.Dump(colors: ColorConfig.NoColors);
 
 
-new Dictionary<string, string>
-{
-   ["Moaid"] = "Hathot",
-   ["Haneeni"] = "Shibli",
-   ["Eren"] = "Yeager",
-   ["Mikasa"] = "Ackerman",
-}.Dump();
+    new Dictionary<string, string>
+    {
+        ["Moaid"] = "Hathot", ["Haneeni"] = "Shibli", ["Eren"] = "Yeager", ["Mikasa"] = "Ackerman",
+    }.Dump();
 
-//TestE.First.Dump();
-//var d = DumpConfig.Default.Generator.Generate(TestE.First.GetType(), null);
+//ItemOrder.First.Dump();
+//var d = DumpConfig.Default.Generator.Generate(ItemOrder.First.GetType(), null);
 //d.Dump();
 
 
@@ -112,18 +113,22 @@ new Dictionary<string, string>
 
 //var arr = new[,,] { { { 1, 2, 4 } }, { { 3, 4, 6 } }, { {1, 2, 88 } } }.Dump();
 
-var arr = new[] { 1, 2, 3, 4 }.Dump();
-var arr2d = new int[,] { {1, 2}, {3, 4} }.Dump();
+    var arr = new[] { 1, 2, 3, 4 }.Dump();
+    var arr2d = new int[,] { { 1, 2 }, { 3, 4 } }.Dump();
 
 
-DumpConfig.Default.TableConfig.ShowArrayIndices = false;
+    DumpConfig.Default.TableConfig.ShowArrayIndices = false;
 
-arr.Dump();
-arr2d.Dump();
+    arr.Dump();
+    arr2d.Dump();
 
-DumpConfig.Default.TableConfig.ShowArrayIndices = true;
+    DumpConfig.Default.TableConfig.ShowArrayIndices = true;
 
-moaid.Dump();
+    moaid.Dump();
+
+    new[] { "Hello", "World", "This", "Is", "Dumpy" }.Dump(renderer: Renderers.TextRenderer);
+
+    new Exception("This is an exception", new ArgumentNullException("blaParam", "This is inner exception")).Dump();
 
 //arr.Dump();
 //moaid.Dump();
@@ -146,8 +151,9 @@ moaid.Dump();
 //var result = DumpConfig.Default.Generator.Generate(family.GetType(), null);
 
 //JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
+}
 
-public enum TestE { First, Second, Last };
+public enum ItemOrder { First, Second, Last };
 public record class Person
 {
     public required string FirstName { get; set; }
@@ -155,7 +161,7 @@ public record class Person
 
     public Person? Spouse { get; set; }
 
-    public TestE TestEnum { get; set; } = TestE.Second;
+    public ItemOrder TestEnum { get; set; } = ItemOrder.Second;
 }
 
 public class Family

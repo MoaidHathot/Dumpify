@@ -41,7 +41,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         if (showIndexes)
         {
-            table.AddColumn(new TableColumn(new Markup("")));
+            table.AddColumn(new TableColumn(new Markup("#", new Style(foreground: context.Config.ColorConfig.ColumnNameColor.ToSpectreColor()))));
         }
 
         table.AddColumn(new TableColumn(new Markup(Markup.Escape($"{mvd.ElementsType?.Name ?? ""}[{obj.GetLength(0)}]"), new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()))));
@@ -94,7 +94,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
             table.Title = new TableTitle(Markup.Escape($"{descriptor.ElementsType?.Name ?? ""}[{rows},{collumns}]"), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
         }
 
-        table.AddColumn(new TableColumn(""));
+        table.AddColumn(new TableColumn(new Markup("#", new Style(foreground: context.Config.ColorConfig.ColumnNameColor.ToSpectreColor()))));
 
         for (var col = 0; col < collumns; ++col)
         {

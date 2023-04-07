@@ -1,19 +1,15 @@
 ﻿using Dumpify.Descriptors;
 using Dumpify.Extensions;
 using Spectre.Console;
-using Spectre.Console.Rendering;
-using System;
+using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Dumpify.Renderers.Spectre.Console.SimpleRenderer;
 
-internal class SpectreConsoleSimpleRenderer : RendererBase<string>
+internal class SpectreConsoleTextRenderer : RendererBase<string>
 {
-    public SpectreConsoleSimpleRenderer()
+    public SpectreConsoleTextRenderer()
         : base(new ConcurrentDictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<string>>>())
     {
     }
@@ -37,14 +33,38 @@ internal class SpectreConsoleSimpleRenderer : RendererBase<string>
 
     protected override string RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext context)
     {
-        return $"{descriptor.Type.Name}: {{}}";
-    }
+        var items = (IEnumerable)obj;
 
+        var renderedItems = new List<string>();
+        foreach (var item in items)
+        {
+            var renderedItem = obj switch
+            {
+                null => RenderNullValue(null, context),
+                not null => GetRenderedValue(item, descriptor.ElementsType, context),
+            };
+
+            renderedItems.Add(renderedItem);
+
+            string GetRenderedValue(object item, Type? elementType, RenderContext context)
+            {
+                var itemType = descriptor.ElementsType ?? item.GetType();
+                var itemDescriptor = DumpConfig.Default.Generator.Generate(itemType, null);
+
+                return RenderDescriptor(item, itemDescriptor, context);
+            }
+        }
+
+        var joined = string.Join(", ", renderedItems);
+
+        return $"[{joined}]";
+    }
 
     protected override void PublishRenderables(string renderable, RenderContext context)
     {
         var text = new Text(renderable);
         AnsiConsole.Write(text);
+        System.Console.WriteLine();
         System.Console.WriteLine();
     }
 
@@ -64,7 +84,7 @@ internal class SpectreConsoleSimpleRenderer : RendererBase<string>
         => $"[Ignored {descriptor.Name}]";
 
     protected override string RenderSingleValueDescriptor(object obj, SingleValueDescriptor descriptor, RenderContext context) 
-        => obj.ToString() ?? "";
+        => obj is string ? $"\"{obj}\"" : obj.ToString() ?? "";
 
     protected override string RenderUnsupportedDescriptor(object obj, IDescriptor descriptor, RenderContext context) 
         => $"[Unsupported {descriptor.GetType().Name} for {descriptor.Name}]";

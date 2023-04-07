@@ -4,14 +4,14 @@ namespace Dumpify.Config;
 
 public class ColorConfig
 {
-    public static DumpColor? DefaultTypeNameColor { get; } = new DumpColor(Color.White);
-    public static DumpColor? DefaultColumnNameColor { get; } = new DumpColor("#87D7D7");
+    public static DumpColor? DefaultTypeNameColor { get; } = new (Color.White);
+    public static DumpColor? DefaultColumnNameColor { get; } = new ("#87D7D7");
     public static DumpColor? DefaultPropertyNameColor { get; } = null;
-    public static DumpColor? DefaultPropertyValueColor { get; } = new DumpColor("#D7D787");
-    public static DumpColor? DefaultNullValueColor { get; } = new DumpColor("#87D7D7");
+    public static DumpColor? DefaultPropertyValueColor { get; } = new ("#D7D787");
+    public static DumpColor? DefaultNullValueColor { get; } = new ("#87D7D7");
     public static DumpColor? DefaultIgnoredValueColor { get; } = null;
-    public static DumpColor? DefaultMetadataInfoColor { get; } = new DumpColor("#87D7D7");
-    public static DumpColor? DefaultMetadataErrorColor { get; } = new DumpColor("#D78700");
+    public static DumpColor? DefaultMetadataInfoColor { get; } = new ("#87D7D7");
+    public static DumpColor? DefaultMetadataErrorColor { get; } = new ("#D78700");
 
     public DumpColor? TypeNameColor { get; set; } = DefaultTypeNameColor;
     public DumpColor? ColumnNameColor { get; set; } = DefaultColumnNameColor;
@@ -22,8 +22,8 @@ public class ColorConfig
     public DumpColor? MetadataInfoColor { get; set; } = DefaultMetadataInfoColor;
     public DumpColor? MetadataErrorColor { get; set; } = DefaultMetadataErrorColor;
 
-    public static ColorConfig DefaultColors => new ColorConfig();
-    public static ColorConfig NoColors => new ColorConfig(null);
+    public static ColorConfig DefaultColors => new ();
+    public static ColorConfig NoColors => new (null);
 
     public ColorConfig(DumpColor? value)
     {

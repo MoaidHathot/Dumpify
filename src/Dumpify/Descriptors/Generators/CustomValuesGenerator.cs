@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -18,7 +19,7 @@ internal class CustomValuesGenerator : IDescriptorGenerator
     {
         _customTypeHandlers = customTypeHandlers;
 
-        _customTypeHandlers.TryAdd(typeof(Type).TypeHandle, (obj, type, propertyInfo) => $"Typeof({((Type)obj).Name})");
+        _customTypeHandlers.TryAdd(typeof(Type).TypeHandle, (obj, type, propertyInfo) => obj);
 
         _customTypeHandlers.TryAdd(typeof(PropertyInfo).TypeHandle, (obj, type, propertyInfo) =>
         {
@@ -46,7 +47,7 @@ internal class CustomValuesGenerator : IDescriptorGenerator
         });
 
         _customTypeHandlers.TryAdd(typeof(StringBuilder).TypeHandle, (obj, type, propertyInfo) => ((StringBuilder)obj).ToString());
-        _customTypeHandlers.TryAdd(typeof(DateTime).TypeHandle, (obj, type, propertyInfo) => ((DateTime)obj).ToString());
+        _customTypeHandlers.TryAdd(typeof(DateTime).TypeHandle, (obj, type, propertyInfo) => ((DateTime)obj).ToString(CultureInfo.CurrentCulture));
         _customTypeHandlers.TryAdd(typeof(DateTimeOffset).TypeHandle, (obj, type, propertyInfo) => ((DateTimeOffset)obj).ToString());
 
 #if NET6_0_OR_GREATER
@@ -58,9 +59,13 @@ internal class CustomValuesGenerator : IDescriptorGenerator
 
     public IDescriptor? Generate(Type type, PropertyInfo? propertyInfo)
     {
-        if(type.IsEnum)
+        if (type.FullName == "System.RuntimeType")
         {
-            _customTypeHandlers.TryAdd(type.TypeHandle, (obj, type, propertyInfo) => $"{type.Name}.{obj}");
+            return new CustomDescriptor(type, propertyInfo);
+        }
+
+        if (type.IsEnum)
+        {
             return new CustomDescriptor(type, propertyInfo);
         }
 

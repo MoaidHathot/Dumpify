@@ -11,12 +11,10 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
 {
     private readonly IRendererHandler<IRenderable> _handler;
 
-    public Type DescriptorType => typeof(ObjectDescriptor);
+    public Type DescriptorType { get; } = typeof(ObjectDescriptor);
 
     public TupleTypeRenderer(IRendererHandler<IRenderable> handler)
-    {
-        _handler = handler;
-    }
+        => _handler = handler;
 
     public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context)
     {

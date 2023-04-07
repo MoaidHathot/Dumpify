@@ -29,6 +29,11 @@ internal class KnownSingleValueGenerator : IDescriptorGenerator
 
     public IDescriptor? Generate(Type type, PropertyInfo? propertyInfo)
     {
+        if (type.IsEnum)
+        {
+            return new SingleValueDescriptor(type, propertyInfo);
+        }
+
         if(!_singleValueTypes.Contains(type.TypeHandle))
         {
             return null;

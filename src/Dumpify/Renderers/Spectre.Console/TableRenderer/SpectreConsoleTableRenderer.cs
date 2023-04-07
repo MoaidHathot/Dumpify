@@ -1,5 +1,4 @@
-﻿using Dumpify.Config;
-using Dumpify.Descriptors;
+﻿using Dumpify.Descriptors;
 using Dumpify.Extensions;
 using Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 using Spectre.Console;
@@ -17,9 +16,11 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         AddCustomTypeDescriptor(new DictionaryTypeRenderer(this));
         AddCustomTypeDescriptor(new ArrayTypeRenderer(this));
         AddCustomTypeDescriptor(new TupleTypeRenderer(this));
+        AddCustomTypeDescriptor(new SystemTypeRenderer(this));
+        AddCustomTypeDescriptor(new EnumTypeRenderer(this));
     }
 
-    protected override IRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext context) 
+    protected override IRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext context)
         => RenderIEnumerable((IEnumerable)obj, descriptor, context);
 
     private IRenderable RenderIEnumerable(IEnumerable obj, MultiValueDescriptor descriptor, RenderContext context)
@@ -30,7 +31,7 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         table.AddColumn(new TableColumn(new Markup(Markup.Escape(typeName), new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()))));
 
         foreach (var item in obj)
-        {        
+        {
             var type = descriptor.ElementsType ?? item?.GetType();
 
             IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null) : null;
@@ -56,21 +57,22 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
 
         if (context.Config.ShowTypeNames is true)
         {
-            table.Title = new TableTitle(Markup.Escape(descriptor.Type.GetGenericTypeName()), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
+            var type = descriptor.Type == obj.GetType() ? descriptor.Type : obj.GetType();
+            table.Title = new TableTitle(Markup.Escape(type.GetGenericTypeName()), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
         }
 
         var columnColor = colorConfig.ColumnNameColor.ToSpectreColor();
         table.AddColumn(new TableColumn(new Markup("Name", new Style(foreground: columnColor))));
         table.AddColumn(new TableColumn(new Markup("Value", new Style(foreground: columnColor))));
 
-        if(context.Config.ShowHeaders is not true)
+        if (context.Config.ShowHeaders is not true)
         {
             table.HideHeaders();
         }
 
         foreach (var property in descriptor.Properties)
         {
-            var renderedValue = RenderDescriptor(property.PropertyInfo!.GetValue(obj), property, context with { CurrentDepth = context.CurrentDepth + 1});
+            var renderedValue = RenderDescriptor(property.PropertyInfo!.GetValue(obj), property, context with { CurrentDepth = context.CurrentDepth + 1 });
             table.AddRow(new Markup(Markup.Escape(property.Name), new Style(foreground: colorConfig.PropertyNameColor.ToSpectreColor())), renderedValue);
         }
 

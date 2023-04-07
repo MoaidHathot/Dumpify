@@ -61,7 +61,7 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
 
     private IDescriptor? GenerateDescriptor(Type type, PropertyInfo? propertyInfo)
     { 
-        var descriptor = GetSpecialyHandledDescriptor(type, propertyInfo);
+        var descriptor = GetSpeciallyHandledDescriptor(type, propertyInfo);
 
         if(descriptor is not null)
         {
@@ -91,7 +91,7 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
         return list;
     }
 
-    private IDescriptor? GetSpecialyHandledDescriptor(Type type, PropertyInfo? propertyInfo)
+    private IDescriptor? GetSpeciallyHandledDescriptor(Type type, PropertyInfo? propertyInfo)
     {
         foreach(var generator in _generatorsChain)
         {
