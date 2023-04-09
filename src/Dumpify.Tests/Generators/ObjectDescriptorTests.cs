@@ -14,7 +14,7 @@ public class ObjectDescriptorTests
     public void PersonHasObjectDescriptor()
     {
         var person = new Person { FirstName = "Moaid", LastName = "Hathot" };
-        var generator = new CompositeDescriptorGenerator(new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, System.Reflection.PropertyInfo?, object>>());
+        var generator = new CompositeDescriptorGenerator(new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, System.Reflection.PropertyInfo?, object?>>());
 
         var descriptor = generator.Generate(person.GetType(), null);
 
@@ -45,7 +45,7 @@ public class ObjectDescriptorTests
         moaid.SignificantOther = haneeni;
         haneeni.SignificantOther = moaid;
 
-        var generator = new CompositeDescriptorGenerator(new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, System.Reflection.PropertyInfo?, object>>());
+        var generator = new CompositeDescriptorGenerator(new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, System.Reflection.PropertyInfo?, object?>>());
 
         var descriptor = generator.Generate(moaid.GetType(), null);
 
