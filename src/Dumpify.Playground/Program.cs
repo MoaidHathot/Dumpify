@@ -2,6 +2,8 @@
 using Dumpify.Config;
 using System.Collections;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 
 //DumpConfig.Default.Renderer = Renderers.TextRenderer;
@@ -26,6 +28,11 @@ void ShowEverything()
 
     moaid.Spouse = haneeni;
     haneeni.Spouse = moaid;
+
+    moaid.Dump();
+
+    var s = System.Text.Json.JsonSerializer.Serialize(moaid, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles });
+    Console.WriteLine(s);
 
     var family = new Family
     {

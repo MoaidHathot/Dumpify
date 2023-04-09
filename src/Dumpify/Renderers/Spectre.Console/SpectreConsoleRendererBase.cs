@@ -12,7 +12,6 @@ internal abstract class SpectreConsoleRendererBase : RendererBase<IRenderable>
     {
     }
 
-
     protected override void PublishRenderables(IRenderable renderable, RenderContext context)
     {
         AnsiConsole.Write(renderable);

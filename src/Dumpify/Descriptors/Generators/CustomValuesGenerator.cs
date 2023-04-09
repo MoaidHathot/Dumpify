@@ -13,9 +13,9 @@ namespace Dumpify.Descriptors.Generators;
 
 internal class CustomValuesGenerator : IDescriptorGenerator
 {
-    private readonly ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>> _customTypeHandlers;
+    private readonly ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object?>> _customTypeHandlers;
 
-    public CustomValuesGenerator(ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>> customTypeHandlers)
+    public CustomValuesGenerator(ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object?>> customTypeHandlers)
     {
         _customTypeHandlers = customTypeHandlers;
 
@@ -41,10 +41,7 @@ internal class CustomValuesGenerator : IDescriptorGenerator
             return $"Constructor {ctor.Name}({string.Join(", ", ctor.GetParameters().Select(p => $"{p.ParameterType} {p.Name}"))})";
         });
 
-        _customTypeHandlers.TryAdd(typeof(Enum).TypeHandle, (obj, type, e) =>
-        {
-            return $"{type.Name}{e}";
-        });
+        _customTypeHandlers.TryAdd(typeof(Enum).TypeHandle, (obj, type, e) => $"{type.Name}{e}");
 
         _customTypeHandlers.TryAdd(typeof(StringBuilder).TypeHandle, (obj, type, propertyInfo) => ((StringBuilder)obj).ToString());
         _customTypeHandlers.TryAdd(typeof(DateTime).TypeHandle, (obj, type, propertyInfo) => ((DateTime)obj).ToString(CultureInfo.CurrentCulture));

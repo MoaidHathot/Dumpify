@@ -45,13 +45,11 @@ public static class DumpExtensions
     {
         try
         {
-
             renderer.Render(obj, descriptor, config);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"[Failed to Render {typeof(T)} - {obj}]. {ex.Message}");
-
 #if DEBUG
             Console.WriteLine(ex);
 #endif
@@ -69,9 +67,7 @@ public static class DumpExtensions
         }
         catch (Exception ex)
         {
-
             Console.WriteLine($"[Failed to Generate descriptor for {typeof(T)} and Property: {info}]. {ex.Message}");
-
 #if DEBUG
             Console.WriteLine(ex);
 #endif

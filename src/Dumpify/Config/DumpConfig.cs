@@ -13,18 +13,18 @@ public class DumpConfig
 
     public static DumpConfig Default { get; } = new DumpConfig();
 
-    internal ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>> CustomDescriptorHandlers { get; }
+    internal ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object?>> CustomDescriptorHandlers { get; }
 
     private DumpConfig()
     {
-        CustomDescriptorHandlers = new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>>();
+        CustomDescriptorHandlers = new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object?>>();
         Generator = new CompositeDescriptorGenerator(CustomDescriptorHandlers);
         Renderer = Config.Renderers.TableRenderer;
         ColorConfig = new ColorConfig();
         TableConfig = new TableConfig();
     }
 
-    public void AddCustomTypeHandler(Type type, Func<object, Type, PropertyInfo?, object> valueFactory)
+    public void AddCustomTypeHandler(Type type, Func<object, Type, PropertyInfo?, object?> valueFactory)
         => CustomDescriptorHandlers[type.TypeHandle] = valueFactory;
 
     public void RemoveCustomTypeHandler(Type type)

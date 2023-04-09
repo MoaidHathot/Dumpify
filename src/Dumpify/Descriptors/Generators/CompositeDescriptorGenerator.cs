@@ -14,7 +14,7 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
 
     private readonly IDescriptorGenerator[] _generatorsChain;
 
-    public CompositeDescriptorGenerator(ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object>> customDescriptorHandlers)
+    public CompositeDescriptorGenerator(ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object?>> customDescriptorHandlers)
     {
         _generatorsChain = new IDescriptorGenerator[]
         {
