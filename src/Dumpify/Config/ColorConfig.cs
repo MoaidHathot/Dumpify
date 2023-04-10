@@ -2,7 +2,7 @@
 
 namespace Dumpify.Config;
 
-public class ColorConfig
+public class ColorConfig : IColorConfig<DumpColor>
 {
     public static DumpColor? DefaultTypeNameColor { get; } = new (Color.White);
     public static DumpColor? DefaultColumnNameColor { get; } = new ("#87D7D7");

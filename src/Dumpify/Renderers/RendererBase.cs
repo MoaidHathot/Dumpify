@@ -22,7 +22,7 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
         });
     }
 
-    public void Render(object? obj, IDescriptor? descriptor, RendererConfig config)
+    public IRenderedObject Render(object? obj, IDescriptor? descriptor, RendererConfig config)
     {
         var idGenerator = new ObjectIDGenerator();
         var context = new RenderContext(config, idGenerator, 0);
@@ -33,7 +33,7 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
             _ => RenderDescriptor(obj, descriptor, context),
         };
 
-        PublishRenderables(renderable, context);
+        return CreateRenderedObject(renderable);
     }
 
     public TRenderable RenderDescriptor(object? @object, IDescriptor? descriptor, RenderContext context)
@@ -113,7 +113,7 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
         return firstTime is false;
     }
 
-    protected abstract void PublishRenderables(TRenderable renderable, RenderContext context);
+    protected abstract IRenderedObject CreateRenderedObject(TRenderable rendered);
 
     public abstract TRenderable RenderNullValue(IDescriptor? descriptor, RenderContext context);
 

@@ -1,22 +1,27 @@
 ﻿using Dumpify;
 using Dumpify.Config;
+using Dumpify.Outputs;
 using System.Collections;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-
 //DumpConfig.Default.Renderer = Renderers.TextRenderer;
+//DumpConfig.Default.ColorConfig = ColorConfig.NoColors;
 
-//TestSingle();
-ShowEverything();
+//DumpConfig.Default.Output = Outputs.Debug;
+
+TestSingle();
+//ShowEverything();
 
 #pragma warning disable CS8321
 void TestSingle()
 #pragma warning restore CS8321
 {
     var descriptor = DumpConfig.Default.Generator.Generate(typeof(Family), null);
-    descriptor.Dump();
+    //descriptor.Dump();
+    var result = descriptor.DumpText();
+    Console.WriteLine(result);
 }
 
 #pragma warning disable CS8321

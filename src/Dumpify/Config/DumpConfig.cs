@@ -4,6 +4,7 @@ using Dumpify.Renderers;
 using System.Reflection;
 using System.Collections.Concurrent;
 using Dumpify.Config;
+using Dumpify.Outputs;
 
 namespace Dumpify;
 
@@ -20,6 +21,7 @@ public class DumpConfig
         CustomDescriptorHandlers = new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object?>>();
         Generator = new CompositeDescriptorGenerator(CustomDescriptorHandlers);
         Renderer = Config.Renderers.TableRenderer;
+        Output = Config.Outputs.Console;
         ColorConfig = new ColorConfig();
         TableConfig = new TableConfig();
     }
@@ -32,6 +34,7 @@ public class DumpConfig
 
     public IDescriptorGenerator Generator { get; set; }
     public IRenderer Renderer { get; set; }
+    public IDumpOutput Output { get; set; }
 
     public int MaxDepth { get => _maxDepth; set => _maxDepth = value.MustBeGreaterThan(0); }
 
@@ -39,6 +42,6 @@ public class DumpConfig
     public bool ShowTypeNames { get; set; } = true;
     public bool ShowHeaders { get; set; } = true;
 
-    public ColorConfig ColorConfig { get; }
+    public ColorConfig ColorConfig { get; set; }
     public TableConfig TableConfig { get; }
 }

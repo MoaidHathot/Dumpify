@@ -1,16 +1,38 @@
 ﻿using Dumpify.Config;
 using Dumpify.Descriptors;
 using Dumpify.Extensions;
+using Dumpify.Outputs;
 using Dumpify.Renderers;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Dumpify;
 
 public static class DumpExtensions
 {
-    public static T? Dump<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, bool? showTypeNames = null, bool? showHeaders = null, ColorConfig? colors = null)
+    public static T? DumpDebug<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, bool? showTypeNames = null, bool? showHeaders = null, ColorConfig? colors = null)
+        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, showTypeNames: showTypeNames, showHeaders: showHeaders, colors: colors, output: Config.Outputs.Debug);
+
+    public static T? DumpTrace<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, bool? showTypeNames = null, bool? showHeaders = null, ColorConfig? colors = null)
+        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, showTypeNames: showTypeNames, showHeaders: showHeaders, colors: colors, output: Config.Outputs.Trace);
+
+    public static T? DumpConsole<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, bool? showTypeNames = null, bool? showHeaders = null, ColorConfig? colors = null)
+        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, showTypeNames: showTypeNames, showHeaders: showHeaders, colors: colors, output: Config.Outputs.Console);
+
+    public static string? DumpText<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, bool? showTypeNames = null, bool? showHeaders = null, ColorConfig? colors = null)
+    {
+        var writer = new StringWriter();
+        _ = obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, showTypeNames: showTypeNames, showHeaders: showHeaders, colors: colors, output: new DumpOutput(writer));
+
+        return writer.ToString();
+    }
+
+    public static T? Dump<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, bool? showTypeNames = null, bool? showHeaders = null, ColorConfig? colors = null, IDumpOutput? output = null)
     {
         var defaultConfig = DumpConfig.Default;
+
+        output ??= defaultConfig.Output;
+        renderer ??= defaultConfig.Renderer;
 
         var rendererConfig = new RendererConfig
         {
@@ -23,11 +45,14 @@ public static class DumpExtensions
         };
 
         var createDescriptor = useDescriptors ?? defaultConfig.UseDescriptors;
-        renderer ??= defaultConfig.Renderer;
 
         if(obj is null || createDescriptor is false)
         {
-            RenderSafely(obj, renderer, null, rendererConfig);
+            if(TryRenderSafely(obj, renderer, null, rendererConfig, output, out var rendered))
+            {
+                OutputSafely(obj, rendered, output);
+            }
+
             return obj;
         }
 
@@ -36,16 +61,38 @@ public static class DumpExtensions
             return obj;
         }
 
-        RenderSafely(obj, renderer, descriptor, rendererConfig);
+        if (TryRenderSafely(obj, renderer, descriptor, rendererConfig, output, out var renderedObject))
+        {
+
+            OutputSafely(obj, renderedObject, output);
+        }
 
         return obj;
     }
 
-    private static void RenderSafely<T>(T? obj, IRenderer renderer, IDescriptor? descriptor, RendererConfig config)
+    private static void OutputSafely(object? obj, IRenderedObject rendered, IDumpOutput output)
     {
         try
         {
-            renderer.Render(obj, descriptor, config);
+            rendered.Output(output);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[Failed to output rendered object {obj?.GetType().FullName} - {obj}]. {ex.Message}");
+#if DEBUG
+            Console.WriteLine(ex);
+#endif
+        }
+    }
+
+    private static bool TryRenderSafely<T>(T? obj, IRenderer renderer, IDescriptor? descriptor, RendererConfig config, IDumpOutput output, [NotNullWhen(true)] out IRenderedObject? renderedObject)
+    {
+        renderedObject = default;
+
+        try
+        {
+            renderedObject = renderer.Render(obj, descriptor, config);
+            return true;
         }
         catch (Exception ex)
         {
@@ -53,6 +100,8 @@ public static class DumpExtensions
 #if DEBUG
             Console.WriteLine(ex);
 #endif
+
+            return false;
         }
     }
 

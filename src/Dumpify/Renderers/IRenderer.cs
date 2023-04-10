@@ -10,5 +10,5 @@ namespace Dumpify.Renderers;
 
 public interface IRenderer
 {
-    void Render(object? obj, IDescriptor? descriptor, RendererConfig config);
+    IRenderedObject Render(object? obj, IDescriptor? descriptor, RendererConfig config);
 }

@@ -1,6 +1,6 @@
 ﻿using Dumpify.Renderers;
-using Dumpify.Renderers.Spectre.Console.SimpleRenderer;
 using Dumpify.Renderers.Spectre.Console.TableRenderer;
+using Dumpify.Renderers.Spectre.Console.TextRenderer;
 
 namespace Dumpify.Config;
 

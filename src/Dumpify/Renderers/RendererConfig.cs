@@ -1,8 +1,9 @@
 ﻿using Dumpify.Config;
+using Dumpify.Outputs;
 
 namespace Dumpify.Renderers;
 
-public struct RendererConfig
+public record struct RendererConfig
 {
     public RendererConfig()
     {
