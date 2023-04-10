@@ -72,7 +72,7 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
     }
 
     private TRenderable TryRenderCustomTypeDescriptor<TDescriptor>(object obj, TDescriptor descriptor, in RenderContext context, Func<object, TDescriptor, RenderContext, TRenderable> defaultRenderer)
-        where TDescriptor : notnull, IDescriptor
+        where TDescriptor : IDescriptor
     {
         if (_customTypeRenderers.TryGetValue(descriptor.GetType().TypeHandle, out var renderList))
         {
@@ -120,7 +120,7 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
     protected abstract TRenderable RenderUnfamiliarCustomDescriptor(object obj, CustomDescriptor descriptor, RenderContext context);
 
     public abstract TRenderable RenderExceededDepth(object obj, IDescriptor? descriptor, RenderContext context);
-    protected abstract TRenderable RenderCircularDependency(object @object, IDescriptor? descriptor, RenderContext context);
+    protected abstract TRenderable RenderCircularDependency(object obj, IDescriptor? descriptor, RenderContext context);
 
     protected abstract TRenderable RenderNullDescriptor(object obj, RenderContext context);
     protected abstract TRenderable RenderIgnoredDescriptor(object obj, IgnoredDescriptor descriptor, RenderContext context);
