@@ -16,17 +16,12 @@ TestSingle();
 
 #pragma warning disable CS8321
 void TestSingle()
-#pragma warning restore CS8321
 {
-    var descriptor = DumpConfig.Default.Generator.Generate(typeof(Family), null);
-    //descriptor.Dump();
-    var result = descriptor.DumpText();
-    Console.WriteLine(result);
+    new Bool(new[] { "a", "b", "c" }).Dump();
 }
 
-#pragma warning disable CS8321
+
 void ShowEverything()
-#pragma warning restore CS8321
 {
     var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
     var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
@@ -35,9 +30,6 @@ void ShowEverything()
     haneeni.Spouse = moaid;
 
     moaid.Dump();
-
-    var s = System.Text.Json.JsonSerializer.Serialize(moaid, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles });
-    Console.WriteLine(s);
 
     var family = new Family
     {
@@ -138,7 +130,7 @@ void ShowEverything()
 
     moaid.Dump();
 
-    new[] { "Hello", "World", "This", "Is", "Dumpy" }.Dump(renderer: Renderers.TextRenderer);
+    //new[] { "Hello", "World", "This", "Is", "Dumpy" }.Dump(renderer: Renderers.TextRenderer);
 
     new Exception("This is an exception", new ArgumentNullException("blaParam", "This is inner exception")).Dump();
 
@@ -164,6 +156,7 @@ void ShowEverything()
 
 //JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
 }
+#pragma warning restore CS8321
 
 public enum ItemOrder { First, Second, Last };
 public record class Person
@@ -191,3 +184,5 @@ public class Family
 
     public StringBuilder? FamilyNameBuilder { get; set; }
 }
+
+public record class Bool(string[] Authors);

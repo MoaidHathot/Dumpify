@@ -55,7 +55,7 @@ internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
                 var itemType = descriptor.ElementsType ?? item.GetType();
                 var itemDescriptor = DumpConfig.Default.Generator.Generate(itemType, null);
 
-                return RenderDescriptor(item, itemDescriptor, context);
+                return RenderDescriptor(item, itemDescriptor, context with { CurrentDepth = context.CurrentDepth + 1});
             }
         }
 

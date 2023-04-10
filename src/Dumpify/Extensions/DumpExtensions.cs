@@ -44,6 +44,8 @@ public static class DumpExtensions
             TableConfig = defaultConfig.TableConfig,
         };
 
+        rendererConfig = output.AdjustConfig(rendererConfig);
+
         var createDescriptor = useDescriptors ?? defaultConfig.UseDescriptors;
 
         if(obj is null || createDescriptor is false)
