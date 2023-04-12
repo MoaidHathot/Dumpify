@@ -1,28 +1,23 @@
-﻿using System;
+﻿using Dumpify.Descriptors.ValueProviders;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dumpify.Descriptors.Generators;
 
 internal class MultiValueGenerator : IDescriptorGenerator
 {
-    public IDescriptor? Generate(Type type, PropertyInfo? propertyInfo)
+    public IDescriptor? Generate(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)
     {
         return type.IsArray switch
         {
-            true => GenerateArrayDescriptor(type, propertyInfo),
-            _ => GenerateEnumerableDescriptor(type, propertyInfo),
+            true => GenerateArrayDescriptor(type, valueProvider),
+            _ => GenerateEnumerableDescriptor(type, valueProvider),
         };
     }
 
-    private MultiValueDescriptor? GenerateArrayDescriptor(Type type, PropertyInfo? propertyInfo) 
-        => new MultiValueDescriptor(type, propertyInfo, type.GetElementType());
+    private MultiValueDescriptor? GenerateArrayDescriptor(Type type, IValueProvider? valueProvider) 
+        => new MultiValueDescriptor(type, valueProvider, type.GetElementType());
 
-    private MultiValueDescriptor? GenerateEnumerableDescriptor(Type type, PropertyInfo? propertyInfo)
+    private MultiValueDescriptor? GenerateEnumerableDescriptor(Type type, IValueProvider? valueProvider)
     {
         bool isEnumerable = false;
 
@@ -30,7 +25,7 @@ internal class MultiValueGenerator : IDescriptorGenerator
         {
             if(i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             {
-                return new MultiValueDescriptor(type, propertyInfo, i.GenericTypeArguments[0]);
+                return new MultiValueDescriptor(type, valueProvider, i.GenericTypeArguments[0]);
             }
             else if(i == typeof(IEnumerable))
             {
@@ -43,6 +38,6 @@ internal class MultiValueGenerator : IDescriptorGenerator
             return null;
         }
 
-        return new MultiValueDescriptor(type, propertyInfo, null);
+        return new MultiValueDescriptor(type, valueProvider, null);
     }
 }

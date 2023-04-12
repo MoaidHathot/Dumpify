@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dumpify.Descriptors.ValueProviders;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Dumpify.Descriptors;
 
-internal record CustomDescriptor(Type Type, PropertyInfo? PropertyInfo) : IDescriptor
+internal record CustomDescriptor(Type Type, IValueProvider? ValueProvider) : IDescriptor
 {
-    public string Name => PropertyInfo?.Name ?? Type.Name;
+    public string Name => ValueProvider?.Name ?? Type.Name;
 }

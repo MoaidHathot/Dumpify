@@ -34,7 +34,7 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         {
             var type = descriptor.ElementsType ?? item?.GetType();
 
-            IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null) : null;
+            IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider) : null;
 
             var renderedItem = RenderDescriptor(item, itemsDescriptor, context);
             table.AddRow(renderedItem);
@@ -72,7 +72,7 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
 
         foreach (var property in descriptor.Properties)
         {
-            var renderedValue = RenderDescriptor(property.PropertyInfo!.GetValue(obj), property, context with { CurrentDepth = context.CurrentDepth + 1 });
+            var renderedValue = RenderDescriptor(property.ValueProvider!.GetValue(obj), property, context with { CurrentDepth = context.CurrentDepth + 1 });
             table.AddRow(new Markup(Markup.Escape(property.Name), new Style(foreground: colorConfig.PropertyNameColor.ToSpectreColor())), renderedValue);
         }
 

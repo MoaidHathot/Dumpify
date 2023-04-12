@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using Dumpify.Descriptors.ValueProviders;
+using System.Collections.Concurrent;
 
 namespace Dumpify.Tests.Generators;
 
@@ -9,9 +10,9 @@ public class MultiValueDescriptorTests
     public void ZArrayHasMultiValueDescriptor()
     {
         var arr = new[] { 1, 2, 3, };
-        var generator = new CompositeDescriptorGenerator(new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, System.Reflection.PropertyInfo?, object?>>());
+        CompositeDescriptorGenerator generator = new CompositeDescriptorGenerator(new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, IValueProvider?, IMemberProvider, object?>>());
 
-        var descriptor = generator.Generate(arr.GetType(), null);
+        var descriptor = generator.Generate(arr.GetType(), null, new MemberProvider());
 
         descriptor.Should().NotBeNull();
         descriptor.Should().BeOfType<MultiValueDescriptor>();

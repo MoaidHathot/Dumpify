@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dumpify.Descriptors.ValueProviders;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,5 +10,5 @@ namespace Dumpify.Descriptors.Generators;
 
 public interface IDescriptorGenerator
 {
-    IDescriptor? Generate(Type type, PropertyInfo? propertyInfo);
+    IDescriptor? Generate(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider);
 }

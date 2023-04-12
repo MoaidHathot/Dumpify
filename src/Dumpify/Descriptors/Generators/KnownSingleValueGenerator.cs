@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Dumpify.Descriptors.ValueProviders;
 
 namespace Dumpify.Descriptors.Generators;
 internal class KnownSingleValueGenerator : IDescriptorGenerator
 {
-    private static readonly HashSet<RuntimeTypeHandle> _singleValueTypes = new HashSet<RuntimeTypeHandle>
+    private static readonly HashSet<RuntimeTypeHandle> _singleValueTypes = new ()
     {
         typeof(bool).TypeHandle,
         typeof(byte).TypeHandle,
@@ -27,11 +22,11 @@ internal class KnownSingleValueGenerator : IDescriptorGenerator
 #endif
     };
 
-    public IDescriptor? Generate(Type type, PropertyInfo? propertyInfo)
+    public IDescriptor? Generate(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)
     {
         if (type.IsEnum)
         {
-            return new SingleValueDescriptor(type, propertyInfo);
+            return new SingleValueDescriptor(type, valueProvider);
         }
 
         if(!_singleValueTypes.Contains(type.TypeHandle))
@@ -39,6 +34,6 @@ internal class KnownSingleValueGenerator : IDescriptorGenerator
             return null;
         }
 
-        return new SingleValueDescriptor(type, propertyInfo);
+        return new SingleValueDescriptor(type, valueProvider);
     }
 }

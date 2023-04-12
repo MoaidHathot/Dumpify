@@ -94,14 +94,16 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
             return RenderUnfamiliarCustomDescriptor(obj, customDescriptor, context);
         }
 
-        var customValue = valueFactory(obj, customDescriptor.Type, customDescriptor.PropertyInfo);
+        var memberProvider = context.Config.MemberProvider;
+        
+        var customValue = valueFactory(obj, customDescriptor.Type, customDescriptor.ValueProvider, memberProvider);
 
         if (customValue is null)
         {
             return RenderNullValue(customDescriptor, context);
         }
 
-        var customValueDescriptor = DumpConfig.Default.Generator.Generate(customValue.GetType(), null);
+        var customValueDescriptor = DumpConfig.Default.Generator.Generate(customValue.GetType(), null, memberProvider);
 
         return RenderDescriptor(customValue, customValueDescriptor, context);
     }

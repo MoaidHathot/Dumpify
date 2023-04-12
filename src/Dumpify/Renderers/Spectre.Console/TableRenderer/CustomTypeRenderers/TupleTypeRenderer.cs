@@ -30,12 +30,13 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         var genericArguments = descriptor.Type.GetGenericArguments();
 
+        var memberProvider = context.Config.MemberProvider;
         for(var index = 0; index < tuple.Length; ++index)
         {
             var value = tuple[index];
             var type = genericArguments[index];
 
-            var typeDescriptor = DumpConfig.Default.Generator.Generate(type, null);
+            var typeDescriptor = DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider);
 
             var renderedValue = value switch
             {

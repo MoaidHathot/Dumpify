@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-//DumpConfig.Default.Renderer = Renderers.TextRenderer;
+//DumpConfig.Default.Renderer = Renderers.Text;
 //DumpConfig.Default.ColorConfig = ColorConfig.NoColors;
 
 //DumpConfig.Default.Output = Outputs.Debug;
@@ -17,9 +17,14 @@ TestSingle();
 #pragma warning disable CS8321
 void TestSingle()
 {
-    new Bool(new[] { "a", "b", "c" }).Dump();
-}
+    //new Book(new[] { "a", "b", "c" }).Dump();
+    //new List<string> { "A", "B", "C" }.Dump(renderer: Renderers.Table, output: Outputs.Console);
+    //new List<string> { "A", "B", "C" }.Dump(renderer: Renderers.Text);
+    
+    //var map = new Dictionary<string, int>() { ["One"] = 1, ["Two"] = 2, ["Three"] = 3 }.DumpConsole();
 
+    new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true });
+}
 
 void ShowEverything()
 {
@@ -130,7 +135,7 @@ void ShowEverything()
 
     moaid.Dump();
 
-    //new[] { "Hello", "World", "This", "Is", "Dumpy" }.Dump(renderer: Renderers.TextRenderer);
+    //new[] { "Hello", "World", "This", "Is", "Dumpy" }.Dump(renderer: Renderers.Text);
 
     new Exception("This is an exception", new ArgumentNullException("blaParam", "This is inner exception")).Dump();
 
@@ -185,4 +190,18 @@ public class Family
     public StringBuilder? FamilyNameBuilder { get; set; }
 }
 
-public record class Bool(string[] Authors);
+public record class Book(string[] Authors);
+
+public class AdditionValue
+{
+    private readonly int _a;
+    private readonly int _b;
+
+    public AdditionValue(int a, int b)
+    {
+        _a = a;
+        _b = b;
+    }
+
+    public int Value => _a + _b;
+}

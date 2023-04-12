@@ -5,6 +5,9 @@ Improve productivity and debuggability by adding `.Dump()` extension methods to 
 
 One of my favorites [LinqPad](https://www.linqpad.net/) feature is its `.Dump()` extension methods and how customizable they are. It was always hard to return to Visual Studio or any Console Application and find out this feature doesn't exist there.
 
+# How to Install
+Either run `dotnet add package Dumpify` or `Install-Package Dumpify`
+
 # Features
 * Dump any object to Console
 * Support for Arrays and IEnumerables
@@ -12,6 +15,12 @@ One of my favorites [LinqPad](https://www.linqpad.net/) feature is its `.Dump()`
 * Support for max nesting levels
 * Support for circular dependencies and references
 * Support for styling and customizations
+* Support for differnt otuput target
+    * Console
+    * Trace
+    * Debug
+    * Text
+    * Custom
 * Configurable
 * Spectre.Console renderers
 * Special Handling for types:
@@ -19,10 +28,6 @@ One of my favorites [LinqPad](https://www.linqpad.net/) feature is its `.Dump()`
     * StringBuilder
     * System.Reflection types
     
-# How to Install
-Either run `dotnet add package Dumpify` or `Install-Package Dumpify`
-    
- 
 # Examples:
 ```csharp
 new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
@@ -67,34 +72,32 @@ new Dictionary<string, string>
 
 
 # Features for the future 0.5.0 release
-* Simple text renderer
-* Consider disabling wrapping of Table titles
-* re-introduce labels
+* Output selection
+* Text renderer
+* Option to Dump fields and private members
 * Consier adding "" to string values.
 
 # Features for the future 0.6.0 release
+* Consider disabling wrapping of Table titles
+* re-introduce labels
 * Better styling of Custom values
 	* Typeof(T) for example, Generic types, etc.
 * Better rendering of Delegates
 
 # To do
-* Custom Outputs
 * Live outputs
 * Improve Cache By decoupling the PropertyInfo from the Descriptors.
 * Rethink Generators caching keys
 * Consider using Max Depth for Descriptors
 * Refactor Renderers and make it better extendable
 * Add more renderers
-    * re-introduce Json Renderers
-    * JavaScript's `console.log` style
+    * re-introduce Json
     * CSharp Renderer
 * Decouple from Spectre.Console
 * Tests
     * More tests
     * Visual (Render) Tests - consider acceptance tests
     * Tests for Nesting
-* Add support for include fields
-* Add support for include private members
 * Cache Spectre.Console styles and colors
 * More sync between Custom Descriptors and Custom Renderers
 	* Think how we can mark type's descriptor as needing special rendering.

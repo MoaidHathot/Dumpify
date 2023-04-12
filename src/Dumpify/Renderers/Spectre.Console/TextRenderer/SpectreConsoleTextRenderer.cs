@@ -25,7 +25,7 @@ internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
         foreach (var property in descriptor.Properties)
         {
             builder.AppendLine();
-            var renderedValue = RenderDescriptor(property.PropertyInfo!.GetValue(obj), property, context with { CurrentDepth = context.CurrentDepth + 1 });
+            var renderedValue = RenderDescriptor(property.ValueProvider!.GetValue(obj), property, context with { CurrentDepth = context.CurrentDepth + 1 });
             builder.Append($"{indent}{property.Name}: {renderedValue}");
         }
 
@@ -39,7 +39,9 @@ internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
     {
         var items = (IEnumerable)obj;
 
+        var memberProvider = context.Config.MemberProvider;
         var renderedItems = new List<IRenderable>();
+
         foreach (var item in items)
         {
             var renderedItem = obj switch
@@ -53,17 +55,21 @@ internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
             IRenderable GetRenderedValue(object item, Type? elementType)
             {
                 var itemType = descriptor.ElementsType ?? item.GetType();
-                var itemDescriptor = DumpConfig.Default.Generator.Generate(itemType, null);
+                var itemDescriptor = DumpConfig.Default.Generator.Generate(itemType, null, memberProvider);
 
                 return RenderDescriptor(item, itemDescriptor, context with { CurrentDepth = context.CurrentDepth + 1});
             }
         }
 
-        var result = renderedItems switch
+        if (renderedItems.None())
         {
-            { Count: 0 } => "[]",
-            _ => $"[{Environment.NewLine}{(string.Join($",{new string(' ', (context.CurrentDepth + 1) * 2)}{Environment.NewLine}", renderedItems))}{Environment.NewLine}]",
-        };
+            return new TextRenderableAdapter("[]");
+        }
+
+        var itemIndent = new string(' ', (context.CurrentDepth + 1) * 2);
+        var itemsStr = string.Join($",{Environment.NewLine}{itemIndent}", renderedItems);
+
+        var result = $"[{Environment.NewLine}{itemIndent}{itemsStr}{Environment.NewLine}{new string(' ', (context.CurrentDepth) * 2)}]";
 
         return new TextRenderableAdapter(result);
     }

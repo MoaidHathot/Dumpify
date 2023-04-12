@@ -4,6 +4,7 @@ using Dumpify.Renderers;
 using System.Reflection;
 using System.Collections.Concurrent;
 using Dumpify.Config;
+using Dumpify.Descriptors.ValueProviders;
 using Dumpify.Outputs;
 
 namespace Dumpify;
@@ -14,19 +15,20 @@ public class DumpConfig
 
     public static DumpConfig Default { get; } = new DumpConfig();
 
-    internal ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object?>> CustomDescriptorHandlers { get; }
+    internal ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, IValueProvider?, IMemberProvider, object?>> CustomDescriptorHandlers { get; }
 
     private DumpConfig()
     {
-        CustomDescriptorHandlers = new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object?>>();
+        CustomDescriptorHandlers = new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, IValueProvider?, IMemberProvider, object?>>();
         Generator = new CompositeDescriptorGenerator(CustomDescriptorHandlers);
-        Renderer = Config.Renderers.TableRenderer;
+        Renderer = Config.Renderers.Table;
         Output = Config.Outputs.Console;
         ColorConfig = new ColorConfig();
         TableConfig = new TableConfig();
+        MembersConfig = new MembersConfig();
     }
 
-    public void AddCustomTypeHandler(Type type, Func<object, Type, PropertyInfo?, object?> valueFactory)
+    public void AddCustomTypeHandler(Type type, Func<object, Type, IValueProvider?, IMemberProvider, object?> valueFactory)
         => CustomDescriptorHandlers[type.TypeHandle] = valueFactory;
 
     public void RemoveCustomTypeHandler(Type type)
@@ -44,4 +46,5 @@ public class DumpConfig
 
     public ColorConfig ColorConfig { get; set; }
     public TableConfig TableConfig { get; }
+    public MembersConfig MembersConfig { get; }
 }

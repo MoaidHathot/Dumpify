@@ -36,11 +36,13 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
         Type? keyType = null;
         Type? valueType = null;
 
+        var memberProvider = context.Config.MemberProvider;
+
         foreach (var keyValue in dictionary.Keys)
         {
             keyType = keyValue.GetType();
 
-            var keyDescriptor = DumpConfig.Default.Generator.Generate(keyType, null);
+            var keyDescriptor = DumpConfig.Default.Generator.Generate(keyType, null, context.Config.MemberProvider);
             var keyRenderable = _handler.RenderDescriptor(keyValue, keyDescriptor, context);
 
             var value = dictionary[keyValue];
@@ -53,7 +55,7 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
             var valueRenderable = value switch
             {
                 null => _handler.RenderNullValue(null, context),
-                not null => _handler.RenderDescriptor(value, DumpConfig.Default.Generator.Generate(value.GetType(), null), context),
+                not null => _handler.RenderDescriptor(value, DumpConfig.Default.Generator.Generate(value.GetType(), null, memberProvider), context),
             };
 
             table.AddRow(keyRenderable, valueRenderable);
@@ -69,7 +71,8 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
             table.Title = new TableTitle(Markup.Escape(title), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
         }
 
-        return table.Collapse();
+        //return table.Collapse();
+        return table;
     }
 
     public bool ShouldHandle(IDescriptor descriptor, object obj)

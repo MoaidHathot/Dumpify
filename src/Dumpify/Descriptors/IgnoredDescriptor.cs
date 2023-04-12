@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Dumpify.Descriptors.ValueProviders;
 
 namespace Dumpify.Descriptors;
 
-internal record IgnoredDescriptor(Type Type, PropertyInfo? PropertyInfo) : IDescriptor
+internal record IgnoredDescriptor(Type Type, IValueProvider? ValueProvider) : IDescriptor
 {
-    public string Name => PropertyInfo?.Name ?? Type.Name;
+    public string Name => ValueProvider?.Name ?? Type.Name;
 }

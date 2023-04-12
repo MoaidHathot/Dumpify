@@ -2,15 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Dumpify.Descriptors;
 
-public interface IDescriptor
+internal abstract record ValueDescriptorBase(Type Type, IValueProvider? ValueProvider) : IDescriptor
 {
-    Type Type { get; }
-    IValueProvider? ValueProvider{ get; }
-    string Name { get; }
+    public string Name { get; } = (ValueProvider?.Name ?? Type.Name);
 }

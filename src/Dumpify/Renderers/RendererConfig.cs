@@ -1,4 +1,5 @@
 ﻿using Dumpify.Config;
+using Dumpify.Descriptors.ValueProviders;
 using Dumpify.Outputs;
 
 namespace Dumpify.Renderers;
@@ -16,4 +17,5 @@ public record struct RendererConfig
 
     public ColorConfig ColorConfig { get; init; } = ColorConfig.DefaultColors;
     public TableConfig TableConfig { get; init; } = new TableConfig();
+    public required IMemberProvider MemberProvider { get; init; }
 }

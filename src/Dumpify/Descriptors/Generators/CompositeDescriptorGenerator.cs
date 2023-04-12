@@ -1,10 +1,5 @@
-﻿using System;
+﻿using Dumpify.Descriptors.ValueProviders;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dumpify.Descriptors.Generators;
 
@@ -14,7 +9,7 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
 
     private readonly IDescriptorGenerator[] _generatorsChain;
 
-    public CompositeDescriptorGenerator(ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, PropertyInfo?, object?>> customDescriptorHandlers)
+    public CompositeDescriptorGenerator(ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, IValueProvider?, IMemberProvider, object?>> customDescriptorHandlers)
     {
         _generatorsChain = new IDescriptorGenerator[]
         {
@@ -25,18 +20,18 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
         };
     }
 
-    public IDescriptor? Generate(Type type, PropertyInfo? propertyInfo)
+    public IDescriptor? Generate(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)
     {
-        var cacheKey = CreateCacheKey(type, propertyInfo);
+        var cacheKey = CreateCacheKey(type, valueProvider);
 
         if (_descriptorsCache.TryGetValue(cacheKey, out IDescriptor? cachedDescriptor))
         {
             return cachedDescriptor;
         }
 
-        _descriptorsCache.TryAdd(cacheKey, new CircularDependencyDescriptor(type, propertyInfo, null));
+        _descriptorsCache.TryAdd(cacheKey, new CircularDependencyDescriptor(type, valueProvider, null));
 
-        var generatedDescriptor = GenerateDescriptor(type, propertyInfo);
+        var generatedDescriptor = GenerateDescriptor(type, valueProvider, memberProvider);
 
         if (generatedDescriptor is null)
         {
@@ -56,31 +51,31 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
         return generatedDescriptor;
     }
 
-    (RuntimeTypeHandle, RuntimeTypeHandle?, string?) CreateCacheKey(Type type, PropertyInfo? propertyInfo)
-        => (type.TypeHandle, propertyInfo?.DeclaringType?.TypeHandle, propertyInfo?.Name);
+    (RuntimeTypeHandle, RuntimeTypeHandle?, string?) CreateCacheKey(Type type, IValueProvider? valueProvider)
+        => (type.TypeHandle, valueProvider?.Info.DeclaringType?.TypeHandle, valueProvider?.Name);
 
-    private IDescriptor? GenerateDescriptor(Type type, PropertyInfo? propertyInfo)
+    private IDescriptor? GenerateDescriptor(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)
     { 
-        var descriptor = GetSpeciallyHandledDescriptor(type, propertyInfo);
+        var descriptor = GetSpeciallyHandledDescriptor(type, valueProvider, memberProvider);
 
         if(descriptor is not null)
         {
             return descriptor;
         }
 
-        var nestedDescriptor = GetNestedDescriptors(type);
-        return new ObjectDescriptor(type, propertyInfo, nestedDescriptor);
+        var nestedDescriptor = GetNestedDescriptors(type, memberProvider);
+        return new ObjectDescriptor(type, valueProvider, nestedDescriptor);
     }
 
-    private IEnumerable<IDescriptor> GetNestedDescriptors(Type type)
+    private IEnumerable<IDescriptor> GetNestedDescriptors(Type type, IMemberProvider memberProvider)
     {
         var list = new List<IDescriptor>();
 
-        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetIndexParameters().Length == 0);
+        var members = memberProvider.GetMembers(type);
 
-        foreach(var property in properties)
+        foreach(var member in members)
         {
-            var descriptor = Generate(property.PropertyType, property);
+            var descriptor = Generate(member.MemberType, member, memberProvider);
 
             if(descriptor is not null)
             {
@@ -91,11 +86,11 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
         return list;
     }
 
-    private IDescriptor? GetSpeciallyHandledDescriptor(Type type, PropertyInfo? propertyInfo)
+    private IDescriptor? GetSpeciallyHandledDescriptor(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)
     {
         foreach(var generator in _generatorsChain)
         {
-            var descriptor = generator.Generate(type, propertyInfo);
+            var descriptor = generator.Generate(type, valueProvider, memberProvider);
 
             if(descriptor is not null)
             {

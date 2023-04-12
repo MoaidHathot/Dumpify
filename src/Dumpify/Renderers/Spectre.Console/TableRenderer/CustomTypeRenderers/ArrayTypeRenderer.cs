@@ -56,7 +56,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
             var item = obj.GetValue(index);
 
             var type = mvd.ElementsType ?? item?.GetType();
-            IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null) : null;
+            IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider) : null;
 
             var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
 
@@ -110,7 +110,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
                 var item = obj.GetValue(row, col);
 
                 var type = descriptor.ElementsType ?? item?.GetType();
-                IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null) : null;
+                IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider) : null;
 
                 var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
                 cells.Add(renderedItem);

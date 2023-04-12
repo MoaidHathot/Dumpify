@@ -1,4 +1,5 @@
-﻿using Dumpify.Renderers;
+﻿using Dumpify.Descriptors.ValueProviders;
+using Dumpify.Renderers;
 using Dumpify.Renderers.Spectre.Console;
 using Dumpify.Renderers.Spectre.Console.TableRenderer;
 using System.Collections.Concurrent;
@@ -13,11 +14,11 @@ public class BasicTests
     {
         var moaid = new PersonWithSignificantOther { FirstName = "Moaid", LastName = "Hathot" };
 
-        var generator = new CompositeDescriptorGenerator(new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, System.Reflection.PropertyInfo?, object?>>());
-        var descriptor = generator.Generate(moaid.GetType(), null);
+        var generator = new CompositeDescriptorGenerator(new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, IValueProvider?, IMemberProvider, object?>>());
+        var descriptor = generator.Generate(moaid.GetType(), null, new MemberProvider());
 
         var renderer = new SpectreConsoleTableRenderer();
 
-        renderer.Render(moaid, descriptor, new RendererConfig() );
+        renderer.Render(moaid, descriptor, new RendererConfig(){ MemberProvider = new MemberProvider()} );
     }
 }
