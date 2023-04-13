@@ -26,6 +26,7 @@ public class DumpConfig
         ColorConfig = new ColorConfig();
         TableConfig = new TableConfig();
         MembersConfig = new MembersConfig();
+        TypeNamingConfig = new TypeNamingConfig();
     }
 
     public void AddCustomTypeHandler(Type type, Func<object, Type, IValueProvider?, IMemberProvider, object?> valueFactory)
@@ -41,10 +42,10 @@ public class DumpConfig
     public int MaxDepth { get => _maxDepth; set => _maxDepth = value.MustBeGreaterThan(0); }
 
     public bool UseDescriptors { get; set; } = true;
-    public bool ShowTypeNames { get; set; } = true;
     public bool ShowHeaders { get; set; } = true;
 
     public ColorConfig ColorConfig { get; set; }
     public TableConfig TableConfig { get; }
     public MembersConfig MembersConfig { get; }
+    public TypeNamingConfig TypeNamingConfig { get; }
 }

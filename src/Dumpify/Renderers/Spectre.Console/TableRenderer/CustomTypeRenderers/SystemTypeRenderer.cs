@@ -22,7 +22,8 @@ internal class SystemTypeRenderer : ICustomTypeRenderer<IRenderable>
     {
         var metadataColor = context.Config.ColorConfig.MetadataInfoColor?.HexString ?? "default";
         var typeColor = context.Config.ColorConfig.TypeNameColor?.HexString ?? "default";
-        var c = $"[{metadataColor}]typeof([/][{typeColor}]{Markup.Escape(((Type)obj).GetGenericTypeName())}[/][{metadataColor}])[/]";
+        var typeName = context.Config.TypeNameProvider.GetTypeName((Type)obj);
+        var c = $"[{metadataColor}]typeof([/][{typeColor}]{Markup.Escape(typeName)}[/][{metadataColor}])[/]";
         return new Markup(c);
     }
 

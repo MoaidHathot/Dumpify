@@ -19,13 +19,14 @@ internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
     {
         var builder = new StringBuilder();
 
-        builder.Append($"{{{descriptor.Type.GetGenericTypeName()}}}");
+        var typeName = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);
+        builder.Append($"{{{typeName}}}");
 
         var indent = new string(' ', (context.CurrentDepth + 1) * 2);
         foreach (var property in descriptor.Properties)
         {
             builder.AppendLine();
-            var renderedValue = RenderDescriptor(property.ValueProvider!.GetValue(obj), property, context with { CurrentDepth = context.CurrentDepth + 1 });
+            var renderedValue = GetValueAndRender(obj, property.ValueProvider!, property, context with { CurrentDepth = context.CurrentDepth + 1 });
             builder.Append($"{indent}{property.Name}: {renderedValue}");
         }
 

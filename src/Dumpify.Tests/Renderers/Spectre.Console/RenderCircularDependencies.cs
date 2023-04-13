@@ -1,6 +1,7 @@
 ﻿using Dumpify.Descriptors.ValueProviders;
 using Dumpify.Renderers;
 using Dumpify.Renderers.Spectre.Console.TableRenderer;
+using Dumpify.Tests.DTO;
 using System.Collections.Concurrent;
 
 namespace Dumpify.Tests.Renderers.Spectre.Console;
@@ -23,6 +24,6 @@ public class RenderCircularDependencies
 
         var renderer = new SpectreConsoleTableRenderer();
 
-        renderer.Render(moaid, descriptor, new RendererConfig() { MemberProvider = new MemberProvider() });
+        renderer.Render(moaid, descriptor, new RendererConfig() { MemberProvider = new MemberProvider(), TypeNameProvider = new TypeNameProvider(true, false)});
     }
 }

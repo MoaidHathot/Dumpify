@@ -1,4 +1,5 @@
 using Dumpify.Descriptors.ValueProviders;
+using Dumpify.Tests.DTO;
 using System.Collections.Concurrent;
 using System.Text;
 

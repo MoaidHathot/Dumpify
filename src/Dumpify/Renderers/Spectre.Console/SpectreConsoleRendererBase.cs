@@ -1,11 +1,8 @@
-﻿using Dumpify.Config;
-using Dumpify.Descriptors;
-using Dumpify.Outputs;
-using Dumpify.Outputs.TextWriters;
+﻿using Dumpify.Descriptors;
+using Dumpify.Descriptors.ValueProviders;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 
 namespace Dumpify.Renderers.Spectre.Console;
 
@@ -15,6 +12,9 @@ internal abstract class SpectreConsoleRendererBase : RendererBase<IRenderable>
         : base(customTypeRenderers)
     {
     }
+
+    protected override IRenderable RenderFailedValueReading(Exception ex, IValueProvider valueProvider, IDescriptor? descriptor, RenderContext context)
+        => RenderSingleValue("[Failed to read value]", context, context.Config.ColorConfig.MetadataErrorColor?.ToSpectreColor());
 
     protected override IRenderedObject CreateRenderedObject(IRenderable rendered)
         => new SpectreConsoleRenderedObject(rendered);

@@ -17,10 +17,11 @@ TestSingle();
 #pragma warning disable CS8321
 void TestSingle()
 {
-    //new Book(new[] { "a", "b", "c" }).Dump();
+    new Book(new[] { "a", "b", "c" }).Dump(tableConfig: new TableConfig { ShowTableHeaders = true});
+    new Book(new[] { "a", "b", "c" }).Dump(tableConfig: new TableConfig { ShowTableHeaders = false});
     //new List<string> { "A", "B", "C" }.Dump(renderer: Renderers.Table, output: Outputs.Console);
     //new List<string> { "A", "B", "C" }.Dump(renderer: Renderers.Text);
-    
+
     //var map = new Dictionary<string, int>() { ["One"] = 1, ["Two"] = 2, ["Three"] = 3 }.DumpConsole();
 
     new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true });
@@ -68,7 +69,7 @@ void ShowEverything()
     stack.Dump();
 
 
-    moaid.Dump(showHeaders: false, showTypeNames: false);
+    moaid.Dump(tableConfig: new TableConfig { ShowTableHeaders = false }, typeNames: new TypeNamingConfig { ShowTypeNames = false });
     moaid.Dump();
 
     new int[][] { new int[] { 1, 2, 3, 4 }, new int[] { 1, 2, 3, 4, 5 } }.Dump();

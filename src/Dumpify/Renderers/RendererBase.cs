@@ -1,4 +1,5 @@
 ﻿using Dumpify.Descriptors;
+using Dumpify.Descriptors.ValueProviders;
 using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 
@@ -115,6 +116,20 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
         return firstTime is false;
     }
 
+    protected virtual TRenderable GetValueAndRender(object source, IValueProvider valueProvider, IDescriptor? descriptor, RenderContext context)
+    {
+        try
+        {
+            var value = valueProvider.GetValue(source);
+            return RenderDescriptor(value, descriptor, context);
+        }
+        catch (Exception ex)
+        {
+            return RenderFailedValueReading(ex, valueProvider, descriptor, context);
+        }
+    }
+
+    protected abstract TRenderable RenderFailedValueReading(Exception ex, IValueProvider valueProvider, IDescriptor? descriptor, RenderContext context);
     protected abstract IRenderedObject CreateRenderedObject(TRenderable rendered);
 
     public abstract TRenderable RenderNullValue(IDescriptor? descriptor, RenderContext context);

@@ -1,4 +1,4 @@
-﻿namespace Dumpify.Tests.Types;
+﻿namespace Dumpify.Tests.DTO;
 
 public class Person
 {

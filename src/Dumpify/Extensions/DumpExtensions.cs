@@ -10,24 +10,24 @@ namespace Dumpify;
 
 public static class DumpExtensions
 {
-    public static T? DumpDebug<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, bool? showTypeNames = null, bool? showHeaders = null, ColorConfig? colors = null, MembersConfig? members = null)
-        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, showTypeNames: showTypeNames, showHeaders: showHeaders, colors: colors, output: Config.Outputs.Debug, members: members);
+    public static T? DumpDebug<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
+        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Config.Outputs.Debug, members: members, tableConfig: tableConfig);
 
-    public static T? DumpTrace<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, bool? showTypeNames = null, bool? showHeaders = null, ColorConfig? colors = null, MembersConfig? members = null)
-        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, showTypeNames: showTypeNames, showHeaders: showHeaders, colors: colors, output: Config.Outputs.Trace, members: members);
+    public static T? DumpTrace<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
+        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Config.Outputs.Trace, members: members, tableConfig: tableConfig);
 
-    public static T? DumpConsole<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, bool? showTypeNames = null, bool? showHeaders = null, ColorConfig? colors = null, MembersConfig? members = null)
-        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, showTypeNames: showTypeNames, showHeaders: showHeaders, colors: colors, output: Config.Outputs.Console, members: members);
+    public static T? DumpConsole<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
+        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Config.Outputs.Console, members: members, tableConfig: tableConfig);
 
-    public static string? DumpText<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, bool? showTypeNames = null, bool? showHeaders = null, ColorConfig? colors = null, MembersConfig? members = null)
+    public static string? DumpText<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
     {
         using var writer = new StringWriter();
-        _ = obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, showTypeNames: showTypeNames, showHeaders: showHeaders, colors: colors, output: new DumpOutput(writer), members: members);
+        _ = obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: new DumpOutput(writer), members: members, tableConfig: tableConfig);
 
         return writer.ToString();
     }
 
-    public static T? Dump<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, bool? showTypeNames = null, bool? showHeaders = null, ColorConfig? colors = null, IDumpOutput? output = null, MembersConfig? members = null)
+    public static T? Dump<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, IDumpOutput? output = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
     {
         var defaultConfig = DumpConfig.Default;
 
@@ -35,16 +35,17 @@ public static class DumpExtensions
         renderer ??= defaultConfig.Renderer;
 
         var membersConfig = members ?? defaultConfig.MembersConfig;
+        var typeNamingConfig = typeNames ?? defaultConfig.TypeNamingConfig;
 
         var rendererConfig = new RendererConfig
         {
             Label = label,
             MaxDepth = maxDepth.MustBeGreaterThan(0) ?? defaultConfig.MaxDepth,
-            ShowTypeNames = showTypeNames ?? defaultConfig.ShowTypeNames,
-            ShowHeaders = showHeaders ?? defaultConfig.ShowHeaders,
             ColorConfig = colors ?? defaultConfig.ColorConfig,
-            TableConfig = defaultConfig.TableConfig,
-            MemberProvider = new MemberProvider(membersConfig.IncludeProperties, membersConfig.IncludeFields, membersConfig.IncludePublicMembers, membersConfig.IncludeNonPublicMembers) 
+            TableConfig = tableConfig ?? defaultConfig.TableConfig,
+            TypeNamingConfig = typeNamingConfig,
+            MemberProvider = new MemberProvider(membersConfig.IncludeProperties, membersConfig.IncludeFields, membersConfig.IncludePublicMembers, membersConfig.IncludeNonPublicMembers),
+            TypeNameProvider = new TypeNameProvider(typeNamingConfig.UseAliases, typeNamingConfig.UseFullName)
         };
 
         rendererConfig = output.AdjustConfig(rendererConfig);

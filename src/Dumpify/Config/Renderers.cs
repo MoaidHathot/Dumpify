@@ -7,5 +7,7 @@ namespace Dumpify.Config;
 public static class Renderers
 {
     public static IRenderer Table { get; } = new SpectreConsoleTableRenderer();
-    public static IRenderer Text { get; } = new SpectreConsoleTextRenderer();
+
+    //Still work in progress
+    //public static IRenderer Text { get; } = new SpectreConsoleTextRenderer();
 }

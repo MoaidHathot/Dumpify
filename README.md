@@ -73,11 +73,12 @@ new Dictionary<string, string>
 
 # Features for the future 0.5.0 release
 * Output selection
-* Text renderer
 * Option to Dump fields and private members
-* Consier adding "" to string values.
+* Consier adding "" to string values
+* Type name customizations
 
 # Features for the future 0.6.0 release
+* Text renderer
 * Consider disabling wrapping of Table titles
 * re-introduce labels
 * Better styling of Custom values

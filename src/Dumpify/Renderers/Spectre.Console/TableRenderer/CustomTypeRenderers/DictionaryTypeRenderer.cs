@@ -26,7 +26,7 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
         table.AddColumn(new TableColumn(new Markup("Key", new Style(foreground: colorConfig.ColumnNameColor.ToSpectreColor()))));
         table.AddColumn(new TableColumn(new Markup("Value", new Style(foreground: colorConfig.ColumnNameColor.ToSpectreColor()))));
 
-        if(context.Config.ShowHeaders is not true)
+        if(context.Config.TableConfig.ShowTableHeaders is not true)
         {
             table.HideHeaders();
         }
@@ -66,13 +66,12 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
             title = $"{title}<{keyType.Name}, {valueType.Name}>";
         }
         
-        if(context.Config.ShowTypeNames is true)
+        if(context.Config.TypeNamingConfig.ShowTypeNames is true)
         {
             table.Title = new TableTitle(Markup.Escape(title), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
         }
 
-        //return table.Collapse();
-        return table;
+        return table.Collapse();
     }
 
     public bool ShouldHandle(IDescriptor descriptor, object obj)

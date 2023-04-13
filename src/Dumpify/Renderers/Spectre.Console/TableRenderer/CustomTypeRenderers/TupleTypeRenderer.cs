@@ -49,14 +49,15 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
             table.AddRow(keyRenderable, renderedValue);
         }
 
-        if(context.Config.ShowHeaders is false)
+        if(context.Config.TableConfig.ShowTableHeaders is false)
         {
             table.HideHeaders();
         }
 
-        if(context.Config.ShowTypeNames is true)
+        if(context.Config.TypeNamingConfig.ShowTypeNames is true)
         {
-            table.Title = new TableTitle(Markup.Escape(descriptor.Type.GetGenericTypeName()), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
+            var typeName = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);
+            table.Title = new TableTitle(Markup.Escape(typeName), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
         }
 
         return table;

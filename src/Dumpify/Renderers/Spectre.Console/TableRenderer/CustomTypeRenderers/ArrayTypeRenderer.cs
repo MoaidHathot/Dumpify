@@ -46,7 +46,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         table.AddColumn(new TableColumn(new Markup(Markup.Escape($"{mvd.ElementsType?.Name ?? ""}[{obj.GetLength(0)}]"), new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()))));
 
-        if(context.Config.ShowHeaders is not true || context.Config.ShowTypeNames is not true)
+        if(context.Config.TableConfig.ShowTableHeaders is not true || context.Config.TypeNamingConfig.ShowTypeNames is not true)
         {
             table.HideHeaders();
         }
@@ -89,7 +89,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         var colorConfig = context.Config.ColorConfig;
 
-        if(context.Config.ShowTypeNames is true)
+        if(context.Config.TypeNamingConfig.ShowTypeNames is true)
         {
             table.Title = new TableTitle(Markup.Escape($"{descriptor.ElementsType?.Name ?? ""}[{rows},{collumns}]"), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
         }
