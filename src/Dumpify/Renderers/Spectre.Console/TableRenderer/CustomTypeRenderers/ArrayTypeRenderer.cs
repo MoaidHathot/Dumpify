@@ -44,7 +44,8 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
             table.AddColumn(new TableColumn(new Markup("#", new Style(foreground: context.Config.ColorConfig.ColumnNameColor.ToSpectreColor()))));
         }
 
-        table.AddColumn(new TableColumn(new Markup(Markup.Escape($"{mvd.ElementsType?.Name ?? ""}[{obj.GetLength(0)}]"), new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()))));
+        var elementName = mvd.ElementsType is null ? "" : context.Config.TypeNameProvider.GetTypeName(mvd.ElementsType);
+        table.AddColumn(new TableColumn(new Markup(Markup.Escape($"{elementName}[{obj.GetLength(0)}]"), new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()))));
 
         if(context.Config.TableConfig.ShowTableHeaders is not true || context.Config.TypeNamingConfig.ShowTypeNames is not true)
         {

@@ -17,14 +17,16 @@ TestSingle();
 #pragma warning disable CS8321
 void TestSingle()
 {
-    new Book(new[] { "a", "b", "c" }).Dump(tableConfig: new TableConfig { ShowTableHeaders = true});
-    new Book(new[] { "a", "b", "c" }).Dump(tableConfig: new TableConfig { ShowTableHeaders = false});
+    //new Book(new[] { "a", "b", "c" }).Dump(tableConfig: new TableConfig { ShowTableHeaders = true});
+    //new Book(new[] { "a", "b", "c" }).Dump(tableConfig: new TableConfig { ShowTableHeaders = false});
     //new List<string> { "A", "B", "C" }.Dump(renderer: Renderers.Table, output: Outputs.Console);
     //new List<string> { "A", "B", "C" }.Dump(renderer: Renderers.Text);
 
     //var map = new Dictionary<string, int>() { ["One"] = 1, ["Two"] = 2, ["Three"] = 3 }.DumpConsole();
 
-    new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true });
+    //new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true });
+
+    Enumerable.Range(1, 3).Select((i, index) => new { i = i, index = index }).ToArray().Dump();
 }
 
 void ShowEverything()
