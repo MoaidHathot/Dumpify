@@ -19,12 +19,13 @@ public static class DumpExtensions
     public static T? DumpConsole<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
         => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Config.Outputs.Console, members: members, tableConfig: tableConfig);
 
-    public static string? DumpText<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
+    public static string DumpText<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
     {
         using var writer = new StringWriter();
+        colors ??= ColorConfig.NoColors;
         _ = obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: new DumpOutput(writer), members: members, tableConfig: tableConfig);
 
-        return writer.ToString();
+        return writer.ToString().Trim();
     }
 
     public static T? Dump<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, IDumpOutput? output = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
@@ -45,7 +46,7 @@ public static class DumpExtensions
             TableConfig = tableConfig ?? defaultConfig.TableConfig,
             TypeNamingConfig = typeNamingConfig,
             MemberProvider = new MemberProvider(membersConfig.IncludeProperties, membersConfig.IncludeFields, membersConfig.IncludePublicMembers, membersConfig.IncludeNonPublicMembers),
-            TypeNameProvider = new TypeNameProvider(typeNamingConfig.UseAliases, typeNamingConfig.UseFullName)
+            TypeNameProvider = new TypeNameProvider(typeNamingConfig.UseAliases, typeNamingConfig.UseFullName, typeNamingConfig.SimplifyAnonymousObjectNames)
         };
 
         rendererConfig = output.AdjustConfig(rendererConfig);

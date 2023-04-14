@@ -1,32 +1,27 @@
 # Dumpify
-**This library is under development and is not recommended in Production payloads**
+Improve productivity and debuggability by adding `.Dump()` extension methods to **Console Applications**.
+`Dump` any object in a structured and colorful way into the Console, Trace, Debug events or your own custom output.
 
-Improve productivity and debuggability by adding `.Dump()` extension methods to **Console Applications**, similar to LinqPad's.
-
-One of my favorites [LinqPad](https://www.linqpad.net/) feature is its `.Dump()` extension methods and how customizable they are. It was always hard to return to Visual Studio or any Console Application and find out this feature doesn't exist there.
+One of my favorites [LinqPad](https://www.linqpad.net/) feature is its `.Dump()` extension methods and how customizable they are. It was always hard to return to Visual Studio, VSCode, Rider, or any other IDE/Editor and find out this feature doesn't exist there.
 
 # How to Install
-Either run `dotnet add package Dumpify` or `Install-Package Dumpify`
+The library is published as a [Nuget](https://www.nuget.org/packages/Dumpify)
+Either run `dotnet add package Dumpify`, `Install-Package Dumpify` or use Visual Studio's [NuGet Package Manager](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-visual-studio)
 
 # Features
-* Dump any object to Console
-* Support for Arrays and IEnumerables
-* Support for Custom descriptors
-* Support for max nesting levels
-* Support for circular dependencies and references
-* Support for styling and customizations
-* Support for differnt otuput target
+* Dump any object in a structured, colorful way to Console, Debug, Trace or any other custom output
+* Support Properties, Fields and non-public members
+* Support max nesting levels
+* Support circular dependencies and references
+* Support styling and customizations
+* Highly Configurable
+* Fast!
+* Support for differnt otuput target:
     * Console
     * Trace
     * Debug
     * Text
     * Custom
-* Configurable
-* Spectre.Console renderers
-* Special Handling for types:
-    * Arrays, IEnumerables, Collections.
-    * StringBuilder
-    * System.Reflection types
     
 # Examples:
 ```csharp
@@ -71,13 +66,9 @@ new Dictionary<string, string>
 ![image](https://user-images.githubusercontent.com/8770486/230250919-838357bf-b6c2-4a91-8702-b639050ebe1d.png)
 
 
-# Features for the future 0.5.0 release
-* Output selection
-* Option to Dump fields and private members
-* Consier adding "" to string values
-* Type name customizations
-
 # Features for the future 0.6.0 release
+* Add configuration for formatting Anonymous Objects type names
+* Cache Spectre.Console styles and colors
 * Text renderer
 * Consider disabling wrapping of Table titles
 * re-introduce labels
@@ -87,25 +78,24 @@ new Dictionary<string, string>
 
 # To do
 * Live outputs
-* Improve Cache By decoupling the PropertyInfo from the Descriptors.
+* Add custom rendering for more types:
+    - DataTable & DataSets
+    - Exceptions, AggregateExceptions, etc...
 * Rethink Generators caching keys
 * Consider using Max Depth for Descriptors
 * Refactor Renderers and make it better extendable
 * Add more renderers
+    * Text Renderers
     * re-introduce Json
     * CSharp Renderer
-* Decouple from Spectre.Console
+* Consider Decoupling from Spectre.Console
 * Tests
     * More tests
     * Visual (Render) Tests - consider acceptance tests
     * Tests for Nesting
-* Cache Spectre.Console styles and colors
 * More sync between Custom Descriptors and Custom Renderers
 	* Think how we can mark type's descriptor as needing special rendering.
 	* The current CustomDescriptorGenerator must generate a value
 	* Consider ValueTuple
 * Refactor SpectureTableRenderer to share customization code
 * Consider changing the style/view of ObjectDescriptors without properties (currently empty table)
-
-# Disclaimer
-This project is inspired by LinqPad's Dump features, authored by Joseph Albahari.

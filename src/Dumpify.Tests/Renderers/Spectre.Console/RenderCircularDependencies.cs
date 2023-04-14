@@ -24,6 +24,6 @@ public class RenderCircularDependencies
 
         var renderer = new SpectreConsoleTableRenderer();
 
-        renderer.Render(moaid, descriptor, new RendererConfig() { MemberProvider = new MemberProvider(), TypeNameProvider = new TypeNameProvider(true, false)});
+        renderer.Render(moaid, descriptor, new RendererConfig() { MemberProvider = new MemberProvider(), TypeNameProvider = new TypeNameProvider(true, false, true)});
     }
 }

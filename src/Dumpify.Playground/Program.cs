@@ -11,6 +11,9 @@ using System.Text.Json.Serialization;
 
 //DumpConfig.Default.Output = Outputs.Debug;
 
+
+
+
 TestSingle();
 //ShowEverything();
 
@@ -24,21 +27,44 @@ void TestSingle()
 
     //var map = new Dictionary<string, int>() { ["One"] = 1, ["Two"] = 2, ["Three"] = 3 }.DumpConsole();
 
-    new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true, IncludeProperties = true});
-    new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = false, IncludeProperties = false});
-    new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = false, IncludeProperties = true});
-    new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true, IncludeProperties = true, IncludePublicMembers = false});
+    //new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true, IncludeProperties = true}, typeNames: new TypeNamingConfig { UseFullName = true});
+    //new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = false, IncludeProperties = false});
+    //new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = false, IncludeProperties = true});
+    //new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true, IncludeProperties = true, IncludePublicMembers = false});
 
     //Enumerable.Range(1, 3).Select((i, index) => new { i = i, index = index }).ToArray().Dump();
+
+    //var str = ((object)null!).DumpText().Dump();
+    //;
+
+    new { Moaid = "Moaid", Hathot = "Hathot" }.Dump();
+    new { Foo = 1, Bar = "22" }.Dump(); 
+    new { Moaid = "Moaid", Hathot = "Hathot" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = false});
+    new { Foo = 1, Bar = "22" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = false}); 
+    new { Moaid = "Moaid", Hathot = "Hathot" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = true});
+    new { Foo = 1, Bar = "22" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = true });
 }
 
 void ShowEverything()
 {
     var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
     var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
-
     moaid.Spouse = haneeni;
     haneeni.Spouse = moaid;
+
+
+    //DumpConfig.Default.Output = Outputs.Debug; //Outputs.Trace, Outputs.Console
+    //moaid.Dump(output: Outputs.Trace);
+    //moaid.DumpDebug();
+    //moaid.DumpTrace();
+
+    //moaid.Dump(output: myCustomOutput);
+
+
+    DumpConfig.Default.TypeNamingConfig.UseAliases = true;
+    DumpConfig.Default.TypeNamingConfig.UseFullName = true;
+
+    moaid.Dump(typeNames: new TypeNamingConfig { UseAliases = true, ShowTypeNames = true });
 
     moaid.Dump();
 

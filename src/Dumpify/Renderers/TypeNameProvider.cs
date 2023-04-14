@@ -1,4 +1,7 @@
-﻿namespace Dumpify.Renderers;
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
+
+namespace Dumpify.Renderers;
 
 internal class TypeNameProvider : ITypeNameProvider
 {
@@ -23,25 +26,29 @@ internal class TypeNameProvider : ITypeNameProvider
 
     private readonly bool _useAliases;
     private readonly bool _useFullTypeNames;
+    private readonly bool _simplifyAnonymousObjectNames;
 
-    public TypeNameProvider(bool useAliases, bool useFullTypeNames)
+    public TypeNameProvider(bool useAliases, bool useFullTypeNames, bool simplifyAnonymousObjectNames)
     {
         _useAliases = useAliases;
         _useFullTypeNames = useFullTypeNames;
+        _simplifyAnonymousObjectNames = simplifyAnonymousObjectNames;
     }
 
     public string GetTypeName(Type type)
     {
         var name = type.IsGenericType switch
         {
-            true => GetGenericNameWithTypes(type, type.Name),
+            true => GetGenericNameWithTypes(type),
             false => _useAliases ? GetNameOrAlias(type) : type.Name
         };
 
-        name = _useFullTypeNames switch
+        name = (_useFullTypeNames, type.Namespace) switch
         {
-            true => $"{(GetNamespace(type) is { Length: > 0 } str ? str : "")}.{name}",
-            false => name,
+            (false, _) => name,
+            (_, null) => name,
+            (true, { Length: > 0} prefix) => $"{prefix}.{name}",
+            (true, { Length: 0}) => name,
         };
 
         return name;
@@ -66,15 +73,45 @@ internal class TypeNameProvider : ITypeNameProvider
         return (name, rank);
     }
 
-    private string GetNamespace(Type type)
-        => type.Namespace ?? "";
+    private (bool simplified, string name) GetNameOrSimplifiedAnonymousObjectName(Type type)
+    {
+        if (_simplifyAnonymousObjectNames is not true)
+        {
+            return (false, type.Name);
+        }
 
-    private string GetGenericNameWithTypes(Type type, string name)
-        => $"{RemoveGenericAnnotations(name)}<{string.Join(", ", type.GenericTypeArguments.Select(GetTypeName))}>";
+        return IsAnonymousType(type) switch
+        {
+            false => (false, type.Name),
+            true => (true, "Anonymous Type"),
+        };
+    }
+
+    private string GetGenericNameWithTypes(Type type)
+    {
+        var (simplified, name) = GetNameOrSimplifiedAnonymousObjectName(type);
+        if (simplified)
+        {
+            return name;
+        }
+
+        var prefix = RemoveGenericAnnotations(name);
+        var genericArguments = string.Join(", ", type.GenericTypeArguments.Select(GetTypeName));
+        return $"{prefix}<{genericArguments}>";
+    }
 
     private string RemoveGenericAnnotations(string name)
         => name[..name.LastIndexOf("`", StringComparison.InvariantCulture)];
 
     private string GetNameOrAlias(Type type)
         => _aliases.GetValueOrDefault(type.TypeHandle) ?? type.Name;
+
+    private bool IsAnonymousType(Type type)
+    {
+        return Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
+                && type.IsGenericType 
+                && ((type.Name.StartsWith("<>") || type.Name.StartsWith("VB$")))
+                && type.Name.Contains("AnonymousType")
+                && type.Attributes.HasFlag(TypeAttributes.NotPublic);
+    }
 }
