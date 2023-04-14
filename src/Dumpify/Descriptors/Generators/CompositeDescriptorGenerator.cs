@@ -5,7 +5,7 @@ namespace Dumpify.Descriptors.Generators;
 
 internal class CompositeDescriptorGenerator : IDescriptorGenerator
 {
-    private readonly ConcurrentDictionary<(RuntimeTypeHandle, RuntimeTypeHandle?, string?), IDescriptor> _descriptorsCache = new();
+    private readonly ConcurrentDictionary<(RuntimeTypeHandle, RuntimeTypeHandle?, string?, IMemberProvider), IDescriptor> _descriptorsCache = new();
 
     private readonly IDescriptorGenerator[] _generatorsChain;
 
@@ -22,7 +22,7 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
 
     public IDescriptor? Generate(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)
     {
-        var cacheKey = CreateCacheKey(type, valueProvider);
+        var cacheKey = CreateCacheKey(type, valueProvider, memberProvider);
 
         if (_descriptorsCache.TryGetValue(cacheKey, out IDescriptor? cachedDescriptor))
         {
@@ -51,8 +51,8 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
         return generatedDescriptor;
     }
 
-    (RuntimeTypeHandle, RuntimeTypeHandle?, string?) CreateCacheKey(Type type, IValueProvider? valueProvider)
-        => (type.TypeHandle, valueProvider?.Info.DeclaringType?.TypeHandle, valueProvider?.Name);
+    (RuntimeTypeHandle, RuntimeTypeHandle?, string?, IMemberProvider) CreateCacheKey(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)
+        => (type.TypeHandle, valueProvider?.Info.DeclaringType?.TypeHandle, valueProvider?.Name, memberProvider);
 
     private IDescriptor? GenerateDescriptor(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)
     { 

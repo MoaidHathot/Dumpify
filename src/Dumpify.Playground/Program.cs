@@ -24,9 +24,12 @@ void TestSingle()
 
     //var map = new Dictionary<string, int>() { ["One"] = 1, ["Two"] = 2, ["Three"] = 3 }.DumpConsole();
 
-    //new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true });
+    new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true, IncludeProperties = true});
+    new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = false, IncludeProperties = false});
+    new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = false, IncludeProperties = true});
+    new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true, IncludeProperties = true, IncludePublicMembers = false});
 
-    Enumerable.Range(1, 3).Select((i, index) => new { i = i, index = index }).ToArray().Dump();
+    //Enumerable.Range(1, 3).Select((i, index) => new { i = i, index = index }).ToArray().Dump();
 }
 
 void ShowEverything()
@@ -142,27 +145,30 @@ void ShowEverything()
 
     new Exception("This is an exception", new ArgumentNullException("blaParam", "This is inner exception")).Dump();
 
-//arr.Dump();
-//moaid.Dump();
+    new AdditionValue(1, 10).Dump(members: new () { IncludeFields = true, IncludeNonPublicMembers = true, IncludeProperties = false });
+    new AdditionValue(1, 10).Dump(members: new() { IncludeFields = true, IncludeNonPublicMembers = true });
+
+    //arr.Dump();
+    //moaid.Dump();
 
 
-//family.Dump(maxDepth: 2);
+    //family.Dump(maxDepth: 2);
 
-//Console.WriteLine(JsonSerializer.Serialize(moaid));
+    //Console.WriteLine(JsonSerializer.Serialize(moaid));
 
 
-//moaid.Dump();
-//arr2d.Dump();
+    //moaid.Dump();
+    //arr2d.Dump();
 
-//moaid.Dump(maxDepth: 2);
-//family.Dump(maxDepth: 2);
-//arr.Dump();
-//arr2d.Dump();
-//((object)null).Dump();
+    //moaid.Dump(maxDepth: 2);
+    //family.Dump(maxDepth: 2);
+    //arr.Dump();
+    //arr2d.Dump();
+    //((object)null).Dump();
 
-//var result = DumpConfig.Default.Generator.Generate(family.GetType(), null);
+    //var result = DumpConfig.Default.Generator.Generate(family.GetType(), null);
 
-//JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
+    //JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
 }
 #pragma warning restore CS8321
 

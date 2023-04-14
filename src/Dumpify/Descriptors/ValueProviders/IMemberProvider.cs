@@ -2,7 +2,7 @@
 
 namespace Dumpify.Descriptors.ValueProviders;
 
-public interface IMemberProvider
+public interface IMemberProvider : IEquatable<IMemberProvider>
 {
     IEnumerable<IValueProvider> GetMembers(Type type);
 }

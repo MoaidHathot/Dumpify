@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Dumpify.Descriptors.ValueProviders;
 
-internal class MemberProvider : IMemberProvider
+internal sealed record MemberProvider : IMemberProvider
 {
     private readonly bool _includeProperties;
     private readonly bool _includeFields;
@@ -52,4 +52,17 @@ internal class MemberProvider : IMemberProvider
 
         return members;
     }
+
+    public bool Equals(IMemberProvider? provider)
+    {
+        if (provider is not MemberProvider other)
+        {
+            return false;
+        }
+
+        return _includeProperties == other._includeProperties && _includeFields == other._includeFields && _includePublicMembers == other._includePublicMembers && _includeNonPublicMembers == other._includeNonPublicMembers;
+    }
+
+    public override int GetHashCode()
+        => HashCode.Combine(_includeProperties, _includeFields, _includePublicMembers, _includeNonPublicMembers);
 }

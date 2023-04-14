@@ -4,12 +4,8 @@ using Dumpify.Outputs;
 
 namespace Dumpify.Renderers;
 
-public record struct RendererConfig
+public record RendererConfig
 {
-    public RendererConfig()
-    {
-    }
-
     public string? Label { get; init; } = null;
     public int? MaxDepth { get; init; } = null;
 
