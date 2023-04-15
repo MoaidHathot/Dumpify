@@ -2,7 +2,12 @@
 
 <PropertyGroup>
 	<TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
+  <PackageReadmeFile>nuget.md</PackageReadmeFile>
 </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../docs/readme/nuget.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Spectre.Console" Version="0.46.0" />

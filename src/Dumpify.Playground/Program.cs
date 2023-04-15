@@ -2,6 +2,7 @@
 using Dumpify.Config;
 using Dumpify.Outputs;
 using System.Collections;
+using System.Data;
 using System.Drawing;
 using System.Net;
 using System.Text;
@@ -48,16 +49,50 @@ void TestSingle()
     "".Dump();
     "".Dump();
 
-var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
-var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
+//var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
+//var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
 
-moaid.Spouse = haneeni;
-haneeni.Spouse = moaid;
+//moaid.Spouse = haneeni;
+//haneeni.Spouse = moaid;
 
-moaid.Dump();
+//moaid.Dump();
 
 
-    IPAddress.Loopback.Dump();
+    //IPAddress.Loopback.Dump();
+
+
+    var table = new DataTable("MemTable");
+    table.Columns.Add("A");
+    table.Columns.Add("B");
+    table.Columns.Add("C");
+    var row = table.NewRow();
+    row["A"] = 1;
+    row["B"] = 2;
+    row["C"] = 3;
+    table.Rows.Add(row);
+
+    table.Dump();
+
+
+    var table02 = new DataTable("MemTable02");
+    table02.Columns.Add("a");
+    table02.Columns.Add("b");
+    table02.Columns.Add("c");
+    table02.Columns.Add("d");
+    var row02 = table02.NewRow();
+    row02["a"] = 1;
+    row02["b"] = 2;
+    row02["c"] = 3;
+    row02["d"] = 4;
+    table02.Rows.Add(row02);
+
+    table02.Dump();
+
+    var set = new DataSet("MemSet");
+    set.Tables.Add(table);
+    set.Tables.Add(table02);
+
+    set.Dump();
 }
 
 void ShowEverything()

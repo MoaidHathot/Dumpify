@@ -18,6 +18,8 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         AddCustomTypeDescriptor(new TupleTypeRenderer(this));
         AddCustomTypeDescriptor(new SystemTypeRenderer(this));
         AddCustomTypeDescriptor(new EnumTypeRenderer(this));
+        AddCustomTypeDescriptor(new DataTableTypeRenderer(this));
+        AddCustomTypeDescriptor(new DataSetTypeRenderer(this));
     }
 
     protected override IRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext context)

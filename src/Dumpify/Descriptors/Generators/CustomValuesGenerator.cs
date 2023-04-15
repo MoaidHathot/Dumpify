@@ -1,5 +1,6 @@
 ﻿using Dumpify.Descriptors.ValueProviders;
 using System.Collections.Concurrent;
+using System.Data;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
@@ -43,6 +44,8 @@ internal class CustomValuesGenerator : IDescriptorGenerator
         });
 
         _customTypeHandlers.TryAdd(typeof(Enum).TypeHandle, (obj, type, e, memberProvider) => $"{type.Name}{e}");
+        _customTypeHandlers.TryAdd(typeof(DataTable).TypeHandle, (obj, type, valueProvider, memberProvider) => obj);
+        _customTypeHandlers.TryAdd(typeof(DataSet).TypeHandle, (obj, type, valueProvider, memberProvider) => obj);
 
         _customTypeHandlers.TryAdd(typeof(StringBuilder).TypeHandle, (obj, type, valueProvider, memberProvider) => ((StringBuilder)obj).ToString());
         _customTypeHandlers.TryAdd(typeof(DateTime).TypeHandle, (obj, type, valueProvider, memberProvider) => ((DateTime)obj).ToString(CultureInfo.CurrentCulture));
