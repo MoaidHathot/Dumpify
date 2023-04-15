@@ -23,7 +23,8 @@ internal class EnumTypeRenderer : ICustomTypeRenderer<IRenderable>
     {
         var color = context.Config.ColorConfig.PropertyValueColor?.HexString ?? "default";
 
-        return new Markup($"[{color}]{descriptor.Type.Name}.{obj}[/]");
+        var name = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);
+        return new Markup($"[{color}]{name}.{obj}[/]");
     }
 
     public bool ShouldHandle(IDescriptor descriptor, object obj)

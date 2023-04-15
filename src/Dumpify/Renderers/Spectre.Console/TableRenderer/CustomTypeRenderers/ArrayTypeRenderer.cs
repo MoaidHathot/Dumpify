@@ -92,7 +92,8 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         if(context.Config.TypeNamingConfig.ShowTypeNames is true)
         {
-            table.Title = new TableTitle(Markup.Escape($"{descriptor.ElementsType?.Name ?? ""}[{rows},{collumns}]"), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
+            var (typeName, rank) = context.Config.TypeNameProvider.GetJaggedArrayNameWithRank(descriptor.Type);
+            table.Title = new TableTitle(Markup.Escape($"{typeName}[{rows},{collumns}]"), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
         }
 
         table.AddColumn(new TableColumn(new Markup("#", new Style(foreground: context.Config.ColorConfig.ColumnNameColor.ToSpectreColor()))));

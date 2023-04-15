@@ -48,7 +48,13 @@ void TestSingle()
     "".Dump();
     "".Dump();
 
-    new AdditionValue(1, 2).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true });
+var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
+var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
+
+moaid.Spouse = haneeni;
+haneeni.Spouse = moaid;
+
+moaid.Dump();
 
 
     IPAddress.Loopback.Dump();

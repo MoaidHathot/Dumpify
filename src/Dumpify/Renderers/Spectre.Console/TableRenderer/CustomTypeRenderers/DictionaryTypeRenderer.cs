@@ -22,7 +22,6 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         var colorConfig = context.Config.ColorConfig;
 
-        var title = "Dictionary";
         table.AddColumn(new TableColumn(new Markup("Key", new Style(foreground: colorConfig.ColumnNameColor.ToSpectreColor()))));
         table.AddColumn(new TableColumn(new Markup("Value", new Style(foreground: colorConfig.ColumnNameColor.ToSpectreColor()))));
 
@@ -33,14 +32,13 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         var dictionary = (IDictionary)obj;
 
-        Type? keyType = null;
         Type? valueType = null;
 
         var memberProvider = context.Config.MemberProvider;
 
         foreach (var keyValue in dictionary.Keys)
         {
-            keyType = keyValue.GetType();
+            var keyType = keyValue.GetType();
 
             var keyDescriptor = DumpConfig.Default.Generator.Generate(keyType, null, context.Config.MemberProvider);
             var keyRenderable = _handler.RenderDescriptor(keyValue, keyDescriptor, context);
@@ -61,13 +59,10 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
             table.AddRow(keyRenderable, valueRenderable);
         }
 
-        if(keyType is not null && valueType is not null)
+        if(context.Config.TypeNamingConfig.ShowTypeNames)
         {
-            title = $"{title}<{keyType.Name}, {valueType.Name}>";
-        }
-        
-        if(context.Config.TypeNamingConfig.ShowTypeNames is true)
-        {
+
+            var title = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);
             table.Title = new TableTitle(Markup.Escape(title), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
         }
 
