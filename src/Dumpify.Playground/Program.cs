@@ -2,6 +2,8 @@
 using Dumpify.Config;
 using Dumpify.Outputs;
 using System.Collections;
+using System.Drawing;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -15,7 +17,7 @@ using System.Text.Json.Serialization;
 
 
 TestSingle();
-//ShowEverything();
+// ShowEverything();
 
 #pragma warning disable CS8321
 void TestSingle()
@@ -37,20 +39,29 @@ void TestSingle()
     //var str = ((object)null!).DumpText().Dump();
     //;
 
-    new { Moaid = "Moaid", Hathot = "Hathot" }.Dump();
-    new { Foo = 1, Bar = "22" }.Dump(); 
-    new { Moaid = "Moaid", Hathot = "Hathot" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = false});
-    new { Foo = 1, Bar = "22" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = false}); 
-    new { Moaid = "Moaid", Hathot = "Hathot" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = true});
-    new { Foo = 1, Bar = "22" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = true });
+    //new { Moaid = "Moaid", Hathot = "Hathot" }.Dump();
+    //new { Foo = 1, Bar = "22" }.Dump(); 
+    //new { Moaid = "Moaid", Hathot = "Hathot" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = false});
+    //new { Foo = 1, Bar = "22" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = false}); 
+    //new { Moaid = "Moaid", Hathot = "Hathot" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = true});
+    //new { Foo = 1, Bar = "22" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = true });
+    "".Dump();
+    "".Dump();
+
+    new AdditionValue(1, 2).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true });
+
+
+    IPAddress.Loopback.Dump();
 }
 
 void ShowEverything()
 {
-    var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
-    var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
+    var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
+    var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
     moaid.Spouse = haneeni;
     haneeni.Spouse = moaid;
+
+    moaid.Dump();
 
 
     //DumpConfig.Default.Output = Outputs.Debug; //Outputs.Trace, Outputs.Console
@@ -198,7 +209,7 @@ void ShowEverything()
 }
 #pragma warning restore CS8321
 
-public enum ItemOrder { First, Second, Last };
+public enum Profession { Software, Health };
 public record class Person
 {
     public required string FirstName { get; set; }
@@ -206,7 +217,7 @@ public record class Person
 
     public Person? Spouse { get; set; }
 
-    public ItemOrder TestEnum { get; set; } = ItemOrder.Second;
+    public Profession Profession { get; set; }
 }
 
 public class Family
@@ -238,5 +249,5 @@ public class AdditionValue
         _b = b;
     }
 
-    public int Value => _a + _b;
+    private int Value => _a + _b;
 }

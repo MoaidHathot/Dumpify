@@ -39,7 +39,7 @@ namespace Dumpify.Tests.Providers
         [DataRow(typeof(TestType), "TestType", true, false)]
         [DataRow(typeof(TestType), "TestType", false, true)]
         [DataRow(typeof(TestType), "TestType", true, true)]
-        public void GetGenericNameUseGenericAnnotations(Type type, string expectedTypeName, bool useAliases, bool useFullTypeName)
+        public void GetTypeNameReturnCorrectResult(Type type, string expectedTypeName, bool useAliases, bool useFullTypeName)
         {
             var provider = new TypeNameProvider(useAliases, useFullTypeName, false);
 
@@ -176,6 +176,15 @@ namespace Dumpify.Tests.Providers
 
             rank3.Should().Be(3);
             name3.Should().Be(expectedElementName);
+        }
+
+
+        [TestMethod]
+        public void NamespaceOfTestTypeIsNull()
+        {
+            //Utility test for making sure that the Namespace of `TestType` stays null during future refactoring
+            //This is an assumption in other tests, and mainly in GetTypeNameReturnCorrectResult
+            typeof(TestType).Namespace.Should().BeNull();
         }
     }
 }
