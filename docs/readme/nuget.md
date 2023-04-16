@@ -22,8 +22,8 @@ new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
 
 ### Support nesting and circular references
 ```csharp
-var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
-var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
+var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
+var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
 
 moaid.Spouse = haneeni;
 haneeni.Spouse = moaid;
@@ -31,7 +31,7 @@ haneeni.Spouse = moaid;
 moaid.Dump();
 //You can define max depth as well, e.g `moaid.Dump(maxDepth: 2)`
 ```
-![image](https://user-images.githubusercontent.com/8770486/232251666-4cc8b734-bbf6-4be9-8111-411b9176ebcb.png)
+![image](https://user-images.githubusercontent.com/8770486/232280616-c6127820-7e2b-448b-81ca-1aded2894cdc.png)
 
 ### Support for Arrrays, Dictionaries and Collections
 ```csharp
