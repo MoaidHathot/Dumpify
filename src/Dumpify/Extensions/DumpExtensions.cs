@@ -10,12 +10,15 @@ namespace Dumpify;
 
 public static class DumpExtensions
 {
+    [return: NotNullIfNotNull(nameof(obj))]
     public static T? DumpDebug<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
         => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Config.Outputs.Debug, members: members, tableConfig: tableConfig);
 
+    [return: NotNullIfNotNull(nameof(obj))]
     public static T? DumpTrace<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
         => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Config.Outputs.Trace, members: members, tableConfig: tableConfig);
 
+    [return: NotNullIfNotNull(nameof(obj))]
     public static T? DumpConsole<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
         => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Config.Outputs.Console, members: members, tableConfig: tableConfig);
 
@@ -28,6 +31,7 @@ public static class DumpExtensions
         return writer.ToString().Trim();
     }
 
+    [return: NotNullIfNotNull(nameof(obj))]
     public static T? Dump<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, IDumpOutput? output = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
     {
         var defaultConfig = DumpConfig.Default;

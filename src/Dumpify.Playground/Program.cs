@@ -15,84 +15,28 @@ using System.Text.Json.Serialization;
 //DumpConfig.Default.Output = Outputs.Debug;
 
 
-
-
 TestSingle();
 // ShowEverything();
 
 #pragma warning disable CS8321
 void TestSingle()
 {
-    //new Book(new[] { "a", "b", "c" }).Dump(tableConfig: new TableConfig { ShowTableHeaders = true});
-    //new Book(new[] { "a", "b", "c" }).Dump(tableConfig: new TableConfig { ShowTableHeaders = false});
-    //new List<string> { "A", "B", "C" }.Dump(renderer: Renderers.Table, output: Outputs.Console);
-    //new List<string> { "A", "B", "C" }.Dump(renderer: Renderers.Text);
+    // DateTime.Now.Dump();
+    // DateTime.UtcNow.Dump();
+    // DateTimeOffset.Now.Dump();
+    // DateTimeOffset.UtcNow.Dump();
+    // TimeSpan.FromSeconds(10).Dump();
+    // (1, "2").Dump();
 
-    //var map = new Dictionary<string, int>() { ["One"] = 1, ["Two"] = 2, ["Three"] = 3 }.DumpConsole();
+    // var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
+    // var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
+    // moaid.Spouse = haneeni;
+    // haneeni.Spouse = moaid;
 
-    //new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true, IncludeProperties = true}, typeNames: new TypeNamingConfig { UseFullName = true});
-    //new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = false, IncludeProperties = false});
-    //new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = false, IncludeProperties = true});
-    //new AdditionValue(1, 10).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true, IncludeProperties = true, IncludePublicMembers = false});
+    // moaid.Dump(typeNames: new TypeNamingConfig { ShowTypeNames = false }, tableConfig: new TableConfig { ShowTableHeaders = false });
 
-    //Enumerable.Range(1, 3).Select((i, index) => new { i = i, index = index }).ToArray().Dump();
-
-    //var str = ((object)null!).DumpText().Dump();
-    //;
-
-    //new { Moaid = "Moaid", Hathot = "Hathot" }.Dump();
-    //new { Foo = 1, Bar = "22" }.Dump(); 
-    //new { Moaid = "Moaid", Hathot = "Hathot" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = false});
-    //new { Foo = 1, Bar = "22" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = false}); 
-    //new { Moaid = "Moaid", Hathot = "Hathot" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = true});
-    //new { Foo = 1, Bar = "22" }.Dump(typeNames: new TypeNamingConfig { SimplifyAnonymousObjectNames = true });
-    "".Dump();
-    "".Dump();
-
-//var moaid = new Person { FirstName = "Moaid", LastName = "Hathot" };
-//var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli" };
-
-//moaid.Spouse = haneeni;
-//haneeni.Spouse = moaid;
-
-//moaid.Dump();
-
-
-    //IPAddress.Loopback.Dump();
-
-
-    var table = new DataTable("MemTable");
-    table.Columns.Add("A");
-    table.Columns.Add("B");
-    table.Columns.Add("C");
-    var row = table.NewRow();
-    row["A"] = 1;
-    row["B"] = 2;
-    row["C"] = 3;
-    table.Rows.Add(row);
-
-    table.Dump();
-
-
-    var table02 = new DataTable("MemTable02");
-    table02.Columns.Add("a");
-    table02.Columns.Add("b");
-    table02.Columns.Add("c");
-    table02.Columns.Add("d");
-    var row02 = table02.NewRow();
-    row02["a"] = 1;
-    row02["b"] = 2;
-    row02["c"] = 3;
-    row02["d"] = 4;
-    table02.Rows.Add(row02);
-
-    table02.Dump();
-
-    var set = new DataSet("MemSet");
-    set.Tables.Add(table);
-    set.Tables.Add(table02);
-
-    set.Dump();
+    var s = Enumerable.Range(0, 10).Select(i => $"#{i}").Dump();
+    string.Join(", ", s).Dump();
 }
 
 void ShowEverything()
@@ -291,4 +235,9 @@ public class AdditionValue
     }
 
     private int Value => _a + _b;
+}
+
+public class Device
+{
+    public bool isPowered { get; set; }
 }
