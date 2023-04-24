@@ -2,6 +2,7 @@
 using Dumpify.Config;
 using Dumpify.Outputs;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Data;
 using System.Drawing;
 using System.Net;
@@ -35,8 +36,16 @@ void TestSingle()
 
     // moaid.Dump(typeNames: new TypeNamingConfig { ShowTypeNames = false }, tableConfig: new TableConfig { ShowTableHeaders = false });
 
-    var s = Enumerable.Range(0, 10).Select(i => $"#{i}").Dump();
-    string.Join(", ", s).Dump();
+    // var s = Enumerable.Range(0, 10).Select(i => $"#{i}").Dump();
+    // string.Join(", ", s).Dump();
+
+    var map = new ConcurrentDictionary<string, int>();
+    map.TryAdd("One", 1);
+    map.TryAdd("Two", 2);
+    map.TryAdd("Three", 3);
+    map.TryAdd("Four", 4);
+
+    map.Dump();
 }
 
 void ShowEverything()

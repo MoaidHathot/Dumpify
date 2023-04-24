@@ -2,6 +2,8 @@
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections;
+using System.Collections.Concurrent;
+using System.Diagnostics.SymbolStore;
 
 namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 
@@ -70,5 +72,11 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
     }
 
     public bool ShouldHandle(IDescriptor descriptor, object obj)
-        => descriptor.Type.IsGenericType && descriptor.Type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
+    {
+        var isGeneric = descriptor.Type.IsGenericType;
+        var typeDefinition = descriptor.Type.GetGenericTypeDefinition();
+        var isDictionary = typeDefinition == typeof(Dictionary<,>) || typeDefinition == typeof(ConcurrentDictionary<,>);
+
+        return isGeneric && isDictionary;
+    }
 }
