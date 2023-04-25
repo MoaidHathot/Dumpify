@@ -18,7 +18,7 @@ internal class SystemTypeRenderer : ICustomTypeRenderer<IRenderable>
 
     public Type DescriptorType { get; } = typeof(CustomDescriptor);
 
-    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context)
+    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context, object? handleContext)
     {
         var metadataColor = context.Config.ColorConfig.MetadataInfoColor?.HexString ?? "default";
         var typeColor = context.Config.ColorConfig.TypeNameColor?.HexString ?? "default";
@@ -27,6 +27,6 @@ internal class SystemTypeRenderer : ICustomTypeRenderer<IRenderable>
         return new Markup(c);
     }
 
-    public bool ShouldHandle(IDescriptor descriptor, object obj)
-        => obj is Type || descriptor?.Type.FullName == "System.RuntimeType";
+    public (bool, object?) ShouldHandle(IDescriptor descriptor, object obj)
+        => (obj is Type || descriptor?.Type.FullName == "System.RuntimeType", null);
 }

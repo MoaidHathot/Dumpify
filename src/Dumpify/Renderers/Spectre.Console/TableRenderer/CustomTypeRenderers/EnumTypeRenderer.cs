@@ -19,7 +19,7 @@ internal class EnumTypeRenderer : ICustomTypeRenderer<IRenderable>
         _handler = handler;
     }
 
-    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context)
+    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context, object? handleContext)
     {
         var color = context.Config.ColorConfig.PropertyValueColor?.HexString ?? "default";
 
@@ -27,6 +27,6 @@ internal class EnumTypeRenderer : ICustomTypeRenderer<IRenderable>
         return new Markup($"[{color}]{name}.{obj}[/]");
     }
 
-    public bool ShouldHandle(IDescriptor descriptor, object obj)
-        => descriptor.Type.IsEnum;
+    public (bool, object?) ShouldHandle(IDescriptor descriptor, object obj)
+        => (descriptor.Type.IsEnum, null);
 }

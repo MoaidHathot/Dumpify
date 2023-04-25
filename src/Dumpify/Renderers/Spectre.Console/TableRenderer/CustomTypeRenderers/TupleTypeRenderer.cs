@@ -16,7 +16,7 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
     public TupleTypeRenderer(IRendererHandler<IRenderable> handler)
         => _handler = handler;
 
-    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context)
+    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context, object? handleContext)
     {
         var table = new Table();
 
@@ -63,6 +63,6 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
         return table;
     }
 
-    public bool ShouldHandle(IDescriptor descriptor, object obj) 
-        => obj is ITuple;
+    public (bool, object?) ShouldHandle(IDescriptor descriptor, object obj) 
+        => (obj is ITuple, null);
 }

@@ -1,9 +1,9 @@
 ﻿using Dumpify.Descriptors;
+using Dumpify.Extensions;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections;
-using System.Collections.Concurrent;
-using System.Diagnostics.SymbolStore;
+using System.Reflection;
 
 namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 
@@ -18,8 +18,10 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
         _handler = handler;
     }
 
-    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context)
+    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context, object? handleContext)
     {
+        handleContext.MustNotBeNull();
+
         var table = new Table();
 
         var colorConfig = context.Config.ColorConfig;
@@ -32,20 +34,17 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
             table.HideHeaders();
         }
 
-        var dictionary = (IDictionary)obj;
-
         Type? valueType = null;
 
         var memberProvider = context.Config.MemberProvider;
 
-        foreach (var keyValue in dictionary.Keys)
+        foreach(var pair in ((IEnumerable<(object? key, object? value)>)handleContext!))
         {
-            var keyType = keyValue.GetType();
+            var keyType = pair.key?.GetType();
+            var keyDescriptor = keyType is null ? null : DumpConfig.Default.Generator.Generate(keyType, null, context.Config.MemberProvider);
+            var keyRenderable = _handler.RenderDescriptor(pair.key, keyDescriptor, context);
 
-            var keyDescriptor = DumpConfig.Default.Generator.Generate(keyType, null, context.Config.MemberProvider);
-            var keyRenderable = _handler.RenderDescriptor(keyValue, keyDescriptor, context);
-
-            var value = dictionary[keyValue];
+            var value = pair.value;
 
             if(value is not null && valueType is null)
             {
@@ -71,12 +70,90 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
         return table.Collapse();
     }
 
-    public bool ShouldHandle(IDescriptor descriptor, object obj)
+    private IEnumerable<(object? key, object? value)> GetPairs(IDescriptor descriptor, object obj)
     {
-        var isGeneric = descriptor.Type.IsGenericType;
-        var typeDefinition = descriptor.Type.GetGenericTypeDefinition();
-        var isDictionary = typeDefinition == typeof(Dictionary<,>) || typeDefinition == typeof(ConcurrentDictionary<,>);
+        if (obj is IDictionary nonGenericDictionary)
+        {
+            foreach (var key in nonGenericDictionary.Keys)
+            {
+                yield return (key, nonGenericDictionary[key]);
+            }
 
-        return isGeneric && isDictionary;
+            yield break;
+        }
+
+        foreach (var i in descriptor.Type.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+        {
+            var genericArgument = i.GetGenericArguments()[0];
+
+            if (genericArgument.IsGenericType)
+            {
+                if (genericArgument.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
+                {
+                    var method = i.GetMethod("GetEnumerator", BindingFlags.Instance | BindingFlags.Public)!;
+                    var items = (IEnumerable)method.Invoke(obj, null)!;
+
+                    foreach(var item in items)
+                    {
+                        var itemType = item.GetType();
+                        
+                        var keyProperty = itemType.GetProperty("Key", BindingFlags.Instance | BindingFlags.Public)!;
+                        var key = keyProperty.GetValue(item);
+
+                        var valueProperty = itemType.GetProperty("Value", BindingFlags.Instance | BindingFlags.Public)!;
+                        var value = valueProperty.GetValue(item);
+
+                        yield return (key, value);
+                    }
+                }
+            }
+        }
+    }
+
+    public (bool, object?) ShouldHandle(IDescriptor descriptor, object obj)
+    {
+        if (obj is IDictionary map)
+        {
+            var list = new List<(object? key, object? value)>(map.Count);
+            foreach(var key in map.Keys)
+            {
+                list.Add((key, map[key]));
+            }
+
+            return (true, list);
+        }
+
+        foreach (var i in descriptor.Type.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+        {
+            var genericArgument = i.GetGenericArguments()[0];
+
+            if (genericArgument.IsGenericType)
+            {
+                if (genericArgument.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
+                {
+                    var method = i.GetMethod("GetEnumerator", BindingFlags.Instance | BindingFlags.Public)!;
+                    var items = (IEnumerable)method.Invoke(obj, null)!;
+
+                    var list = new List<(object? key, object? value)>();
+
+                    foreach(var item in items)
+                    {
+                        var itemType = item.GetType();
+                        
+                        var keyProperty = itemType.GetProperty("Key", BindingFlags.Instance | BindingFlags.Public)!;
+                        var key = keyProperty.GetValue(item);
+
+                        var valueProperty = itemType.GetProperty("Value", BindingFlags.Instance | BindingFlags.Public)!;
+                        var value = valueProperty.GetValue(item);
+
+                        list.Add((key, value));
+                    }
+
+                    return (true, list);
+                }
+            }
+        }
+
+        return (false, null);
     }
 }

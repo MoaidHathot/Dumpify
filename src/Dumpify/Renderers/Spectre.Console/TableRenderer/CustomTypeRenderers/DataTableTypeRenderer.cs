@@ -15,7 +15,7 @@ internal class DataTableTypeRenderer : ICustomTypeRenderer<IRenderable>
         _handler = handler;
     }
 
-    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context)
+    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context, object? handleContext)
     {
         var dataTable = (DataTable)obj;
 
@@ -60,6 +60,6 @@ internal class DataTableTypeRenderer : ICustomTypeRenderer<IRenderable>
         return rendered;
     }
 
-    public bool ShouldHandle(IDescriptor descriptor, object obj)
-        => descriptor.Type == typeof(DataTable);
+    public (bool, object?) ShouldHandle(IDescriptor descriptor, object obj)
+        => (descriptor.Type == typeof(DataTable), null);
 }

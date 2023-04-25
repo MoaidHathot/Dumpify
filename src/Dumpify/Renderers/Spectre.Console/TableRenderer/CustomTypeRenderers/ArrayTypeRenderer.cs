@@ -16,10 +16,10 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 
     public Type DescriptorType { get; } = typeof(MultiValueDescriptor);
 
-    public bool ShouldHandle(IDescriptor descriptor, object obj)
-        => descriptor.Type.IsArray && ((Array)obj).Rank < 3;
+    public (bool shouldHandle, object? handleContext)  ShouldHandle(IDescriptor descriptor, object obj)
+        => (descriptor.Type.IsArray && ((Array)obj).Rank < 3, null);
 
-    public IRenderable Render(IDescriptor descriptor, object @object, RenderContext context)
+    public IRenderable Render(IDescriptor descriptor, object @object, RenderContext context, object? handleContext)
     {
         var mvd = (MultiValueDescriptor)descriptor;
         var obj = (Array)@object;

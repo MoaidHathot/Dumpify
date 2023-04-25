@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
@@ -29,6 +30,7 @@ internal static class ValidationExtensions
         return value;
     }
 
+    [return: NotNull]
     public static T MustNotBeNull<T>(this T? value, string reason = "")
         => value ?? throw new ArgumentNullException(nameof(value), $"Value should not be null. {(string.IsNullOrWhiteSpace(reason) ? "" : $"Reason: {reason}")}");
 

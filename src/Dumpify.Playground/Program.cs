@@ -1,11 +1,14 @@
 ﻿using Dumpify;
 using Dumpify.Config;
 using Dumpify.Outputs;
+using Spectre.Console;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Specialized;
 using System.Data;
 using System.Drawing;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -17,7 +20,7 @@ using System.Text.Json.Serialization;
 
 
 TestSingle();
-// ShowEverything();
+ShowEverything();
 
 #pragma warning disable CS8321
 void TestSingle()
@@ -27,7 +30,6 @@ void TestSingle()
     // DateTimeOffset.Now.Dump();
     // DateTimeOffset.UtcNow.Dump();
     // TimeSpan.FromSeconds(10).Dump();
-    // (1, "2").Dump();
 
     // var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
     // var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
@@ -39,13 +41,43 @@ void TestSingle()
     // var s = Enumerable.Range(0, 10).Select(i => $"#{i}").Dump();
     // string.Join(", ", s).Dump();
 
-    var map = new ConcurrentDictionary<string, int>();
-    map.TryAdd("One", 1);
-    map.TryAdd("Two", 2);
-    map.TryAdd("Three", 3);
-    map.TryAdd("Four", 4);
+    //Test().Dump();
 
+    //IPAddress.IPv6Any.Dump();
+
+    var map = new Dictionary<string, string>();
+    map.Add("One", "1");
+    map.Add("Two", "2");
+    map.Add("Three", "3");
+    map.Add("Four", "4");
     map.Dump();
+
+
+
+    var map2 = new ConcurrentDictionary<string, string>();
+    map2.TryAdd("One", "1");
+    map2.TryAdd("Two", "2");
+    map2.TryAdd("Three", "3");
+    map2.TryAdd("Four", "4");
+    map2.Dump();
+
+    var test = new Test();
+    test.Add(new KeyValuePair<string, int>("One", 1));
+    test.Add(new KeyValuePair<string, int>("Two", 2));
+    test.Add(new KeyValuePair<string, int>("Three", 3));
+    test.Add(new KeyValuePair<string, int>("Four", 4));
+    test.Add(new KeyValuePair<string, int>("Five", 5));
+
+    test.Dump();
+
+    async IAsyncEnumerable<int> Test()
+    {
+        await Task.Yield();
+        yield return 1;
+        yield return 2;
+        yield return 3;
+        yield return 4;
+    }
 }
 
 void ShowEverything()
@@ -249,4 +281,34 @@ public class AdditionValue
 public class Device
 {
     public bool isPowered { get; set; }
+}
+
+
+class Test : ICollection<KeyValuePair<string, int>>
+{
+    private List<(string key, int value)> _list = new ();
+
+    public IEnumerator<KeyValuePair<string, int>> GetEnumerator()
+        => _list.Select(l => new KeyValuePair<string, int>(l.key, l.value)).GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator()
+        => GetEnumerator();
+
+    public void Add(KeyValuePair<string, int> item)
+        => _list.Add((item.Key, item.Value));
+
+    public void Clear()
+        => _list.Clear();
+
+    public bool Contains(KeyValuePair<string, int> item)
+        => _list.Contains((item.Key, item.Value));
+
+    public void CopyTo(KeyValuePair<string, int>[] array, int arrayIndex)
+        => throw new NotImplementedException();
+
+    public bool Remove(KeyValuePair<string, int> item)
+        => throw new NotImplementedException();
+
+    public int Count => _list.Count;
+    public bool IsReadOnly { get; } = false;
 }

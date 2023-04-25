@@ -21,7 +21,7 @@ internal class DataSetTypeRenderer : ICustomTypeRenderer<IRenderable>
         _handler = handler;
     }
 
-    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context)
+    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context, object? handleContext)
     {
         var dataSet = ((DataSet)obj);
 
@@ -47,6 +47,6 @@ internal class DataSetTypeRenderer : ICustomTypeRenderer<IRenderable>
         return table.Collapse();
     }
 
-    public bool ShouldHandle(IDescriptor descriptor, object obj)
-        => descriptor.Type == typeof(DataSet);
+    public (bool, object?) ShouldHandle(IDescriptor descriptor, object obj)
+        => (descriptor.Type == typeof(DataSet), null);
 }
