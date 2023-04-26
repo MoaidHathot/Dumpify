@@ -19,7 +19,7 @@ using System.Text.Json.Serialization;
 //DumpConfig.Default.Output = Outputs.Debug;
 
 
-TestSingle();
+//TestSingle();
 ShowEverything();
 
 #pragma warning disable CS8321
@@ -50,7 +50,7 @@ void TestSingle()
     map.Add("Two", "2");
     map.Add("Three", "3");
     map.Add("Four", "4");
-    map.Dump();
+    map.Dump(map.GetType().Name);
 
 
 
@@ -59,7 +59,7 @@ void TestSingle()
     map2.TryAdd("Two", "2");
     map2.TryAdd("Three", "3");
     map2.TryAdd("Four", "4");
-    map2.Dump();
+    map2.Dump(map2.GetType().Name);
 
     var test = new Test();
     test.Add(new KeyValuePair<string, int>("One", 1));
@@ -68,7 +68,7 @@ void TestSingle()
     test.Add(new KeyValuePair<string, int>("Four", 4));
     test.Add(new KeyValuePair<string, int>("Five", 5));
 
-    test.Dump();
+    test.Dump(test.GetType().Name);
 
     async IAsyncEnumerable<int> Test()
     {
@@ -87,7 +87,7 @@ void ShowEverything()
     moaid.Spouse = haneeni;
     haneeni.Spouse = moaid;
 
-    moaid.Dump();
+    moaid.Dump("Test Label");
 
 
     //DumpConfig.Default.Output = Outputs.Debug; //Outputs.Trace, Outputs.Console
