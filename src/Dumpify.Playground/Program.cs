@@ -19,8 +19,8 @@ using System.Text.Json.Serialization;
 //DumpConfig.Default.Output = Outputs.Debug;
 
 
-//TestSingle();
-ShowEverything();
+TestSingle();
+//ShowEverything();
 
 #pragma warning disable CS8321
 void TestSingle()
@@ -50,34 +50,49 @@ void TestSingle()
     map.Add("Two", "2");
     map.Add("Three", "3");
     map.Add("Four", "4");
-    map.Dump(map.GetType().Name);
-
-
-
-    var map2 = new ConcurrentDictionary<string, string>();
-    map2.TryAdd("One", "1");
-    map2.TryAdd("Two", "2");
-    map2.TryAdd("Three", "3");
-    map2.TryAdd("Four", "4");
-    map2.Dump(map2.GetType().Name);
-
+    map.Add("Five", "5");
+    //
+    // map.Dump(map.GetType().Name);
+    //
+    //
+    // map.Add("Five", "5");
+    // map.Add("Six", "6");
+    //
+    // map.Add("Seven", "7");
+    // // test.Sum(a => a.);
+    //
+    // var map2 = new ConcurrentDictionary<string, string>();
+    // map2.TryAdd("One", "1");
+    // map2.TryAdd("Two", "2");
+    // map2.TryAdd("Three", "3");
+    // map2.TryAdd("Four", "4");
+    // map2.Dump(map2.GetType().Name);
+    //
+    //
+    //
     var test = new Test();
     test.Add(new KeyValuePair<string, int>("One", 1));
     test.Add(new KeyValuePair<string, int>("Two", 2));
     test.Add(new KeyValuePair<string, int>("Three", 3));
     test.Add(new KeyValuePair<string, int>("Four", 4));
     test.Add(new KeyValuePair<string, int>("Five", 5));
+    //
+    //
+    // test.Dump(test.GetType().Name);
+    //
+    // async IAsyncEnumerable<int> Test()
+    // {
+    //     await Task.Yield();
+    //     yield return 1;
+    //     yield return 2;
+    //     yield return 3;
+    //     yield return 4;
+    // }
 
-    test.Dump(test.GetType().Name);
+    object moaid = "Moaid";
 
-    async IAsyncEnumerable<int> Test()
-    {
-        await Task.Yield();
-        yield return 1;
-        yield return 2;
-        yield return 3;
-        yield return 4;
-    }
+    new[] { new { Foo = moaid }, new { Foo = moaid }, new { Foo = moaid } }.Dump(label: "bla");
+
 }
 
 void ShowEverything()
@@ -142,20 +157,20 @@ void ShowEverything()
 
     new int[][] { new int[] { 1, 2, 3, 4 }, new int[] { 1, 2, 3, 4, 5 } }.Dump();
 
-//moaid.Dump(label: "Test");
-//moaid.Dump();
+    //moaid.Dump(label: "Test");
+    //moaid.Dump();
 
-//new { Name = "MyBook", Author = new { FirstName = "Moaid", LastName = "Hathot", Address = new { Email = "moaid@test.com" } } }.Dump(maxDepth: 7, showTypeNames: true, showHeaders: true);
-//moaid.Dump();
+    //new { Name = "MyBook", Author = new { FirstName = "Moaid", LastName = "Hathot", Address = new { Email = "moaid@test.com" } } }.Dump(maxDepth: 7, showTypeNames: true, showHeaders: true);
+    //moaid.Dump();
 
-//DumpConfig.Default.ShowTypeNames = false;
-//DumpConfig.Default.ShowHeaders = false;
+    //DumpConfig.Default.ShowTypeNames = false;
+    //DumpConfig.Default.ShowHeaders = false;
 
-//DumpConfig.Default.Generator.Generate(new { Name = "MyBook", Author = new { FirstName = "Moaid", LastName = "Hathot", Address = new { Email = "moaid@test.com" } } }.GetType(), null).Dump();
-//moaid.Dump();
+    //DumpConfig.Default.Generator.Generate(new { Name = "MyBook", Author = new { FirstName = "Moaid", LastName = "Hathot", Address = new { Email = "moaid@test.com" } } }.GetType(), null).Dump();
+    //moaid.Dump();
 
     new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
-//new HashSet<string> { "Moaid", "Hathot", "shibli" }.Dump();
+    //new HashSet<string> { "Moaid", "Hathot", "shibli" }.Dump();
 
 
     new Dictionary<Person, string> { [new Person { FirstName = "Moaid", LastName = "Hathot" }] = "Moaid Hathot", [new Person { FirstName = "Haneeni", LastName = "Shibli" }] = "Haneeni Shibli", [new Person { FirstName = "Waseem", LastName = "Hathot" }] = "Waseem Hathot", }.Dump();
@@ -166,30 +181,33 @@ void ShowEverything()
 
     new Dictionary<string, string>
     {
-        ["Moaid"] = "Hathot", ["Haneeni"] = "Shibli", ["Eren"] = "Yeager", ["Mikasa"] = "Ackerman",
+        ["Moaid"] = "Hathot",
+        ["Haneeni"] = "Shibli",
+        ["Eren"] = "Yeager",
+        ["Mikasa"] = "Ackerman",
     }.Dump();
 
-//ItemOrder.First.Dump();
-//var d = DumpConfig.Default.Generator.Generate(ItemOrder.First.GetType(), null);
-//d.Dump();
+    //ItemOrder.First.Dump();
+    //var d = DumpConfig.Default.Generator.Generate(ItemOrder.First.GetType(), null);
+    //d.Dump();
 
 
-//var ao = new
-//{
-//    DateTime = DateTime.Now,
-//    DateTimeUtc = DateTime.UtcNow,
-//    DateTimeOffset = DateTimeOffset.Now,
-//    DateOnly = DateOnly.FromDateTime(DateTime.Now),
-//    TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
-//    TimeSpan = TimeSpan.FromMicroseconds(30324),
-//}.Dump();
+    //var ao = new
+    //{
+    //    DateTime = DateTime.Now,
+    //    DateTimeUtc = DateTime.UtcNow,
+    //    DateTimeOffset = DateTimeOffset.Now,
+    //    DateOnly = DateOnly.FromDateTime(DateTime.Now),
+    //    TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
+    //    TimeSpan = TimeSpan.FromMicroseconds(30324),
+    //}.Dump();
 
-//var d = DumpConfig.Default.Generator.Generate(ao.GetType(), null);
-//d.Dump();
+    //var d = DumpConfig.Default.Generator.Generate(ao.GetType(), null);
+    //d.Dump();
 
-//DumpConfig.Default.Generator.Generate(typeof(Family), null).Dump();
+    //DumpConfig.Default.Generator.Generate(typeof(Family), null).Dump();
 
-//var arr = new[,,] { { { 1, 2, 4 } }, { { 3, 4, 6 } }, { {1, 2, 88 } } }.Dump();
+    //var arr = new[,,] { { { 1, 2, 4 } }, { { 3, 4, 6 } }, { {1, 2, 88 } } }.Dump();
 
     var arr = new[] { 1, 2, 3, 4 }.Dump();
     var arr2d = new int[,] { { 1, 2 }, { 3, 4 } }.Dump();
@@ -208,7 +226,7 @@ void ShowEverything()
 
     new Exception("This is an exception", new ArgumentNullException("blaParam", "This is inner exception")).Dump();
 
-    new AdditionValue(1, 10).Dump(members: new () { IncludeFields = true, IncludeNonPublicMembers = true, IncludeProperties = false });
+    new AdditionValue(1, 10).Dump(members: new() { IncludeFields = true, IncludeNonPublicMembers = true, IncludeProperties = false });
     new AdditionValue(1, 10).Dump(members: new() { IncludeFields = true, IncludeNonPublicMembers = true });
 
     //arr.Dump();
@@ -286,7 +304,7 @@ public class Device
 
 class Test : ICollection<KeyValuePair<string, int>>
 {
-    private List<(string key, int value)> _list = new ();
+    private List<(string key, int value)> _list = new();
 
     public IEnumerator<KeyValuePair<string, int>> GetEnumerator()
         => _list.Select(l => new KeyValuePair<string, int>(l.key, l.value)).GetEnumerator();

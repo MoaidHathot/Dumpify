@@ -40,7 +40,7 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
 
         _descriptorsCache.AddOrUpdate(cacheKey, generatedDescriptor, (key, descriptor) =>
         {
-            if(descriptor is CircularDependencyDescriptor cdd)
+            if (descriptor is CircularDependencyDescriptor cdd)
             {
                 cdd.Descriptor = generatedDescriptor;
             }
@@ -55,10 +55,10 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
         => (type.TypeHandle, valueProvider?.Info.DeclaringType?.TypeHandle, valueProvider?.Name, memberProvider);
 
     private IDescriptor? GenerateDescriptor(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)
-    { 
+    {
         var descriptor = GetSpeciallyHandledDescriptor(type, valueProvider, memberProvider);
 
-        if(descriptor is not null)
+        if (descriptor is not null)
         {
             return descriptor;
         }
@@ -73,11 +73,11 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
 
         var members = memberProvider.GetMembers(type);
 
-        foreach(var member in members)
+        foreach (var member in members)
         {
             var descriptor = Generate(member.MemberType, member, memberProvider);
 
-            if(descriptor is not null)
+            if (descriptor is not null)
             {
                 list.Add(descriptor);
             }
@@ -88,11 +88,11 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
 
     private IDescriptor? GetSpeciallyHandledDescriptor(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)
     {
-        foreach(var generator in _generatorsChain)
+        foreach (var generator in _generatorsChain)
         {
             var descriptor = generator.Generate(type, valueProvider, memberProvider);
 
-            if(descriptor is not null)
+            if (descriptor is not null)
             {
                 return descriptor;
             }

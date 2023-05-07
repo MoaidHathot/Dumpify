@@ -69,10 +69,10 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
             table.Title = new TableTitle(Markup.Escape(title), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
         }
 
-        if (context.Config.Label is { } label && context.CurrentDepth == 0)
-        {
-            table.Caption = new TableTitle(Markup.Escape(label));
-        }
+        //if (context.Config.Label is { } label && context.CurrentDepth == 0)
+        //{
+        //    table.Caption = new TableTitle(Markup.Escape(label));
+        //}
 
         return table.Collapse();
     }

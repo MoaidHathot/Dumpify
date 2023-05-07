@@ -49,6 +49,8 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
             return RenderExceededDepth(@object, descriptor, context);
         }
 
+        descriptor = GetObjectInstanceDescriptor(@object, descriptor, context);
+
         return descriptor switch
         {
             null => RenderNullDescriptor(@object, context),
@@ -60,6 +62,24 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
             CustomDescriptor customDescriptor => TryRenderCustomTypeDescriptor(@object, customDescriptor, context, RenderCustomDescriptor),
             _ => RenderUnsupportedDescriptor(@object, descriptor, context),
         };
+    }
+
+    private IDescriptor? GetObjectInstanceDescriptor(object @object, IDescriptor? descriptor, RenderContext context)
+    {
+        var type = descriptor?.Type switch
+        {
+            null => @object.GetType(),
+            var elementType when @object.GetType() == elementType => elementType,
+            _ => @object.GetType()
+        };
+
+        if (type != descriptor?.Type)
+        {
+            var actualDescriptor = DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider);
+            return actualDescriptor;
+        }
+
+        return descriptor;
     }
 
     private TRenderable TryRenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext context)
@@ -98,7 +118,7 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
         }
 
         var memberProvider = context.Config.MemberProvider;
-        
+
         var customValue = valueFactory(obj, customDescriptor.Type, customDescriptor.ValueProvider, memberProvider);
 
         if (customValue is null)

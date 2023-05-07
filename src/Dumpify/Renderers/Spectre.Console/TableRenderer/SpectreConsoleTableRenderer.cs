@@ -79,11 +79,10 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
             table.AddRow(new Markup(Markup.Escape(property.Name), new Style(foreground: colorConfig.PropertyNameColor.ToSpectreColor())), renderedValue);
         }
 
-
-        if (context.Config.Label is { } label && context.CurrentDepth == 0)
-        {
-            table.Caption = new TableTitle(Markup.Escape(label));
-        }
+        //if (context.Config.Label is { } label && context.CurrentDepth == 0)
+        //{
+        //    table.Caption = new TableTitle(Markup.Escape(label));
+        //}
 
         table.Collapse();
         return table;
