@@ -15,7 +15,7 @@ internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
     {
     }
 
-    protected override IRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext context)
+    protected override IRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<SpectreRendererState> context)
     {
         var builder = new StringBuilder();
 
@@ -33,10 +33,10 @@ internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
         return RenderSingleValue(builder.ToString(), context, null);
     }
 
-    protected override IRenderable RenderSingleValue(object value, RenderContext context, Color? color)
+    protected override IRenderable RenderSingleValue(object value, RenderContext<SpectreRendererState> context, Color? color)
         => new TextRenderableAdapter(value.ToString() ?? "", new Style(foreground: color));
 
-    protected override IRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext context)
+    protected override IRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext<SpectreRendererState> context)
     {
         var items = (IEnumerable)obj;
 
@@ -58,7 +58,7 @@ internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
                 var itemType = descriptor.ElementsType ?? item.GetType();
                 var itemDescriptor = DumpConfig.Default.Generator.Generate(itemType, null, memberProvider);
 
-                return RenderDescriptor(item, itemDescriptor, context with { CurrentDepth = context.CurrentDepth + 1});
+                return RenderDescriptor(item, itemDescriptor, context with { CurrentDepth = context.CurrentDepth + 1 });
             }
         }
 
@@ -81,4 +81,7 @@ internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
 
         return base.CreateRenderedObject(markup);
     }
+
+    // protected override IRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<SpectreRendererState> context) => throw new NotImplementedException();
+    // protected override IRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext<SpectreRendererState> context) => throw new NotImplementedException();
 }

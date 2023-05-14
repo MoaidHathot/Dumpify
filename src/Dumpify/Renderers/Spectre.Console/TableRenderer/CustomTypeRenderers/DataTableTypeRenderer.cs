@@ -7,16 +7,18 @@ namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 
 internal class DataTableTypeRenderer : ICustomTypeRenderer<IRenderable>
 {
-    private readonly IRendererHandler<IRenderable> _handler;
+    private readonly IRendererHandler<IRenderable, SpectreRendererState> _handler;
     public Type DescriptorType => typeof(CustomDescriptor);
 
-    public DataTableTypeRenderer(IRendererHandler<IRenderable> handler)
+    public DataTableTypeRenderer(IRendererHandler<IRenderable, SpectreRendererState> handler)
     {
         _handler = handler;
     }
 
-    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context, object? handleContext)
+    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext baseContext, object? handleContext)
     {
+        var context = (RenderContext<SpectreRendererState>)baseContext;
+
         var dataTable = (DataTable)obj;
 
         var table = new Table();
@@ -28,12 +30,12 @@ internal class DataTableTypeRenderer : ICustomTypeRenderer<IRenderable>
             (false, _) => null,
         };
 
-        if(title is not null)
+        if (title is not null)
         {
             table.Title = new TableTitle(Markup.Escape(title), new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()));
         }
 
-        foreach(DataColumn column in dataTable.Columns)
+        foreach (DataColumn column in dataTable.Columns)
         {
             table.AddColumn(new TableColumn(new Markup(Markup.Escape(column.ColumnName), new Style(foreground: context.Config.ColorConfig.ColumnNameColor.ToSpectreColor()))));
         }
@@ -47,9 +49,9 @@ internal class DataTableTypeRenderer : ICustomTypeRenderer<IRenderable>
         return table.Collapse();
     }
 
-    private IRenderable RenderTableCell(object? obj, RenderContext context)
+    private IRenderable RenderTableCell(object? obj, RenderContext<SpectreRendererState> context)
     {
-        if(obj is null)
+        if (obj is null)
         {
             return _handler.RenderNullValue(null, context);
         }

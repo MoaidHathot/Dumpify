@@ -7,20 +7,22 @@ namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 
 internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 {
-    private readonly IRendererHandler<IRenderable> _handler;
+    private readonly IRendererHandler<IRenderable, SpectreRendererState> _handler;
 
-    public ArrayTypeRenderer(IRendererHandler<IRenderable> handler)
+    public ArrayTypeRenderer(IRendererHandler<IRenderable, SpectreRendererState> handler)
     {
         _handler = handler;
     }
 
     public Type DescriptorType { get; } = typeof(MultiValueDescriptor);
 
-    public (bool shouldHandle, object? handleContext)  ShouldHandle(IDescriptor descriptor, object obj)
+    public (bool shouldHandle, object? handleContext) ShouldHandle(IDescriptor descriptor, object obj)
         => (descriptor.Type.IsArray && ((Array)obj).Rank < 3, null);
 
-    public IRenderable Render(IDescriptor descriptor, object @object, RenderContext context, object? handleContext)
+    public IRenderable Render(IDescriptor descriptor, object @object, RenderContext baseContext, object? handleContext)
     {
+        var context = (RenderContext<SpectreRendererState>)baseContext;
+
         var mvd = (MultiValueDescriptor)descriptor;
         var obj = (Array)@object;
 
@@ -33,7 +35,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
         };
     }
 
-    private IRenderable RenderSingleDimensionArray(Array obj, MultiValueDescriptor mvd, RenderContext context)
+    private IRenderable RenderSingleDimensionArray(Array obj, MultiValueDescriptor mvd, RenderContext<SpectreRendererState> context)
     {
         var table = new Table();
 
@@ -47,12 +49,12 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
         var elementName = mvd.ElementsType is null ? "" : context.Config.TypeNameProvider.GetTypeName(mvd.ElementsType);
         table.AddColumn(new TableColumn(new Markup(Markup.Escape($"{elementName}[{obj.GetLength(0)}]"), new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()))));
 
-        if(context.Config.TableConfig.ShowTableHeaders is not true || context.Config.TypeNamingConfig.ShowTypeNames is not true)
+        if (context.Config.TableConfig.ShowTableHeaders is not true || context.Config.TypeNamingConfig.ShowTypeNames is not true)
         {
             table.HideHeaders();
         }
 
-        for(var index = 0; index < obj.Length; ++index)
+        for (var index = 0; index < obj.Length; ++index)
         {
             var item = obj.GetValue(index);
 
@@ -76,8 +78,10 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
         return table;
     }
 
-    private IRenderable RenderTwoDimensionalArray(Array obj, MultiValueDescriptor descriptor, RenderContext context)
+    private IRenderable RenderTwoDimensionalArray(Array obj, MultiValueDescriptor descriptor, RenderContext baseContext)
     {
+        var context = (RenderContext<SpectreRendererState>)baseContext;
+
         if (obj.Rank != 2)
         {
             return RenderHighRankArrays(obj, descriptor, context);
@@ -90,7 +94,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         var colorConfig = context.Config.ColorConfig;
 
-        if(context.Config.TypeNamingConfig.ShowTypeNames is true)
+        if (context.Config.TypeNamingConfig.ShowTypeNames is true)
         {
             var (typeName, rank) = context.Config.TypeNameProvider.GetJaggedArrayNameWithRank(descriptor.Type);
             table.Title = new TableTitle(Markup.Escape($"{typeName}[{rows},{collumns}]"), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
@@ -124,6 +128,6 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
         return table.Collapse();
     }
 
-    private IRenderable RenderHighRankArrays(Array arr, MultiValueDescriptor descriptor, RenderContext context) 
-        => _handler.RenderDescriptor(arr, descriptor, context);
+    private IRenderable RenderHighRankArrays(Array arr, MultiValueDescriptor descriptor, RenderContext context)
+        => _handler.RenderDescriptor(arr, descriptor, (RenderContext<SpectreRendererState>)context);
 }

@@ -9,15 +9,17 @@ namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 
 internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
 {
-    private readonly IRendererHandler<IRenderable> _handler;
+    private readonly IRendererHandler<IRenderable, SpectreRendererState> _handler;
 
     public Type DescriptorType { get; } = typeof(ObjectDescriptor);
 
-    public TupleTypeRenderer(IRendererHandler<IRenderable> handler)
+    public TupleTypeRenderer(IRendererHandler<IRenderable, SpectreRendererState> handler)
         => _handler = handler;
 
-    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context, object? handleContext)
+    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext baseContext, object? handleContext)
     {
+        var context = (RenderContext<SpectreRendererState>)baseContext;
+
         var table = new Table();
 
         var colorConfig = context.Config.ColorConfig;
@@ -31,7 +33,7 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
         var genericArguments = descriptor.Type.GetGenericArguments();
 
         var memberProvider = context.Config.MemberProvider;
-        for(var index = 0; index < tuple.Length; ++index)
+        for (var index = 0; index < tuple.Length; ++index)
         {
             var value = tuple[index];
             var type = genericArguments[index];
@@ -49,12 +51,12 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
             table.AddRow(keyRenderable, renderedValue);
         }
 
-        if(context.Config.TableConfig.ShowTableHeaders is false)
+        if (context.Config.TableConfig.ShowTableHeaders is false)
         {
             table.HideHeaders();
         }
 
-        if(context.Config.TypeNamingConfig.ShowTypeNames is true)
+        if (context.Config.TypeNamingConfig.ShowTypeNames is true)
         {
             var typeName = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);
             table.Title = new TableTitle(Markup.Escape(typeName), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
@@ -63,6 +65,6 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
         return table;
     }
 
-    public (bool, object?) ShouldHandle(IDescriptor descriptor, object obj) 
+    public (bool, object?) ShouldHandle(IDescriptor descriptor, object obj)
         => (obj is ITuple, null);
 }

@@ -51,6 +51,7 @@ void TestSingle()
     map.Add("Three", "3");
     map.Add("Four", "4");
     map.Add("Five", "5");
+    map.Dump();
     //
     // map.Dump(map.GetType().Name);
     //
@@ -76,6 +77,7 @@ void TestSingle()
     test.Add(new KeyValuePair<string, int>("Three", 3));
     test.Add(new KeyValuePair<string, int>("Four", 4));
     test.Add(new KeyValuePair<string, int>("Five", 5));
+    test.Dump();
     //
     //
     // test.Dump(test.GetType().Name);
@@ -101,8 +103,6 @@ void ShowEverything()
     var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
     moaid.Spouse = haneeni;
     haneeni.Spouse = moaid;
-
-    moaid.Dump("Test Label");
 
 
     //DumpConfig.Default.Output = Outputs.Debug; //Outputs.Trace, Outputs.Console

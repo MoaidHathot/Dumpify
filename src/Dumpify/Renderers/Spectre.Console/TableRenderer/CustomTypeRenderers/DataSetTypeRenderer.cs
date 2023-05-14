@@ -1,28 +1,24 @@
 ﻿using Dumpify.Descriptors;
 using Spectre.Console;
 using Spectre.Console.Rendering;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 
 internal class DataSetTypeRenderer : ICustomTypeRenderer<IRenderable>
 {
-    private readonly IRendererHandler<IRenderable> _handler;
+    private readonly IRendererHandler<IRenderable, SpectreRendererState> _handler;
     public Type DescriptorType => typeof(CustomDescriptor);
 
-    public DataSetTypeRenderer(IRendererHandler<IRenderable> handler)
+    public DataSetTypeRenderer(IRendererHandler<IRenderable, SpectreRendererState> handler)
     {
         _handler = handler;
     }
 
-    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context, object? handleContext)
+    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext baseContext, object? handleContext)
     {
+        var context = (RenderContext<SpectreRendererState>)baseContext;
+
         var dataSet = ((DataSet)obj);
 
         var table = new Table();

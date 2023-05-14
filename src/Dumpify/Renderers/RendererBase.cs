@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 
 namespace Dumpify.Renderers;
 
-internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<TRenderable>
+internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRendererHandler<TRenderable, TState>
 {
     private readonly ConcurrentDictionary<RuntimeTypeHandle, IList<ICustomTypeRenderer<TRenderable>>> _customTypeRenderers;
 
@@ -23,10 +23,13 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
         });
     }
 
+
+
     public IRenderedObject Render(object? obj, IDescriptor? descriptor, RendererConfig config)
     {
+        var state = CreateState(obj, descriptor, config);
         var idGenerator = new ObjectIDGenerator();
-        var context = new RenderContext(config, idGenerator, 0);
+        var context = new RenderContext<TState>(config, idGenerator, 0, state);
 
         var renderable = obj switch
         {
@@ -37,7 +40,7 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
         return CreateRenderedObject(renderable);
     }
 
-    public TRenderable RenderDescriptor(object? @object, IDescriptor? descriptor, RenderContext context)
+    public TRenderable RenderDescriptor(object? @object, IDescriptor? descriptor, RenderContext<TState> context)
     {
         if (@object is null)
         {
@@ -64,7 +67,7 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
         };
     }
 
-    private IDescriptor? GetObjectInstanceDescriptor(object @object, IDescriptor? descriptor, RenderContext context)
+    private IDescriptor? GetObjectInstanceDescriptor(object @object, IDescriptor? descriptor, RenderContext<TState> context)
     {
         var type = descriptor?.Type switch
         {
@@ -82,7 +85,7 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
         return descriptor;
     }
 
-    private TRenderable TryRenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext context)
+    private TRenderable TryRenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<TState> context)
     {
         if (ObjectAlreadyRendered(obj, context.ObjectTracker))
         {
@@ -92,7 +95,7 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
         return RenderObjectDescriptor(obj, descriptor, context);
     }
 
-    private TRenderable TryRenderCustomTypeDescriptor<TDescriptor>(object obj, TDescriptor descriptor, in RenderContext context, Func<object, TDescriptor, RenderContext, TRenderable> defaultRenderer)
+    private TRenderable TryRenderCustomTypeDescriptor<TDescriptor>(object obj, TDescriptor descriptor, in RenderContext<TState> context, Func<object, TDescriptor, RenderContext<TState>, TRenderable> defaultRenderer)
         where TDescriptor : IDescriptor
     {
         if (_customTypeRenderers.TryGetValue(descriptor.GetType().TypeHandle, out var renderList))
@@ -110,7 +113,7 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
         return defaultRenderer(obj, descriptor, context);
     }
 
-    private TRenderable RenderCustomDescriptor(object obj, CustomDescriptor customDescriptor, RenderContext context)
+    private TRenderable RenderCustomDescriptor(object obj, CustomDescriptor customDescriptor, RenderContext<TState> context)
     {
         if (!DumpConfig.Default.CustomDescriptorHandlers.TryGetValue(customDescriptor.Type.TypeHandle, out var valueFactory))
         {
@@ -138,7 +141,7 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
         return firstTime is false;
     }
 
-    protected virtual TRenderable GetValueAndRender(object source, IValueProvider valueProvider, IDescriptor? descriptor, RenderContext context)
+    protected virtual TRenderable GetValueAndRender(object source, IValueProvider valueProvider, IDescriptor? descriptor, RenderContext<TState> context)
     {
         try
         {
@@ -151,20 +154,22 @@ internal abstract class RendererBase<TRenderable> : IRenderer, IRendererHandler<
         }
     }
 
-    protected abstract TRenderable RenderFailedValueReading(Exception ex, IValueProvider valueProvider, IDescriptor? descriptor, RenderContext context);
+    protected abstract TRenderable RenderFailedValueReading(Exception ex, IValueProvider valueProvider, IDescriptor? descriptor, RenderContext<TState> context);
     protected abstract IRenderedObject CreateRenderedObject(TRenderable rendered);
 
-    public abstract TRenderable RenderNullValue(IDescriptor? descriptor, RenderContext context);
+    public abstract TRenderable RenderNullValue(IDescriptor? descriptor, RenderContext<TState> context);
 
-    protected abstract TRenderable RenderUnfamiliarCustomDescriptor(object obj, CustomDescriptor descriptor, RenderContext context);
+    protected abstract TRenderable RenderUnfamiliarCustomDescriptor(object obj, CustomDescriptor descriptor, RenderContext<TState> context);
 
-    public abstract TRenderable RenderExceededDepth(object obj, IDescriptor? descriptor, RenderContext context);
-    protected abstract TRenderable RenderCircularDependency(object obj, IDescriptor? descriptor, RenderContext context);
+    public abstract TRenderable RenderExceededDepth(object obj, IDescriptor? descriptor, RenderContext<TState> context);
+    protected abstract TRenderable RenderCircularDependency(object obj, IDescriptor? descriptor, RenderContext<TState> context);
 
-    protected abstract TRenderable RenderNullDescriptor(object obj, RenderContext context);
-    protected abstract TRenderable RenderIgnoredDescriptor(object obj, IgnoredDescriptor descriptor, RenderContext context);
-    protected abstract TRenderable RenderSingleValueDescriptor(object obj, SingleValueDescriptor descriptor, RenderContext context);
-    protected abstract TRenderable RenderUnsupportedDescriptor(object obj, IDescriptor descriptor, RenderContext context);
-    protected abstract TRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext context);
-    protected abstract TRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext context);
+    protected abstract TRenderable RenderNullDescriptor(object obj, RenderContext<TState> context);
+    protected abstract TRenderable RenderIgnoredDescriptor(object obj, IgnoredDescriptor descriptor, RenderContext<TState> context);
+    protected abstract TRenderable RenderSingleValueDescriptor(object obj, SingleValueDescriptor descriptor, RenderContext<TState> context);
+    protected abstract TRenderable RenderUnsupportedDescriptor(object obj, IDescriptor descriptor, RenderContext<TState> context);
+    protected abstract TRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<TState> context);
+    protected abstract TRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext<TState> context);
+
+    protected abstract TState CreateState(object? obj, IDescriptor? descriptor, RendererConfig config);
 }

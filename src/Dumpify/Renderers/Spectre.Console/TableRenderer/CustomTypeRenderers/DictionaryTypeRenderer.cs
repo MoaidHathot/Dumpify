@@ -9,17 +9,19 @@ namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 
 internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
 {
-    private readonly IRendererHandler<IRenderable> _handler;
+    private readonly IRendererHandler<IRenderable, SpectreRendererState> _handler;
 
     public Type DescriptorType { get; } = typeof(MultiValueDescriptor);
 
-    public DictionaryTypeRenderer(IRendererHandler<IRenderable> handler)
+    public DictionaryTypeRenderer(IRendererHandler<IRenderable, SpectreRendererState> handler)
     {
         _handler = handler;
     }
 
-    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context, object? handleContext)
+    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext baseContext, object? handleContext)
     {
+        var context = (RenderContext<SpectreRendererState>)baseContext;
+
         handleContext.MustNotBeNull();
 
         var table = new Table();
@@ -32,7 +34,7 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
         table.AddColumn(keyColumn);
         table.AddColumn(valueColumn);
 
-        if(context.Config.TableConfig.ShowTableHeaders is not true)
+        if (context.Config.TableConfig.ShowTableHeaders is not true)
         {
             table.HideHeaders();
         }
@@ -41,7 +43,7 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         var memberProvider = context.Config.MemberProvider;
 
-        foreach(var pair in ((IEnumerable<(object? key, object? value)>)handleContext!))
+        foreach (var pair in ((IEnumerable<(object? key, object? value)>)handleContext!))
         {
             var keyType = pair.key?.GetType();
             var keyDescriptor = keyType is null ? null : DumpConfig.Default.Generator.Generate(keyType, null, context.Config.MemberProvider);
@@ -49,7 +51,7 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
 
             var value = pair.value;
 
-            if(value is not null && valueType is null)
+            if (value is not null && valueType is null)
             {
                 valueType = value.GetType();
             }
@@ -63,7 +65,7 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
             table.AddRow(keyRenderable, valueRenderable);
         }
 
-        if(context.Config.TypeNamingConfig.ShowTypeNames)
+        if (context.Config.TypeNamingConfig.ShowTypeNames)
         {
             var title = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);
             table.Title = new TableTitle(Markup.Escape(title), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
@@ -100,10 +102,10 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
                     var method = i.GetMethod("GetEnumerator", BindingFlags.Instance | BindingFlags.Public)!;
                     var items = (IEnumerable)method.Invoke(obj, null)!;
 
-                    foreach(var item in items)
+                    foreach (var item in items)
                     {
                         var itemType = item.GetType();
-                        
+
                         var keyProperty = itemType.GetProperty("Key", BindingFlags.Instance | BindingFlags.Public)!;
                         var key = keyProperty.GetValue(item);
 
@@ -122,7 +124,7 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
         if (obj is IDictionary map)
         {
             var list = new List<(object? key, object? value)>(map.Count);
-            foreach(var key in map.Keys)
+            foreach (var key in map.Keys)
             {
                 list.Add((key, map[key]));
             }
@@ -143,10 +145,10 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
 
                     var list = new List<(object? key, object? value)>();
 
-                    foreach(var item in items)
+                    foreach (var item in items)
                     {
                         var itemType = item.GetType();
-                        
+
                         var keyProperty = itemType.GetProperty("Key", BindingFlags.Instance | BindingFlags.Public)!;
                         var key = keyProperty.GetValue(item);
 
