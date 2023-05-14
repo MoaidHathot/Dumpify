@@ -1,5 +1,4 @@
-﻿using Dumpify.Config;
-using Dumpify.Descriptors;
+﻿using Dumpify.Descriptors;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 

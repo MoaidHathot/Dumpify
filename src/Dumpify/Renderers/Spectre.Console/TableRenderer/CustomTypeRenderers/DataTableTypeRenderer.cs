@@ -32,12 +32,12 @@ internal class DataTableTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         if (title is not null)
         {
-            table.Title = new TableTitle(Markup.Escape(title), new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()));
+            table.Title = new TableTitle(Markup.Escape(title), new Style(foreground: context.State.Colors.TypeNameColor));
         }
 
         foreach (DataColumn column in dataTable.Columns)
         {
-            table.AddColumn(new TableColumn(new Markup(Markup.Escape(column.ColumnName), new Style(foreground: context.Config.ColorConfig.ColumnNameColor.ToSpectreColor()))));
+            table.AddColumn(new TableColumn(new Markup(Markup.Escape(column.ColumnName), new Style(foreground: context.State.Colors.ColumnNameColor))));
         }
 
         foreach (DataRow row in dataTable.Rows)

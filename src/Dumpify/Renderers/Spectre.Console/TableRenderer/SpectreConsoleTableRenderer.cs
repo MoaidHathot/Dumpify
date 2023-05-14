@@ -1,5 +1,4 @@
 ﻿using Dumpify.Descriptors;
-using Dumpify.Extensions;
 using Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 using Spectre.Console;
 using Spectre.Console.Rendering;
@@ -30,7 +29,7 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         var table = new Table();
 
         var typeName = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);
-        table.AddColumn(new TableColumn(new Markup(Markup.Escape(typeName), new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()))));
+        table.AddColumn(new TableColumn(new Markup(Markup.Escape(typeName), new Style(foreground: context.State.Colors.TypeNameColor))));
 
         foreach (var item in obj)
         {
@@ -61,7 +60,7 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         {
             var type = descriptor.Type == obj.GetType() ? descriptor.Type : obj.GetType();
             var typeName = context.Config.TypeNameProvider.GetTypeName(type);
-            table.Title = new TableTitle(Markup.Escape(typeName), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
+            table.Title = new TableTitle(Markup.Escape(typeName), new Style(foreground: context.State.Colors.TypeNameColor));
         }
 
         var columnColor = colorConfig.ColumnNameColor.ToSpectreColor();
@@ -76,7 +75,7 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         foreach (var property in descriptor.Properties)
         {
             var renderedValue = GetValueAndRender(obj, property.ValueProvider!, property, context with { CurrentDepth = context.CurrentDepth + 1 });
-            table.AddRow(new Markup(Markup.Escape(property.Name), new Style(foreground: colorConfig.PropertyNameColor.ToSpectreColor())), renderedValue);
+            table.AddRow(new Markup(Markup.Escape(property.Name), new Style(foreground: context.State.Colors.PropertyNameColor)), renderedValue);
         }
 
         //if (context.Config.Label is { } label && context.CurrentDepth == 0)

@@ -14,8 +14,10 @@ internal class EnumTypeRenderer : ICustomTypeRenderer<IRenderable>
         _handler = handler;
     }
 
-    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext context, object? handleContext)
+    public IRenderable Render(IDescriptor descriptor, object obj, RenderContext baseContext, object? handleContext)
     {
+        var context = (RenderContext<SpectreRendererState>)baseContext;
+
         var color = context.Config.ColorConfig.PropertyValueColor?.HexString ?? "default";
 
         var name = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);

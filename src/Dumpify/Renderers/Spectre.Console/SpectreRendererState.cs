@@ -6,7 +6,7 @@ namespace Dumpify.Renderers.Spectre.Console;
 
 public class SpectreRendererState
 {
-    IColorConfig<Color?> Colors { get; }
+    public IColorConfig<Color?> Colors { get; }
 
     public SpectreRendererState(RendererConfig config)
     {

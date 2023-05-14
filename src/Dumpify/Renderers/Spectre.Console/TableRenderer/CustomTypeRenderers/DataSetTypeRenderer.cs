@@ -30,7 +30,7 @@ internal class DataSetTypeRenderer : ICustomTypeRenderer<IRenderable>
             (false, _) => "",
         };
 
-        table.AddColumn(new TableColumn(new Markup(Markup.Escape(title), new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()))));
+        table.AddColumn(new TableColumn(new Markup(Markup.Escape(title), new Style(foreground: context.State.Colors.TypeNameColor))));
 
         foreach (DataTable dataTable in dataSet.Tables)
         {

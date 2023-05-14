@@ -46,7 +46,7 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
                 not null => _handler.RenderDescriptor(value, typeDescriptor, context),
             };
 
-            var keyRenderable = new Markup($"Item{index + 1}", new Style(foreground: colorConfig.PropertyNameColor.ToSpectreColor()));
+            var keyRenderable = new Markup($"Item{index + 1}", new Style(foreground: context.State.Colors.PropertyNameColor));
 
             table.AddRow(keyRenderable, renderedValue);
         }
@@ -59,7 +59,7 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
         if (context.Config.TypeNamingConfig.ShowTypeNames is true)
         {
             var typeName = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);
-            table.Title = new TableTitle(Markup.Escape(typeName), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
+            table.Title = new TableTitle(Markup.Escape(typeName), new Style(foreground: context.State.Colors.TypeNameColor));
         }
 
         return table;
