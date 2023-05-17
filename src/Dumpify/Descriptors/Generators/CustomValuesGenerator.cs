@@ -50,6 +50,7 @@ internal class CustomValuesGenerator : IDescriptorGenerator
         _customTypeHandlers.TryAdd(typeof(StringBuilder).TypeHandle, (obj, type, valueProvider, memberProvider) => ((StringBuilder)obj).ToString());
         _customTypeHandlers.TryAdd(typeof(DateTime).TypeHandle, (obj, type, valueProvider, memberProvider) => ((DateTime)obj).ToString(CultureInfo.CurrentCulture));
         _customTypeHandlers.TryAdd(typeof(DateTimeOffset).TypeHandle, (obj, type, valueProvider, memberProvider) => ((DateTimeOffset)obj).ToString());
+        _customTypeHandlers.TryAdd(typeof(Guid).TypeHandle, (obj, type, valueProvider, memberProvider) => ((Guid)obj).ToString());
 
 #if NET6_0_OR_GREATER
         _customTypeHandlers.TryAdd(typeof(DateOnly).TypeHandle, (obj, type, valueProvider, memberProvider) => ((DateOnly)obj).ToString());
@@ -70,7 +71,7 @@ internal class CustomValuesGenerator : IDescriptorGenerator
             return new CustomDescriptor(type, valueProvider);
         }
 
-        if(_customTypeHandlers.ContainsKey(type.TypeHandle))
+        if (_customTypeHandlers.ContainsKey(type.TypeHandle))
         {
             return new CustomDescriptor(type, valueProvider);
         }
