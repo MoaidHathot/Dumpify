@@ -19,22 +19,35 @@ using System.Text.Json.Serialization;
 //DumpConfig.Default.Output = Outputs.Debug;
 
 
+TestParticular();
 TestSingle();
-//ShowEverything();
+// ShowEverything();
 
 #pragma warning disable CS8321
+void TestParticular()
+{
+    // Guid.NewGuid().Dump(members: new MembersConfig { IncludeNonPublicMembers = true, IncludeFields = true });
+    // new NullReferenceException("sfsdf", new ArgumentNullException("bbbbb")).Dump();
+}
+
 void TestSingle()
 {
-    // DateTime.Now.Dump();
-    // DateTime.UtcNow.Dump();
-    // DateTimeOffset.Now.Dump();
-    // DateTimeOffset.UtcNow.Dump();
-    // TimeSpan.FromSeconds(10).Dump();
 
-    // var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
-    // var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
-    // moaid.Spouse = haneeni;
-    // haneeni.Spouse = moaid;
+    new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
+
+    DateTime.Now.Dump();
+    DateTime.UtcNow.Dump();
+    DateTimeOffset.Now.Dump();
+    DateTimeOffset.UtcNow.Dump();
+    TimeSpan.FromSeconds(10).Dump();
+
+    var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
+    var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
+    moaid.Spouse = haneeni;
+    haneeni.Spouse = moaid;
+
+    ("ItemA", "ItemB").Dump();
+    Tuple.Create("ItemAA", "ItemBB").Dump();
 
     // moaid.Dump(typeNames: new TypeNamingConfig { ShowTypeNames = false }, tableConfig: new TableConfig { ShowTableHeaders = false });
 
@@ -52,6 +65,13 @@ void TestSingle()
     map.Add("Four", "4");
     map.Add("Five", "5");
     map.Dump();
+
+
+    var map2 = new Dictionary<string, Person>();
+    map2.Add("Moaid", new Person { FirstName = "Moaid", LastName = "Hathot" });
+    map2.Add("Haneeni", new Person { FirstName = "Haneeni", LastName = "Shibli" });
+    map2.Dump("Test Label");
+
     //
     // map.Dump(map.GetType().Name);
     //
@@ -91,9 +111,7 @@ void TestSingle()
     //     yield return 4;
     // }
 
-    object moaid = "Moaid";
-
-    new[] { new { Foo = moaid }, new { Foo = moaid }, new { Foo = moaid } }.Dump(label: "bla");
+    // new[] { new { Foo = moaid }, new { Foo = moaid }, new { Foo = moaid } }.Dump(label: "bla");
 
 }
 
@@ -116,7 +134,7 @@ void ShowEverything()
     DumpConfig.Default.TypeNamingConfig.UseAliases = true;
     DumpConfig.Default.TypeNamingConfig.UseFullName = true;
 
-    moaid.Dump(typeNames: new TypeNamingConfig { UseAliases = true, ShowTypeNames = true });
+    moaid.Dump(typeNames: new TypeNamingConfig { UseAliases = true, ShowTypeNames = false });
 
     moaid.Dump();
 
@@ -136,7 +154,7 @@ void ShowEverything()
     (10, "hello").Dump();
 
     var f = () => 10;
-    f.Dump();
+    // f.Dump();
 
     family.Dump();
 

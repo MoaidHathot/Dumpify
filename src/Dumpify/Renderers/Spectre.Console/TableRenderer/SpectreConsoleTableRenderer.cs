@@ -1,4 +1,5 @@
 ﻿using Dumpify.Descriptors;
+using Dumpify.Renderers.Spectre.Console.Builder;
 using Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 using Spectre.Console;
 using Spectre.Console.Rendering;
@@ -52,38 +53,14 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
 
     protected override IRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<SpectreRendererState> context)
     {
-        var table = new Table();
-
-        var colorConfig = context.Config.ColorConfig;
-
-        if (context.Config.TypeNamingConfig.ShowTypeNames)
-        {
-            var type = descriptor.Type == obj.GetType() ? descriptor.Type : obj.GetType();
-            var typeName = context.Config.TypeNameProvider.GetTypeName(type);
-            table.Title = new TableTitle(Markup.Escape(typeName), new Style(foreground: context.State.Colors.TypeNameColor));
-        }
-
-        var columnColor = colorConfig.ColumnNameColor.ToSpectreColor();
-        table.AddColumn(new TableColumn(new Markup("Name", new Style(foreground: columnColor))));
-        table.AddColumn(new TableColumn(new Markup("Value", new Style(foreground: columnColor))));
-
-        if (context.Config.TableConfig.ShowTableHeaders is false)
-        {
-            table.HideHeaders();
-        }
+        var builder = new ObjectTableBuilder(context, descriptor, obj);
 
         foreach (var property in descriptor.Properties)
         {
             var renderedValue = GetValueAndRender(obj, property.ValueProvider!, property, context with { CurrentDepth = context.CurrentDepth + 1 });
-            table.AddRow(new Markup(Markup.Escape(property.Name), new Style(foreground: context.State.Colors.PropertyNameColor)), renderedValue);
+            builder.AddRow(property, obj, renderedValue);
         }
 
-        //if (context.Config.Label is { } label && context.CurrentDepth == 0)
-        //{
-        //    table.Caption = new TableTitle(Markup.Escape(label));
-        //}
-
-        table.Collapse();
-        return table;
+        return builder.Build();
     }
 }

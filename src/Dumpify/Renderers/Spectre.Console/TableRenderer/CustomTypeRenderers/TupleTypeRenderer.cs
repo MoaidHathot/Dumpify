@@ -1,6 +1,7 @@
 ﻿using Dumpify.Config;
 using Dumpify.Descriptors;
 using Dumpify.Extensions;
+using Dumpify.Renderers.Spectre.Console.Builder;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Runtime.CompilerServices;
@@ -20,13 +21,8 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
     {
         var context = (RenderContext<SpectreRendererState>)baseContext;
 
-        var table = new Table();
-
-        var colorConfig = context.Config.ColorConfig;
-        var columnColor = colorConfig.ColumnNameColor.ToSpectreColor();
-
-        table.AddColumn(new TableColumn(new Markup(Markup.Escape("Item"), new Style(columnColor))));
-        table.AddColumn(new TableColumn(new Markup(Markup.Escape("Value"), new Style(columnColor))));
+        var tableBuilder = new ObjectTableBuilder(context, descriptor, obj);
+        tableBuilder.SetColumnNames("Item", "Value");
 
         var tuple = (ITuple)obj;
 
@@ -46,23 +42,10 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
                 not null => _handler.RenderDescriptor(value, typeDescriptor, context),
             };
 
-            var keyRenderable = new Markup($"Item{index + 1}", new Style(foreground: context.State.Colors.PropertyNameColor));
-
-            table.AddRow(keyRenderable, renderedValue);
+            tableBuilder.AddRow(typeDescriptor, value, $"Item{index + 1}", renderedValue);
         }
 
-        if (context.Config.TableConfig.ShowTableHeaders is false)
-        {
-            table.HideHeaders();
-        }
-
-        if (context.Config.TypeNamingConfig.ShowTypeNames is true)
-        {
-            var typeName = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);
-            table.Title = new TableTitle(Markup.Escape(typeName), new Style(foreground: context.State.Colors.TypeNameColor));
-        }
-
-        return table;
+        return tableBuilder.Build();
     }
 
     public (bool, object?) ShouldHandle(IDescriptor descriptor, object obj)

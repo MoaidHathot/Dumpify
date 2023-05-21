@@ -1,5 +1,6 @@
 ﻿using Dumpify.Descriptors;
 using Dumpify.Extensions;
+using Dumpify.Renderers.Spectre.Console.Builder;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections;
@@ -24,22 +25,8 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         handleContext.MustNotBeNull();
 
-        var table = new Table();
-
-        var colorConfig = context.Config.ColorConfig;
-
-        var columnNameColor = context.State.Colors.ColumnNameColor;
-
-        var keyColumn = new TableColumn(new Markup("Key", new Style(foreground: columnNameColor)));
-        var valueColumn = new TableColumn(new Markup("Value", new Style(foreground: columnNameColor)));
-
-        table.AddColumn(keyColumn);
-        table.AddColumn(valueColumn);
-
-        if (context.Config.TableConfig.ShowTableHeaders is not true)
-        {
-            table.HideHeaders();
-        }
+        var tableBuilder = new ObjectTableBuilder(context, descriptor, obj);
+        tableBuilder.SetColumnNames("Key", "Value");
 
         Type? valueType = null;
 
@@ -58,27 +45,24 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
                 valueType = value.GetType();
             }
 
-            var valueRenderable = value switch
+            (IDescriptor? valueDescritor, IRenderable renderedValue) = value switch
             {
-                null => _handler.RenderNullValue(null, context),
-                not null => _handler.RenderDescriptor(value, DumpConfig.Default.Generator.Generate(value.GetType(), null, memberProvider), context),
+                null => (null, _handler.RenderNullValue(null, context)),
+                not null => GetDescriptorAndRender(value, context),
             };
 
-            table.AddRow(keyRenderable, valueRenderable);
+            tableBuilder.AddRow(valueDescritor, value, keyRenderable, renderedValue);
         }
 
-        if (context.Config.TypeNamingConfig.ShowTypeNames)
-        {
-            var title = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);
-            table.Title = new TableTitle(Markup.Escape(title), new Style(foreground: context.State.Colors.TypeNameColor));
-        }
+        return tableBuilder.Build();
+    }
 
-        //if (context.Config.Label is { } label && context.CurrentDepth == 0)
-        //{
-        //    table.Caption = new TableTitle(Markup.Escape(label));
-        //}
+    private (IDescriptor? descriptor, IRenderable renderedValue) GetDescriptorAndRender(object value, RenderContext<SpectreRendererState> context)
+    {
+        var descriptor = DumpConfig.Default.Generator.Generate(value.GetType(), null, context.Config.MemberProvider);
+        var rendered = _handler.RenderDescriptor(value, descriptor, context);
 
-        return table.Collapse();
+        return (descriptor, rendered);
     }
 
     private IEnumerable<(object? key, object? value)> GetPairs(IDescriptor descriptor, object obj)

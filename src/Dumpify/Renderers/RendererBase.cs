@@ -23,13 +23,11 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
         });
     }
 
-
-
     public IRenderedObject Render(object? obj, IDescriptor? descriptor, RendererConfig config)
     {
         var state = CreateState(obj, descriptor, config);
         var idGenerator = new ObjectIDGenerator();
-        var context = new RenderContext<TState>(config, idGenerator, 0, state);
+        var context = new RenderContext<TState>(config, idGenerator, 0, obj, state);
 
         var renderable = obj switch
         {
