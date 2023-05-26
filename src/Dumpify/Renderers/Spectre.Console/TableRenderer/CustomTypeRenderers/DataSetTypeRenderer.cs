@@ -1,9 +1,11 @@
 ﻿using Dumpify.Descriptors;
+using Dumpify.Renderers.Spectre.Console.Builder;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Data;
 
 namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
+
 
 internal class DataSetTypeRenderer : ICustomTypeRenderer<IRenderable>
 {
@@ -21,7 +23,7 @@ internal class DataSetTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         var dataSet = ((DataSet)obj);
 
-        var table = new Table();
+        var tableBuilder = new ObjectTableBuilder(context, descriptor, obj);
 
         var title = (context.Config.TypeNamingConfig.ShowTypeNames, dataSet.DataSetName) switch
         {
@@ -30,17 +32,17 @@ internal class DataSetTypeRenderer : ICustomTypeRenderer<IRenderable>
             (false, _) => "",
         };
 
-        table.AddColumn(new TableColumn(new Markup(Markup.Escape(title), new Style(foreground: context.State.Colors.TypeNameColor))));
+        tableBuilder.AddColumnName(title, new Style(foreground: context.State.Colors.TypeNameColor));
 
         foreach (DataTable dataTable in dataSet.Tables)
         {
             var tableDescriptor = DumpConfig.Default.Generator.Generate(typeof(DataTable), null, context.Config.MemberProvider);
             var renderedItem = _handler.RenderDescriptor(dataTable, tableDescriptor, context);
 
-            table.AddRow(renderedItem);
+            tableBuilder.AddRow(tableDescriptor, dataTable, renderedItem);
         }
 
-        return table.Collapse();
+        return tableBuilder.Build();
     }
 
     public (bool, object?) ShouldHandle(IDescriptor descriptor, object obj)

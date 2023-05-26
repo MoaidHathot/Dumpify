@@ -11,10 +11,9 @@ internal class ObjectTableBuilder
     private readonly object _sourceObject;
 
     private Table _table = new Table();
-    private readonly List<IEnumerable<IRenderable>> _rows = new();
 
-    private string _columnKeyName;
-    private string _columnValueName;
+    private readonly List<IEnumerable<IRenderable>> _rows = new();
+    private readonly List<IRenderable> _columnNames = new(2);
 
     public ObjectTableBuilder(RenderContext<SpectreRendererState> context, IDescriptor descriptor, object sourceObject)
     {
@@ -22,18 +21,38 @@ internal class ObjectTableBuilder
         _descriptor = descriptor;
         _sourceObject = sourceObject;
 
-        (_columnKeyName, _columnValueName) = ("Name", "Value");
-
         InitTable();
     }
 
-    public ObjectTableBuilder SetColumnNames(string keyName, string valueName)
+    public ObjectTableBuilder AddDefaultColumnNames()
+        => SetColumnNames(new[] { "Name", "Value" });
+
+    public ObjectTableBuilder AddColumnName(string columnName, Style? style)
     {
-        _columnKeyName = keyName;
-        _columnValueName = valueName;
+        _columnNames.Add(ToColumnNameMarkup(columnName, style));
+        return this;
+    }
+
+    public ObjectTableBuilder AddColumnName(string columnName)
+        => AddColumnName(columnName, GetColumnNameStyle());
+
+    public ObjectTableBuilder SetColumnNames(IEnumerable<string> columnNames)
+    {
+        _columnNames.Clear();
+
+        foreach (var columnName in columnNames)
+        {
+            AddColumnName(columnName);
+        }
 
         return this;
     }
+
+    private Style GetColumnNameStyle()
+        => new Style(foreground: _context.Config.ColorConfig.ColumnNameColor.ToSpectreColor());
+
+    public ObjectTableBuilder SetColumnNames(params string[] columnNames)
+        => SetColumnNames((IEnumerable<string>)columnNames);
 
     private void InitTable()
     {
@@ -55,45 +74,52 @@ internal class ObjectTableBuilder
         }
     }
 
-    public ObjectTableBuilder AddRow(IDescriptor? descriptor, object? obj, IRenderable keyRenderable, IRenderable renderedValue)
+    public ObjectTableBuilder SetTitle(string? title, Style? style = null)
     {
-        _rows.Add(new[]
+        var tableTitle = title switch
         {
-            keyRenderable,
-            renderedValue
-       });
+            null => null,
+            not null => new TableTitle(Markup.Escape(title), style),
+        };
+
+        _table.Title = tableTitle;
 
         return this;
     }
 
+    public ObjectTableBuilder SetTitle(string? title)
+        => SetTitle(title, new Style(foreground: _context.State.Colors.TypeNameColor));
+
+    public ObjectTableBuilder AddRow(IDescriptor? descriptor, object? obj, IEnumerable<IRenderable> renderables)
+    {
+        _rows.Add(renderables);
+
+        return this;
+    }
+
+    public ObjectTableBuilder AddRow(IDescriptor? descriptor, object? obj, params IRenderable[] renderables)
+        => AddRow(descriptor, obj, (IEnumerable<IRenderable>)renderables);
+
+    //todo: In the future, after the refactoring, this should be an extension method
     public ObjectTableBuilder AddRow(IDescriptor? descriptor, object? obj, string keyValue, IRenderable renderedValue)
-    {
-        _rows.Add(new[]
-        {
-            new Markup(Markup.Escape(keyValue), new Style(foreground: _context.State.Colors.PropertyNameColor)),
-            renderedValue
-       });
+        => AddRow(descriptor, obj, new[] { ToPropertyNameMarkup(keyValue), renderedValue });
 
-        return this;
-    }
+    //todo: In the future, after the refactoring, this should be an extension method
+    public ObjectTableBuilder AddRowWithTypeName(IDescriptor? descriptor, object? obj, IRenderable renderedValue)
+        => AddRow(descriptor, obj, new[] { ToPropertyNameMarkup(descriptor?.Name ?? ""), renderedValue });
 
-    public ObjectTableBuilder AddRow(IDescriptor descriptor, object? obj, IRenderable renderedValue)
-    {
-        _rows.Add(new[]
-        {
-            new Markup(Markup.Escape(descriptor.Name), new Style(foreground: _context.State.Colors.PropertyNameColor)),
-            renderedValue
-       });
-        return this;
-    }
+    private IRenderable ToPropertyNameMarkup(string str)
+        => new Markup(Markup.Escape(str), new Style(foreground: _context.State.Colors.PropertyNameColor));
+
+    private IRenderable ToColumnNameMarkup(string str, Style? style)
+        => new Markup(Markup.Escape(str), style);
 
     public Table Build()
     {
-        var colorConfig = _context.Config.ColorConfig;
-        var columnColor = colorConfig.ColumnNameColor.ToSpectreColor();
-
-        _table.AddColumn(new TableColumn(new Markup(_columnKeyName, new Style(foreground: columnColor))));
-        _table.AddColumn(new TableColumn(new Markup(_columnValueName, new Style(foreground: columnColor))));
+        foreach (var column in _columnNames)
+        {
+            _table.AddColumn(new TableColumn(column));
+        }
 
         foreach (var row in _rows)
         {

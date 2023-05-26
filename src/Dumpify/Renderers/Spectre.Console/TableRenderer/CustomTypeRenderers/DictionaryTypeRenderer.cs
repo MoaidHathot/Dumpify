@@ -1,7 +1,6 @@
 ﻿using Dumpify.Descriptors;
 using Dumpify.Extensions;
 using Dumpify.Renderers.Spectre.Console.Builder;
-using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections;
 using System.Reflection;

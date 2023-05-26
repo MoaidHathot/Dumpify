@@ -21,7 +21,7 @@ using System.Text.Json.Serialization;
 
 TestParticular();
 TestSingle();
-// ShowEverything();
+ShowEverything();
 
 #pragma warning disable CS8321
 void TestParticular()
@@ -91,13 +91,13 @@ void TestSingle()
     //
     //
     //
-    var test = new Test();
-    test.Add(new KeyValuePair<string, int>("One", 1));
-    test.Add(new KeyValuePair<string, int>("Two", 2));
-    test.Add(new KeyValuePair<string, int>("Three", 3));
-    test.Add(new KeyValuePair<string, int>("Four", 4));
-    test.Add(new KeyValuePair<string, int>("Five", 5));
-    test.Dump();
+    // var test = new Test();
+    // test.Add(new KeyValuePair<string, int>("One", 1));
+    // test.Add(new KeyValuePair<string, int>("Two", 2));
+    // test.Add(new KeyValuePair<string, int>("Three", 3));
+    // test.Add(new KeyValuePair<string, int>("Four", 4));
+    // test.Add(new KeyValuePair<string, int>("Five", 5));
+    // test.Dump();
     //
     //
     // test.Dump(test.GetType().Name);
@@ -113,6 +113,21 @@ void TestSingle()
 
     // new[] { new { Foo = moaid }, new { Foo = moaid }, new { Foo = moaid } }.Dump(label: "bla");
 
+    var dataTable = new DataTable("Moaid Table");
+    dataTable.Columns.Add("A");
+    dataTable.Columns.Add("B");
+    dataTable.Columns.Add("C");
+
+    dataTable.Rows.Add("a", "b", "c");
+    dataTable.Rows.Add("A", "B", "C");
+    dataTable.Rows.Add("1", "2", "3");
+
+    dataTable.Dump("Test Label 2");
+
+    var set = new DataSet();
+
+    set.Tables.Add(dataTable);
+    set.Dump("Test Label 3");
 }
 
 void ShowEverything()

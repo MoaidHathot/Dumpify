@@ -1,4 +1,5 @@
 ﻿using Dumpify.Descriptors;
+using Dumpify.Renderers.Spectre.Console.Builder;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Data;
@@ -21,7 +22,7 @@ internal class DataTableTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         var dataTable = (DataTable)obj;
 
-        var table = new Table();
+        var builder = new ObjectTableBuilder(context, descriptor, obj);
 
         var title = (context.Config.TypeNamingConfig.ShowTypeNames, dataTable.TableName) switch
         {
@@ -30,23 +31,20 @@ internal class DataTableTypeRenderer : ICustomTypeRenderer<IRenderable>
             (false, _) => null,
         };
 
-        if (title is not null)
-        {
-            table.Title = new TableTitle(Markup.Escape(title), new Style(foreground: context.State.Colors.TypeNameColor));
-        }
+        builder.SetTitle(title);
 
         foreach (DataColumn column in dataTable.Columns)
         {
-            table.AddColumn(new TableColumn(new Markup(Markup.Escape(column.ColumnName), new Style(foreground: context.State.Colors.ColumnNameColor))));
+            builder.AddColumnName(column.ColumnName);
         }
 
         foreach (DataRow row in dataTable.Rows)
         {
             var renderables = row.ItemArray.Select(item => RenderTableCell(item, context)).ToArray();
-            table.AddRow(renderables);
+            builder.AddRow(null, row, renderables);
         }
 
-        return table.Collapse();
+        return builder.Build();
     }
 
     private IRenderable RenderTableCell(object? obj, RenderContext<SpectreRendererState> context)
