@@ -27,7 +27,8 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
 
     private IRenderable RenderIEnumerable(IEnumerable obj, MultiValueDescriptor descriptor, RenderContext<SpectreRendererState> context)
     {
-        var builder = new ObjectTableBuilder(context, descriptor, obj);
+        var builder = new ObjectTableBuilder(context, descriptor, obj)
+            .HideTitle();
 
         var typeName = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);
         builder.AddColumnName(typeName + "", new Style(foreground: context.State.Colors.TypeNameColor));

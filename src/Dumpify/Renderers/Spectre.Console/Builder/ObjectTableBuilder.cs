@@ -15,7 +15,8 @@ internal class ObjectTableBuilder
     private readonly List<IEnumerable<IRenderable>> _rows = new();
     private readonly List<IRenderable> _columnNames = new(2);
 
-    private TableTitle? _tableTitle = null;
+    private (string? title, Style? style)? _title = default;
+
     private bool? _showHeaders = null;
 
     public ObjectTableBuilder(RenderContext<SpectreRendererState> context, IDescriptor descriptor, object sourceObject)
@@ -65,16 +66,17 @@ internal class ObjectTableBuilder
 
     public ObjectTableBuilder SetTitle(string? title, Style? style = null)
     {
-        var tableTitle = title switch
+        _title = title switch
         {
-            null => null,
-            not null => new TableTitle(Markup.Escape(title), style),
+            null => (null, null),
+            not null => (Markup.Escape(title), style),
         };
-
-        _tableTitle = tableTitle;
 
         return this;
     }
+
+    public ObjectTableBuilder HideTitle()
+        => SetTitle(null, null);
 
     public ObjectTableBuilder SetTitle(string? title)
         => SetTitle(title, new Style(foreground: _context.State.Colors.TypeNameColor));
@@ -138,7 +140,18 @@ internal class ObjectTableBuilder
         {
             var type = _descriptor.Type == _sourceObject.GetType() ? _descriptor.Type : _sourceObject.GetType();
             var typeName = _context.Config.TypeNameProvider.GetTypeName(type);
-            table.Title = new TableTitle(Markup.Escape(typeName), new Style(foreground: _context.State.Colors.TypeNameColor));
+
+            var title = _title switch
+            {
+                null => new TableTitle(Markup.Escape(typeName), new Style(foreground: _context.State.Colors.TypeNameColor)),
+                not null => string.IsNullOrWhiteSpace(_title.Value.title) ? null : new TableTitle(_title.Value.title!, _title.Value.style),
+            };
+
+            if (title is not null)
+            {
+
+                table.Title = title;
+            }
         }
 
         var hideHeaders = _showHeaders switch
@@ -153,17 +166,10 @@ internal class ObjectTableBuilder
             table.HideHeaders();
         }
 
-        // if (_shouldHideHeaders is true || _context.Config.TableConfig.ShowTableHeaders is false)
-        // {
-        //     table.HideHeaders();
-        // }
-
         if (_context.Config.Label is { } label && _context.CurrentDepth == 0 && object.ReferenceEquals(_context.RootObject, _sourceObject))
         {
             table.Caption = new TableTitle(Markup.Escape(label));
         }
-
-        table.Title = _tableTitle;
 
         var columns = GetBehaviorColumns().Concat(_columnNames);
 
@@ -179,6 +185,8 @@ internal class ObjectTableBuilder
 
             table.AddRow(fullRow);
         }
+
+        table.RoundedBorder();
 
         return table.Collapse();
     }

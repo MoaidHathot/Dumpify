@@ -37,7 +37,8 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 
     private IRenderable RenderSingleDimensionArray(Array obj, MultiValueDescriptor mvd, RenderContext<SpectreRendererState> context)
     {
-        var builder = new ObjectTableBuilder(context, mvd, obj);
+        var builder = new ObjectTableBuilder(context, mvd, obj)
+            .HideTitle();
 
         var showIndexes = context.Config.TableConfig.ShowArrayIndices;
 
@@ -79,6 +80,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
         }
 
         var builder = new ObjectTableBuilder(context, descriptor, obj)
+            .HideTitle()
             .AddBehavior(new RowIndicesTableBuilderBehavior());
 
         var rows = obj.GetLength(0);

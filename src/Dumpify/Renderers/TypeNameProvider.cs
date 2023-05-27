@@ -45,10 +45,10 @@ internal class TypeNameProvider : ITypeNameProvider
 
         name = (_useFullTypeNames, type.Namespace) switch
         {
-            (false, _) => name,
             (_, null) => name,
-            (true, { Length: > 0} prefix) => $"{prefix}.{name}",
-            (true, { Length: 0}) => name,
+            (false, _) => name,
+            (true, { Length: 0 }) => name,
+            (true, { Length: > 0 } prefix) => $"{prefix}.{name}",
         };
 
         return name;
@@ -56,7 +56,7 @@ internal class TypeNameProvider : ITypeNameProvider
 
     public (string typeName, int rank) GetJaggedArrayNameWithRank(Type arrayType)
     {
-        if(arrayType.IsArray is not true)
+        if (arrayType.IsArray is not true)
         {
             throw new ArgumentException($"The type {arrayType.FullName} is not an array");
         }
@@ -64,7 +64,7 @@ internal class TypeNameProvider : ITypeNameProvider
         int rank = 0;
         string name = arrayType.GetElementType() is { } elementType ? GetTypeName(elementType) : GetTypeName(arrayType);
 
-        for(var type = arrayType; type.IsArray; type = type.GetElementType()!)
+        for (var type = arrayType; type.IsArray; type = type.GetElementType()!)
         {
             ++rank;
             name = GetTypeName(type.GetElementType()!);
@@ -90,6 +90,7 @@ internal class TypeNameProvider : ITypeNameProvider
     private string GetGenericNameWithTypes(Type type)
     {
         var (simplified, name) = GetNameOrSimplifiedAnonymousObjectName(type);
+
         if (simplified)
         {
             return name;
@@ -97,6 +98,7 @@ internal class TypeNameProvider : ITypeNameProvider
 
         var prefix = RemoveGenericAnnotations(name);
         var genericArguments = string.Join(", ", type.GenericTypeArguments.Select(GetTypeName));
+
         return $"{prefix}<{genericArguments}>";
     }
 
@@ -109,7 +111,7 @@ internal class TypeNameProvider : ITypeNameProvider
     private bool IsAnonymousType(Type type)
     {
         return Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
-                && type.IsGenericType 
+                && type.IsGenericType
                 && ((type.Name.StartsWith("<>") || type.Name.StartsWith("VB$")))
                 && type.Name.Contains("AnonymousType")
                 && type.Attributes.HasFlag(TypeAttributes.NotPublic);
