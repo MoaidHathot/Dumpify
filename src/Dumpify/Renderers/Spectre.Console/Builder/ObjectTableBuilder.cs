@@ -10,20 +10,29 @@ internal class ObjectTableBuilder
     private readonly IDescriptor _descriptor;
     private readonly object _sourceObject;
 
-    private Table _table = new Table();
+    private List<ITableBuilderBehavior> _behaviors = new();
 
     private readonly List<IEnumerable<IRenderable>> _rows = new();
     private readonly List<IRenderable> _columnNames = new(2);
+
+    private TableTitle? _tableTitle = null;
+    private bool? _showHeaders = null;
 
     public ObjectTableBuilder(RenderContext<SpectreRendererState> context, IDescriptor descriptor, object sourceObject)
     {
         _context = context;
         _descriptor = descriptor;
         _sourceObject = sourceObject;
-
-        InitTable();
     }
 
+    public ObjectTableBuilder AddBehavior(ITableBuilderBehavior behavior)
+    {
+        _behaviors.Add(behavior);
+
+        return this;
+    }
+
+    //todo: this should be an extension method
     public ObjectTableBuilder AddDefaultColumnNames()
         => SetColumnNames(new[] { "Name", "Value" });
 
@@ -54,26 +63,6 @@ internal class ObjectTableBuilder
     public ObjectTableBuilder SetColumnNames(params string[] columnNames)
         => SetColumnNames((IEnumerable<string>)columnNames);
 
-    private void InitTable()
-    {
-        if (_context.Config.TypeNamingConfig.ShowTypeNames is true)
-        {
-            var type = _descriptor.Type == _sourceObject.GetType() ? _descriptor.Type : _sourceObject.GetType();
-            var typeName = _context.Config.TypeNameProvider.GetTypeName(type);
-            _table.Title = new TableTitle(Markup.Escape(typeName), new Style(foreground: _context.State.Colors.TypeNameColor));
-        }
-
-        if (_context.Config.TableConfig.ShowTableHeaders is false)
-        {
-            _table.HideHeaders();
-        }
-
-        if (_context.Config.Label is { } label && _context.CurrentDepth == 0 && object.ReferenceEquals(_context.RootObject, _sourceObject))
-        {
-            _table.Caption = new TableTitle(Markup.Escape(label));
-        }
-    }
-
     public ObjectTableBuilder SetTitle(string? title, Style? style = null)
     {
         var tableTitle = title switch
@@ -82,7 +71,7 @@ internal class ObjectTableBuilder
             not null => new TableTitle(Markup.Escape(title), style),
         };
 
-        _table.Title = tableTitle;
+        _tableTitle = tableTitle;
 
         return this;
     }
@@ -108,24 +97,92 @@ internal class ObjectTableBuilder
     public ObjectTableBuilder AddRowWithTypeName(IDescriptor? descriptor, object? obj, IRenderable renderedValue)
         => AddRow(descriptor, obj, new[] { ToPropertyNameMarkup(descriptor?.Name ?? ""), renderedValue });
 
+    public ObjectTableBuilder HideHeaders()
+        => SetHeadersVisibility(false);
+
+    public ObjectTableBuilder ShowHeaders()
+        => SetHeadersVisibility(true);
+
+    public ObjectTableBuilder SetHeadersVisibility(bool? showHeaders)
+    {
+        _showHeaders = showHeaders;
+
+        return this;
+    }
+
     private IRenderable ToPropertyNameMarkup(string str)
         => new Markup(Markup.Escape(str), new Style(foreground: _context.State.Colors.PropertyNameColor));
 
     private IRenderable ToColumnNameMarkup(string str, Style? style)
         => new Markup(Markup.Escape(str), style);
 
-    public Table Build()
+    private IEnumerable<IRenderable> GetBehaviorColumns()
+        => _behaviors.SelectMany(b => b.GetAdditionalColumns(_context));
+
+    private IEnumerable<IRenderable> GetBehaviorRows(Table table)
     {
-        foreach (var column in _columnNames)
+        var behaviorContext = new BehaviorContext
         {
-            _table.AddColumn(new TableColumn(column));
+            TotalAvailableRows = _rows.Count,
+            AddedRows = table.Rows.Count,
+        };
+
+        return _behaviors.SelectMany(b => b.GetAdditionalRowElements(behaviorContext, _context));
+    }
+
+    private Table CreateTable()
+    {
+        var table = new Table();
+
+        if (_context.Config.TypeNamingConfig.ShowTypeNames is true)
+        {
+            var type = _descriptor.Type == _sourceObject.GetType() ? _descriptor.Type : _sourceObject.GetType();
+            var typeName = _context.Config.TypeNameProvider.GetTypeName(type);
+            table.Title = new TableTitle(Markup.Escape(typeName), new Style(foreground: _context.State.Colors.TypeNameColor));
+        }
+
+        var hideHeaders = _showHeaders switch
+        {
+            true => false,
+            false => true,
+            null => _context.Config.TableConfig.ShowTableHeaders is false,
+        };
+
+        if (hideHeaders)
+        {
+            table.HideHeaders();
+        }
+
+        // if (_shouldHideHeaders is true || _context.Config.TableConfig.ShowTableHeaders is false)
+        // {
+        //     table.HideHeaders();
+        // }
+
+        if (_context.Config.Label is { } label && _context.CurrentDepth == 0 && object.ReferenceEquals(_context.RootObject, _sourceObject))
+        {
+            table.Caption = new TableTitle(Markup.Escape(label));
+        }
+
+        table.Title = _tableTitle;
+
+        var columns = GetBehaviorColumns().Concat(_columnNames);
+
+        foreach (var column in columns)
+        {
+            table.AddColumn(new TableColumn(column));
         }
 
         foreach (var row in _rows)
         {
-            _table.AddRow(row);
+            var additional = GetBehaviorRows(table);
+            var fullRow = additional.Concat(row);
+
+            table.AddRow(fullRow);
         }
 
-        return _table.Collapse();
+        return table.Collapse();
     }
+
+    public Table Build()
+        => CreateTable();
 }

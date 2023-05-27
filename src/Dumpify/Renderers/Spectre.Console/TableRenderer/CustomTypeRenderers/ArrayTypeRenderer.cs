@@ -1,4 +1,5 @@
 ﻿using Dumpify.Descriptors;
+using Dumpify.Renderers.Spectre.Console.Builder;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
@@ -36,21 +37,21 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 
     private IRenderable RenderSingleDimensionArray(Array obj, MultiValueDescriptor mvd, RenderContext<SpectreRendererState> context)
     {
-        var table = new Table();
+        var builder = new ObjectTableBuilder(context, mvd, obj);
 
         var showIndexes = context.Config.TableConfig.ShowArrayIndices;
 
         if (showIndexes)
         {
-            table.AddColumn(new TableColumn(new Markup("#", new Style(foreground: context.Config.ColorConfig.ColumnNameColor.ToSpectreColor()))));
+            builder.AddBehavior(new RowIndicesTableBuilderBehavior());
         }
 
         var elementName = mvd.ElementsType is null ? "" : context.Config.TypeNameProvider.GetTypeName(mvd.ElementsType);
-        table.AddColumn(new TableColumn(new Markup(Markup.Escape($"{elementName}[{obj.GetLength(0)}]"), new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()))));
+        builder.AddColumnName($"{elementName}[{obj.GetLength(0)}]", new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()));
 
         if (context.Config.TableConfig.ShowTableHeaders is not true || context.Config.TypeNamingConfig.ShowTypeNames is not true)
         {
-            table.HideHeaders();
+            builder.HideHeaders();
         }
 
         for (var index = 0; index < obj.Length; ++index)
@@ -62,19 +63,10 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 
             var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
 
-            if (showIndexes)
-            {
-                var renderedIndex = new Markup(index.ToString(), new Style(foreground: context.Config.ColorConfig.ColumnNameColor.ToSpectreColor()));
-                table.AddRow(renderedIndex, renderedItem);
-            }
-            else
-            {
-                table.AddRow(renderedItem);
-            }
+            builder.AddRow(itemsDescriptor, item, renderedItem);
         }
 
-        table.Collapse();
-        return table;
+        return builder.Build();
     }
 
     private IRenderable RenderTwoDimensionalArray(Array obj, MultiValueDescriptor descriptor, RenderContext baseContext)
@@ -86,7 +78,8 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
             return RenderHighRankArrays(obj, descriptor, context);
         }
 
-        var table = new Table();
+        var builder = new ObjectTableBuilder(context, descriptor, obj)
+            .AddBehavior(new RowIndicesTableBuilderBehavior());
 
         var rows = obj.GetLength(0);
         var collumns = obj.GetLength(1);
@@ -96,19 +89,18 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
         if (context.Config.TypeNamingConfig.ShowTypeNames is true)
         {
             var (typeName, rank) = context.Config.TypeNameProvider.GetJaggedArrayNameWithRank(descriptor.Type);
-            table.Title = new TableTitle(Markup.Escape($"{typeName}[{rows},{collumns}]"), new Style(foreground: colorConfig.TypeNameColor.ToSpectreColor()));
+            builder.SetTitle($"{typeName}[{rows},{collumns}]");
         }
 
-        table.AddColumn(new TableColumn(new Markup("#", new Style(foreground: context.Config.ColorConfig.ColumnNameColor.ToSpectreColor()))));
-
+        var columnStyle = new Style(foreground: colorConfig.ColumnNameColor.ToSpectreColor());
         for (var col = 0; col < collumns; ++col)
         {
-            table.AddColumn(new TableColumn(new Markup(col.ToString(), new Style(foreground: colorConfig.ColumnNameColor.ToSpectreColor()))));
+            builder.AddColumnName(col.ToString(), columnStyle);
         }
 
         for (var row = 0; row < rows; ++row)
         {
-            var cells = new List<IRenderable>() { new Markup(row.ToString(), new Style(foreground: colorConfig.ColumnNameColor.ToSpectreColor())) };
+            var cells = new List<IRenderable>(2);
 
             for (var col = 0; col < collumns; ++col)
             {
@@ -121,10 +113,10 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
                 cells.Add(renderedItem);
             }
 
-            table.AddRow(cells);
+            builder.AddRow(null, null, cells);
         }
 
-        return table.Collapse();
+        return builder.Build();
     }
 
     private IRenderable RenderHighRankArrays(Array arr, MultiValueDescriptor descriptor, RenderContext context)

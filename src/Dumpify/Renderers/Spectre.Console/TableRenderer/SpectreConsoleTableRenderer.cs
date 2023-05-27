@@ -27,10 +27,10 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
 
     private IRenderable RenderIEnumerable(IEnumerable obj, MultiValueDescriptor descriptor, RenderContext<SpectreRendererState> context)
     {
-        var table = new Table();
+        var builder = new ObjectTableBuilder(context, descriptor, obj);
 
         var typeName = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);
-        table.AddColumn(new TableColumn(new Markup(Markup.Escape(typeName), new Style(foreground: context.State.Colors.TypeNameColor))));
+        builder.AddColumnName(typeName + "", new Style(foreground: context.State.Colors.TypeNameColor));
 
         foreach (var item in obj)
         {
@@ -39,16 +39,10 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
             IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider) : null;
 
             var renderedItem = RenderDescriptor(item, itemsDescriptor, context);
-            table.AddRow(renderedItem);
+            builder.AddRow(itemsDescriptor, item, renderedItem);
         }
 
-        if (context.Config.TableConfig.ShowTableHeaders is false)
-        {
-            table.HideHeaders();
-        }
-
-        table.Collapse();
-        return table;
+        return builder.Build();
     }
 
     protected override IRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<SpectreRendererState> context)

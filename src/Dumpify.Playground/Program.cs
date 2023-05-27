@@ -1,17 +1,9 @@
 ﻿using Dumpify;
 using Dumpify.Config;
-using Dumpify.Outputs;
 using Spectre.Console;
 using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Specialized;
 using System.Data;
-using System.Drawing;
-using System.Net;
-using System.Net.NetworkInformation;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 //DumpConfig.Default.Renderer = Renderers.Text;
 //DumpConfig.Default.ColorConfig = ColorConfig.NoColors;
@@ -19,15 +11,17 @@ using System.Text.Json.Serialization;
 //DumpConfig.Default.Output = Outputs.Debug;
 
 
-TestParticular();
+// TestParticular();
 TestSingle();
-ShowEverything();
+// ShowEverything();
 
 #pragma warning disable CS8321
 void TestParticular()
 {
     // Guid.NewGuid().Dump(members: new MembersConfig { IncludeNonPublicMembers = true, IncludeFields = true });
     // new NullReferenceException("sfsdf", new ArgumentNullException("bbbbb")).Dump();
+
+    "This is string".Dump("Label1");
 }
 
 void TestSingle()
@@ -128,6 +122,10 @@ void TestSingle()
 
     set.Tables.Add(dataTable);
     set.Dump("Test Label 3");
+
+    var arr = new[] { 1, 2, 3, 4 }.Dump();
+    var arr2d = new int[,] { { 1, 2 }, { 3, 4 } }.Dump();
+    var arr3d = new int[,,] { { { 1, 2 }, { 3, 4 } }, { { 3, 4 }, { 5, 6 } }, { { 6, 7 }, { 8, 9 } } }.Dump();
 }
 
 void ShowEverything()
@@ -171,7 +169,7 @@ void ShowEverything()
     var f = () => 10;
     // f.Dump();
 
-    family.Dump();
+    family.Dump(label: "This is my family label");
 
     new HashSet<string> { "A", "B", "C", "A" }.Dump();
 
