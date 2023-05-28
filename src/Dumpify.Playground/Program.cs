@@ -11,8 +11,8 @@ using System.Text;
 //DumpConfig.Default.Output = Outputs.Debug;
 
 
-// TestParticular();
-TestSingle();
+TestParticular();
+// TestSingle();
 // ShowEverything();
 
 #pragma warning disable CS8321
@@ -21,7 +21,8 @@ void TestParticular()
     // Guid.NewGuid().Dump(members: new MembersConfig { IncludeNonPublicMembers = true, IncludeFields = true });
     // new NullReferenceException("sfsdf", new ArgumentNullException("bbbbb")).Dump();
 
-    "This is string".Dump("Label1");
+    // "This is string".Dump("Label1");
+    var arr3d = new int[,,] { { { 1, 2, 22 }, { 3, 4, 44 } }, { { 5, 6, 66 }, { 7, 8, 88 } }, { { 9, 10, 1010 }, { 11, 12, 1212 } } }.Dump();
 }
 
 void TestSingle()

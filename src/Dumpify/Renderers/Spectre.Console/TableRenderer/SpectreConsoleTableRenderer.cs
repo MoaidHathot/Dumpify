@@ -5,6 +5,7 @@ using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
 namespace Dumpify.Renderers.Spectre.Console.TableRenderer;
 
@@ -30,7 +31,8 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         var builder = new ObjectTableBuilder(context, descriptor, obj)
             .HideTitle();
 
-        var typeName = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);
+        var typeName = GetTypeName(descriptor.Type);
+
         builder.AddColumnName(typeName + "", new Style(foreground: context.State.Colors.TypeNameColor));
 
         foreach (var item in obj)
@@ -44,6 +46,18 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         }
 
         return builder.Build();
+
+        string GetTypeName(Type type)
+        {
+            if (!type.IsArray)
+            {
+                return context.Config.TypeNameProvider.GetTypeName(type);
+            }
+
+            var (name, rank) = context.Config.TypeNameProvider.GetJaggedArrayNameWithRank(type);
+
+            return $"{name}[{new string(',', rank + 1)}]";
+        }
     }
 
     protected override IRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<SpectreRendererState> context)
