@@ -145,6 +145,7 @@ DumpConfig.Default.MaxDepth = 3;
 * Documentation
 * Support .NET Standard 2.0 instad of .NET Standard 2.1
 * Better support for `Nullable<T>`
+* Better support for Reflection types.
 
 
 # To do
