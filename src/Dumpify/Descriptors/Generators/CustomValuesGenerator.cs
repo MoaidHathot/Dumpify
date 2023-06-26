@@ -76,6 +76,12 @@ internal class CustomValuesGenerator : IDescriptorGenerator
             return new CustomDescriptor(type, valueProvider);
         }
 
+        if ((type.Namespace?.StartsWith("System.Reflection") ?? false) && !type.IsArray)
+        {
+            _customTypeHandlers.TryAdd(type.TypeHandle, (obj, t, valProvider, memProvider) => t.Name.ToString());
+            return new CustomDescriptor(type, valueProvider);
+        }
+
         return null;
     }
 }

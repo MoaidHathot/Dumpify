@@ -70,7 +70,7 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
         var type = descriptor?.Type switch
         {
             null => @object.GetType(),
-            var elementType when @object.GetType() == elementType => elementType,
+            var elementType when elementType == typeof(Type) || @object.GetType() == elementType => elementType,
             _ => @object.GetType()
         };
 

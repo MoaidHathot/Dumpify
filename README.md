@@ -140,6 +140,12 @@ DumpConfig.Default.MaxDepth = 3;
 * Better styling of Custom values
 	* Typeof(T) for example, Generic types, etc.
 * Better rendering of Delegates
+* Unifying namespaces of library types
+* Handling all Reflection types
+* Documentation
+* Support .NET Standard 2.0 instad of .NET Standard 2.1
+* Better support for `Nullable<T>`
+
 
 # To do
 * Live outputs

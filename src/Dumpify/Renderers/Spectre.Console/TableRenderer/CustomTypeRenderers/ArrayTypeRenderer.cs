@@ -59,7 +59,8 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
         {
             var item = obj.GetValue(index);
 
-            var type = mvd.ElementsType ?? item?.GetType();
+            //var type = mvd.ElementsType ?? item?.GetType();
+            var type =  item?.GetType() ?? mvd.ElementsType;
             IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider) : null;
 
             var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
