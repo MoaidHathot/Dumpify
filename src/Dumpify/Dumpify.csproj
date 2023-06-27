@@ -1,15 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-<PropertyGroup>
-	<TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
-  <PackageReadmeFile>nuget.md</PackageReadmeFile>
-</PropertyGroup>
+  <PropertyGroup>
+	<TargetFrameworks>net7.0;netstandard2.1;netstandard2.0</TargetFrameworks>
+    <PackageReadmeFile>nuget.md</PackageReadmeFile>
+  </PropertyGroup>
 
   <ItemGroup>
     <None Include="../../docs/readme/nuget.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
+    <PackageReference Include="PolySharp" Version="1.13.2" Condition="'$(TargetFramework)' == 'netstandard2.0'">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Spectre.Console" Version="0.46.0" />
   </ItemGroup>
 

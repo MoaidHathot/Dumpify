@@ -10,12 +10,14 @@ namespace Dumpify.Tests.Generators;
 public class CustomDescriptorTests
 {
     [TestMethod]
+#if NET7_0_OR_GREATER
+    [DataRow(typeof(DateOnly))]
+    [DataRow(typeof(TimeOnly))]
+#endif
+    [DataRow(typeof(TimeSpan))]
     [DataRow(typeof(StringBuilder))]
     [DataRow(typeof(DateTime))]
     [DataRow(typeof(DateTimeOffset))]
-    [DataRow(typeof(DateOnly))]
-    [DataRow(typeof(TimeOnly))]
-    [DataRow(typeof(TimeSpan))]
     [DataRow(typeof(Type))]
     [DataRow(typeof(PropertyInfo))]
     public void ShouldBeCustomValueDescriptor(Type type)
