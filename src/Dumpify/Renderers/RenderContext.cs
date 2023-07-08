@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Dumpify.Renderers;
+namespace Dumpify;
 
 public record class RenderContext(in RendererConfig Config, ObjectIDGenerator ObjectTracker, int CurrentDepth, object? RootObject);
 public record class RenderContext<TState>(in RendererConfig Config, ObjectIDGenerator ObjectTracker, int CurrentDepth, object? RootObject, TState State) : RenderContext(Config, ObjectTracker, CurrentDepth, RootObject);

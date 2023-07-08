@@ -1,6 +1,6 @@
 ﻿using Dumpify.Descriptors;
 
-namespace Dumpify.Renderers;
+namespace Dumpify;
 
 internal interface IRendererHandler<TRenderable, TState>
 {

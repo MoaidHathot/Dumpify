@@ -1,7 +1,7 @@
 ﻿using Dumpify.Extensions;
 using System.Drawing;
 
-namespace Dumpify.Config;
+namespace Dumpify;
 
 public class DumpColor
 {

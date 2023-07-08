@@ -4,7 +4,7 @@ using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections.Concurrent;
 
-namespace Dumpify.Renderers.Spectre.Console;
+namespace Dumpify;
 
 internal abstract class SpectreConsoleRendererBase : RendererBase<IRenderable, SpectreRendererState>
 {

@@ -1,5 +1,4 @@
-﻿using Dumpify.Config;
-using Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
+﻿using Dumpify;
 using System.Reflection;
 
 namespace Dumpify.Descriptors.ValueProviders;

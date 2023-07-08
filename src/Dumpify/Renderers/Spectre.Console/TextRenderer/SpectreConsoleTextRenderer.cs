@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Text;
 
-namespace Dumpify.Renderers.Spectre.Console.TextRenderer;
+namespace Dumpify;
 
 internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
 {

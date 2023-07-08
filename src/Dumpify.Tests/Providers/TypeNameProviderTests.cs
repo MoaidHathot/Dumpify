@@ -1,5 +1,4 @@
-﻿using Dumpify.Renderers;
-using System.Text;
+﻿using System.Text;
 
 namespace Dumpify.Tests.Providers
 {

@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Dumpify.Config;
+namespace Dumpify;
 
 public class ColorConfig : IColorConfig<DumpColor>
 {

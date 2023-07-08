@@ -1,12 +1,6 @@
 ﻿using Dumpify.Descriptors;
-using Spectre.Console.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Dumpify.Renderers;
+namespace Dumpify;
 
 internal class CustomTypeRenderer<TRenderable> : ICustomTypeRenderer<TRenderable>
 {

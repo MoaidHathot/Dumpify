@@ -3,7 +3,7 @@ using Dumpify.Descriptors.ValueProviders;
 using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 
-namespace Dumpify.Renderers;
+namespace Dumpify;
 
 internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRendererHandler<TRenderable, TState>
 {

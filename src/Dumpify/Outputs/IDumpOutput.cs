@@ -1,11 +1,10 @@
-﻿using Dumpify.Renderers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dumpify.Outputs;
+namespace Dumpify;
 public interface IDumpOutput
 {
     public TextWriter TextWriter { get; }

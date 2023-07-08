@@ -1,9 +1,8 @@
 ﻿using Dumpify.Descriptors;
-using Dumpify.Renderers.Spectre.Console.Builder;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
-namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
+namespace Dumpify;
 
 internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 {

@@ -1,4 +1,4 @@
-﻿using Dumpify.Config;
+﻿using Dumpify;
 using Spectre.Console;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dumpify.Renderers.Spectre.Console;
+namespace Dumpify;
 
 internal static class MappingExtensions
 {
