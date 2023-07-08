@@ -56,8 +56,6 @@ internal class CustomValuesGenerator : IDescriptorGenerator
         _customTypeHandlers.TryAdd(typeof(DateOnly).TypeHandle, (obj, type, valueProvider, memberProvider) => ((DateOnly)obj).ToString());
         _customTypeHandlers.TryAdd(typeof(TimeOnly).TypeHandle, (obj, type, valueProvider, memberProvider) => ((TimeOnly)obj).ToString());
         _customTypeHandlers.TryAdd(typeof(TimeSpan).TypeHandle, (obj, type, valueProvider, memberProvider) => ((TimeSpan)obj).ToString());
-#elif NETSTANDARD2_0
-        _customTypeHandlers.TryAdd(typeof(TimeSpan).TypeHandle, (obj, type, valueProvider, memberProvider) => ((TimeSpan)obj).ToString());
 #endif
     }
 
