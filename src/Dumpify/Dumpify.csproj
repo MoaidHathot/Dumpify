@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 <PropertyGroup>
-	<TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
+	<TargetFrameworks>net7.0;netstandard2.1;netstandard2.0</TargetFrameworks>
   <PackageReadmeFile>nuget.md</PackageReadmeFile>
 </PropertyGroup>
 
@@ -11,6 +11,11 @@
 
   <ItemGroup>
     <PackageReference Include="Spectre.Console" Version="0.46.0" />
-  </ItemGroup>
 
+    <PackageReference Include="PolySharp" Version="1.13.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" />
+  </ItemGroup>
 </Project>
