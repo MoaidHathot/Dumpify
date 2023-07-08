@@ -1,6 +1,6 @@
 ﻿using Dumpify;
-using Dumpify.Config;
 using Spectre.Console;
+
 using System.Collections;
 using System.Data;
 using System.Reflection;

@@ -1,6 +1,6 @@
 ﻿using Dumpify.Descriptors;
 
-namespace Dumpify.Renderers;
+namespace Dumpify;
 
 public interface IRenderer
 {

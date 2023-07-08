@@ -2,7 +2,7 @@ using Dumpify.Descriptors;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
-namespace Dumpify.Renderers.Spectre.Console.Builder;
+namespace Dumpify;
 
 internal class ObjectTableBuilder
 {

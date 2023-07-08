@@ -2,7 +2,7 @@
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
-namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
+namespace Dumpify;
 internal class SystemTypeRenderer : ICustomTypeRenderer<IRenderable>
 {
     private readonly IRendererHandler<IRenderable, SpectreRendererState> _handler;

@@ -1,7 +1,4 @@
 ﻿using Dumpify.Descriptors.ValueProviders;
-using Dumpify.Renderers;
-using Dumpify.Renderers.Spectre.Console;
-using Dumpify.Renderers.Spectre.Console.TableRenderer;
 using Dumpify.Tests.DTO;
 using System.Collections.Concurrent;
 

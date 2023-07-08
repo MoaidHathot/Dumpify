@@ -1,7 +1,7 @@
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
-namespace Dumpify.Renderers.Spectre.Console.Builder;
+namespace Dumpify;
 
 public interface ITableBuilderBehavior
 {

@@ -1,5 +1,4 @@
-﻿using Dumpify.Config;
-using Dumpify.Renderers;
+﻿using Dumpify;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +6,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dumpify.Outputs;
+namespace Dumpify;
 
 public class DumpOutput : IDumpOutput
 {

@@ -1,11 +1,10 @@
 ﻿using Dumpify.Descriptors;
 using Dumpify.Extensions;
-using Dumpify.Renderers.Spectre.Console.Builder;
 using Spectre.Console.Rendering;
 using System.Collections;
 using System.Reflection;
 
-namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
+namespace Dumpify;
 
 internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
 {

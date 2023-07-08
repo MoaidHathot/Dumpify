@@ -1,7 +1,7 @@
 ﻿using Dumpify.Descriptors;
 using Spectre.Console.Rendering;
 
-namespace Dumpify.Renderers;
+namespace Dumpify;
 
 internal interface IDescriptorRenderer
 {

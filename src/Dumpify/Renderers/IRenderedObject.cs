@@ -1,6 +1,4 @@
-﻿using Dumpify.Outputs;
-
-namespace Dumpify.Renderers;
+﻿namespace Dumpify;
 
 public interface IRenderedObject
 {

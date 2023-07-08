@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dumpify.Renderers.Spectre.Console.TextRenderer;
+namespace Dumpify;
 
 internal class TextRenderableAdapter : IRenderable
 {

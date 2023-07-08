@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dumpify.Renderers.Spectre.Console;
+namespace Dumpify;
 
 internal static class SpectreConsoleExtensions
 {

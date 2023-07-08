@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dumpify.Config;
+namespace Dumpify;
 
 public interface IColorConfig<TColor>
 {
