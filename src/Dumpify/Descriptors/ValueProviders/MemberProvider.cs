@@ -63,5 +63,5 @@ internal sealed record MemberProvider : IMemberProvider
     }
 
     public override int GetHashCode()
-        => HashCode.Combine(_includeProperties, _includeFields, _includePublicMembers, _includeNonPublicMembers);
+        => (_includeProperties, _includeFields, _includePublicMembers, _includeNonPublicMembers).GetHashCode();
 }
