@@ -5,7 +5,7 @@ namespace Dumpify;
 
 public class DumpColor
 {
-    private static readonly ColorConverter _converter = new ();
+    private static readonly System.ComponentModel.TypeConverter _converter = System.ComponentModel.TypeDescriptor.GetConverter(typeof(Color));
 
     internal Color Color { get; }
     internal string HexString { get; }
