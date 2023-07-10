@@ -9,9 +9,6 @@ namespace Dumpify.Tests.Generators;
 public class SingleValueDescriptorTests
 {
     [TestMethod]
-#if NET7_0_OR_GREATER
-    [DataRow(typeof(Half))]
-#endif
     [DataRow(typeof(int))]
     [DataRow(typeof(string))]
     [DataRow(typeof(bool))]
@@ -24,6 +21,7 @@ public class SingleValueDescriptorTests
     [DataRow(typeof(float))]
     [DataRow(typeof(double))]
     [DataRow(typeof(decimal))]
+    [DataRow(typeof(Half))]
     public void ShouldBeSingleValueDescriptor(Type type)
     {
         var generator = new CompositeDescriptorGenerator(new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, IValueProvider?, IMemberProvider, object?>>());
