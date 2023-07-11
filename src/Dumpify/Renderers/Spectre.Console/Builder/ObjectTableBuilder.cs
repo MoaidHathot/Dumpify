@@ -176,7 +176,9 @@ internal class ObjectTableBuilder
         foreach (var column in columns)
         {
             var tableColumn = new TableColumn(column);
-            if (_context.Config.TableConfig.NoColumnWrapping) tableColumn.NoWrap();
+
+            if (_context.Config.TableConfig.NoColumnWrapping)
+                tableColumn.NoWrap();
             
             table.AddColumn(tableColumn);
         }
@@ -191,7 +193,7 @@ internal class ObjectTableBuilder
 
         table.RoundedBorder();
 
-        return _context.Config.TableConfig.Expanded ? table.Expand() : table.Collapse();
+        return _context.Config.TableConfig.ExpandTables ? table.Expand() : table.Collapse();
     }
 
     public Table Build()

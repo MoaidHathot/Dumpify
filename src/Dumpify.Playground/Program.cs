@@ -24,31 +24,29 @@ void TestParticular()
 
     // "This is string".Dump("Label1");
     // var arr3d = new int[,,] { { { 1, 2, 22 }, { 3, 4, 44 } }, { { 5, 6, 66 }, { 7, 8, 88 } }, { { 9, 10, 1010 }, { 11, 12, 1212 } } }.Dump();
-    //var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
-    //var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
-    //moaid.Spouse = haneeni;
-    //haneeni.Spouse = moaid;
-    //var family = new Family
-    //{
-    //    Parent1 = moaid,
-    //    Parent2 = haneeni,
-    //    FamilyId = 42,
-    //    ChildrenArray = new[] { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot", Spouse = new Person { FirstName = "Child22", LastName = "Hathot", Spouse = new Person { FirstName = "Child222", LastName = "Hathot" } } } },
-    //    ChildrenList = new List<Person> { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
-    //    ChildrenArrayList = new ArrayList { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
-    //    FamilyType = typeof(Family),
-    //    FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
-    //}.DumpText();
+    var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
+    var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
+    moaid.Spouse = haneeni;
+    haneeni.Spouse = moaid;
+    var family = new Family
+    {
+        Parent1 = moaid,
+        Parent2 = haneeni,
+        FamilyId = 42,
+        ChildrenArray = new[] { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot", Spouse = new Person { FirstName = "Child22", LastName = "Hathot", Spouse = new Person { FirstName = "Child222", LastName = "Hathot", Spouse = new Person { FirstName = "Child2222", LastName = "Hathot", Spouse = new Person
+        {
+            FirstName = "Child22222", LastName = "Hathot#@" 
+        }}} } } },
+        ChildrenList = new List<Person> { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
+        ChildrenArrayList = new ArrayList { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
+        FamilyType = typeof(Family),
+        FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
+    }.Dump().DumpText();
 
 
-    //File.WriteAllText(@"S:\Programming\Github\Dumpify\textDump.txt", family);
-    var options = new OptionsA { StrProp = "PropA*", IntProp = 3, OptBProp = new OptionsB { Op2StrProp = "Prop2B*", OptCProp = new OptionsC { Opt3IntProp = 666, } }, };
+    File.WriteAllText(@"S:\Programming\Github\Dumpify\textDump.txt", family);
 
-    var generator = new ConfigGenerator();
-    var result = generator.Generate(options);
-
-    // new List<int> { 1, 2, 3, 4 }.Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true });
-    //typeof(TypeEvaluator).GetProperties().Dump();
+    //new List<int> { 1, 2, 3, 4 }.Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true });
 
 
 
@@ -390,122 +388,4 @@ class Test : ICollection<KeyValuePair<string, int>>
 
     public int Count => _list.Count;
     public bool IsReadOnly { get; } = false;
-}
-
-;
-
-
-
-
-public class OptionsA
-{
-    public string? StrProp { get; set; }
-    public int? IntProp { get; set; }
-    public OptionsB? OptBProp { get; set; }
-}
-
-public class OptionsB
-{
-    public string? Op2StrProp { get; set; }
-    public OptionsC? OptCProp { get; set; }
-}
-
-public class OptionsC
-{
-    public int Opt3IntProp { get; set; }
-}
-
-
-public class ConfigGenerator
-{
-    private Dictionary<Type, TypeEvaluator> _evaluators = new();
-
-    public IEnumerable<string> Generate(object obj)
-    {
-        if (!_evaluators.TryGetValue(obj.GetType(), out var evaluator))
-        {
-            evaluator = CreatePropertyEvaluator(obj);
-            _evaluators.Add(obj.GetType(), evaluator);
-        }
-
-        evaluator.Dump(members: new MembersConfig { IncludeNonPublicMembers = true, IncludeFields = true });
-
-        foreach (var i in evaluator.properties)
-        {
-            Console.WriteLine(i.evaluator.GetValue(obj));
-        }
-
-        return Enumerable.Empty<string>();
-    }
-
-    private TypeEvaluator CreatePropertyEvaluator(object obj)
-    {
-        var type = obj.GetType();
-
-        var stack = new Queue<(Type type, CompositePropertyEvaluator evaluator)>();
-
-        stack.Enqueue((type, new CompositePropertyEvaluator(null, null)));
-
-        var list = new List<(string path, CompositePropertyEvaluator evaluator)>(5);
-
-        while (stack.Any())
-        {
-            var tuple = stack.Dequeue();
-
-            if (tuple.type == typeof(int) || tuple.type == typeof(string) || tuple.type == typeof(bool))
-            {
-                list.Add(("", tuple.evaluator));
-                continue;
-            }
-
-            var properties = tuple.type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-            foreach (var property in properties)
-            {
-                stack.Enqueue((property.PropertyType, new CompositePropertyEvaluator(property, tuple.evaluator)));
-            }
-        }
-
-        return new TypeEvaluator(type, list);
-    }
-}
-
-internal record TypeEvaluator(Type Type, List<(string path, CompositePropertyEvaluator evaluator)> properties);
-
-internal class CompositePropertyEvaluator
-{
-    private PropertyInfo? _propertyInfo;
-    private readonly CompositePropertyEvaluator? _parentEvaluator;
-
-    public CompositePropertyEvaluator(PropertyInfo? propertyInfo, CompositePropertyEvaluator? parentEvaluator)
-    {
-        _propertyInfo = propertyInfo;
-        _parentEvaluator = parentEvaluator;
-    }
-
-    public object? GetValue(object obj)
-    {
-        object? value = obj;
-
-        if (_parentEvaluator is not null)
-        {
-            value = _parentEvaluator.GetValue(value);
-        }
-
-        return GetPropertyValue(value);
-    }
-
-    private object? GetPropertyValue(object? obj)
-    {
-        if (obj is null)
-        {
-            return null;
-        }
-
-        return _propertyInfo switch
-        {
-            null => obj,
-            { } evaluator => evaluator.GetValue(obj)
-        };
-    }
 }
