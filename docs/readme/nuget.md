@@ -33,7 +33,7 @@ moaid.Dump();
 ```
 ![image](https://user-images.githubusercontent.com/8770486/232280616-c6127820-7e2b-448b-81ca-1aded2894cdc.png)
 
-### Support for Arrrays, Dictionaries and Collections
+### Support for Arrays, Dictionaries and Collections
 ```csharp
 var arr = new[] { 1, 2, 3, 4 }.Dump();
 ```
@@ -112,7 +112,7 @@ package.Dump(output: new DumpOutput(writer)); //Custom output
 ```
 
 
-### Every configuration can be defiend per-Dump or globally for all Dumps, e.g:
+### Every configuration can be defined per-Dump or globally for all Dumps, e.g:
 ```csharp
 DumpConfig.Default.TypeNamingConfig.UseAliases = true;
 DumpConfig.Default.TypeNamingConfig.ShowTypeNames = false;
