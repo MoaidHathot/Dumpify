@@ -12,18 +12,13 @@ using System.Text;
 //DumpConfig.Default.Output = Outputs.Debug;
 
 Console.WriteLine("---------------------");
-TestParticular();
+TestObjectWithLargeWidth();
 // TestSingle();
 // ShowEverything();
 
 #pragma warning disable CS8321
-void TestParticular()
+void TestObjectWithLargeWidth()
 {
-    // Guid.NewGuid().Dump(members: new MembersConfig { IncludeNonPublicMembers = true, IncludeFields = true });
-    // new NullReferenceException("sfsdf", new ArgumentNullException("bbbbb")).Dump();
-
-    // "This is string".Dump("Label1");
-    // var arr3d = new int[,,] { { { 1, 2, 22 }, { 3, 4, 44 } }, { { 5, 6, 66 }, { 7, 8, 88 } }, { { 9, 10, 1010 }, { 11, 12, 1212 } } }.Dump();
     var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
     var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
     moaid.Spouse = haneeni;
@@ -35,21 +30,14 @@ void TestParticular()
         FamilyId = 42,
         ChildrenArray = new[] { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot", Spouse = new Person { FirstName = "Child22", LastName = "Hathot", Spouse = new Person { FirstName = "Child222", LastName = "Hathot", Spouse = new Person { FirstName = "Child2222", LastName = "Hathot", Spouse = new Person
         {
-            FirstName = "Child22222", LastName = "Hathot#@" 
+            FirstName = "Child22222", LastName = "Hathot#@!%"
         }}} } } },
         ChildrenList = new List<Person> { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
         ChildrenArrayList = new ArrayList { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
         FamilyType = typeof(Family),
         FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
     }.Dump().DumpText();
-
-
-    File.WriteAllText(@"S:\Programming\Github\Dumpify\textDump.txt", family);
-
-    //new List<int> { 1, 2, 3, 4 }.Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true });
-
-
-
+    //File.WriteAllText(@"S:\Programming\Github\Dumpify\textDump.txt", family);
 }
 
 void TestSingle()

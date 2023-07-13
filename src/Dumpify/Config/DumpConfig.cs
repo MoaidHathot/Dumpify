@@ -1,9 +1,7 @@
-﻿using Dumpify.Extensions;
-using Dumpify.Descriptors.Generators;
-using System.Reflection;
-using System.Collections.Concurrent;
-using Dumpify;
+﻿using Dumpify.Descriptors.Generators;
 using Dumpify.Descriptors.ValueProviders;
+using Dumpify.Extensions;
+using System.Collections.Concurrent;
 
 namespace Dumpify;
 
@@ -25,6 +23,7 @@ public class DumpConfig
         TableConfig = new TableConfig();
         MembersConfig = new MembersConfig();
         TypeNamingConfig = new TypeNamingConfig();
+        OutputConfig = new OutputConfig();
     }
 
     public void AddCustomTypeHandler(Type type, Func<object, Type, IValueProvider?, IMemberProvider, object?> valueFactory)
@@ -42,8 +41,9 @@ public class DumpConfig
     public bool UseDescriptors { get; set; } = true;
     public bool ShowHeaders { get; set; } = true;
 
-    public ColorConfig ColorConfig { get; set; }
+    public ColorConfig ColorConfig { get; }
     public TableConfig TableConfig { get; }
     public MembersConfig MembersConfig { get; }
     public TypeNamingConfig TypeNamingConfig { get; }
+    public OutputConfig OutputConfig { get; }
 }

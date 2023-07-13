@@ -2,5 +2,5 @@
 
 public interface IRenderedObject
 {
-    public void Output(IDumpOutput output);
+    public void Output(IDumpOutput output, OutputConfig config);
 }
