@@ -25,7 +25,7 @@ public static class DumpExtensions
         using var writer = new StringWriter();
 
         colors ??= ColorConfig.NoColors;
-        outputConfig ??= new OutputConfig { OutputWidthOverride = 1000, OutputHeightOverride = 1000 };
+        outputConfig ??= new OutputConfig { WidthOverride = 1000, HeightOverride = 1000 };
 
         _ = obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: new DumpOutput(writer), members: members, tableConfig: tableConfig, outputConfig: outputConfig);
 

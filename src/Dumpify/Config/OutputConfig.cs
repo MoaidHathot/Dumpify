@@ -2,6 +2,6 @@ namespace Dumpify;
 
 public class OutputConfig
 {
-    public int? OutputWidthOverride { get; set; }
-    public int? OutputHeightOverride { get; set; }
+    public int? WidthOverride { get; set; }
+    public int? HeightOverride { get; set; }
 }

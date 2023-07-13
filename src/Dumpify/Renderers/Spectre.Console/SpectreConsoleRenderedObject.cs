@@ -45,10 +45,10 @@ internal class SpectreConsoleRenderedObject : IRenderedObject
 
     private (int width, int heigth) GetRenderAreaDimensions(OutputConfig config, int defaultWidth, int defaultHeigth)
     {
-        var width = config.OutputWidthOverride ?? defaultWidth;
-        var heigth = config.OutputHeightOverride ?? defaultHeigth;
+        var width = config.WidthOverride ?? defaultWidth;
+        var height = config.HeightOverride ?? defaultHeigth;
 
-        return (width, heigth);
+        return (width, height);
     }
 
     private (bool isStdOut, bool isStdErr) GetSystemStdSettings(IDumpOutput output)
