@@ -24,7 +24,7 @@ internal class SpectreConsoleRenderedObject : IRenderedObject
         console.WriteLine();
     }
 
-    private IAnsiConsoleOutput CreateOutput(IDumpOutput output, OutputConfig config)
+    private static IAnsiConsoleOutput CreateOutput(IDumpOutput output, OutputConfig config)
     {
         var defaultConsoleSettings = GetDefaultConsoleOutputSettings(output);
         var dimensions = GetRenderAreaDimensions(config, defaultConsoleSettings.width, defaultConsoleSettings.heigth);
@@ -32,7 +32,7 @@ internal class SpectreConsoleRenderedObject : IRenderedObject
         return new CustomConsoleOutput(output.TextWriter, dimensions.width, dimensions.heigth, defaultConsoleSettings.isTerminal, defaultConsoleSettings.enableEncoding);
     }
 
-    private (int width, int heigth, bool isTerminal, bool enableEncoding) GetDefaultConsoleOutputSettings(IDumpOutput output)
+    private static (int width, int heigth, bool isTerminal, bool enableEncoding) GetDefaultConsoleOutputSettings(IDumpOutput output)
     {
         var consoleOutput = new AnsiConsoleOutput(output.TextWriter);
         var stdSettings = GetSystemStdSettings(output);
@@ -42,16 +42,15 @@ internal class SpectreConsoleRenderedObject : IRenderedObject
         return (consoleOutput.Width, consoleOutput.Height, consoleOutput.IsTerminal, enableEncoding);
     }
 
-
-    private (int width, int heigth) GetRenderAreaDimensions(OutputConfig config, int defaultWidth, int defaultHeigth)
+    private static (int width, int heigth) GetRenderAreaDimensions(OutputConfig config, int defaultWidth, int defaultHeight)
     {
         var width = config.WidthOverride ?? defaultWidth;
-        var height = config.HeightOverride ?? defaultHeigth;
+        var height = config.HeightOverride ?? defaultHeight;
 
         return (width, height);
     }
 
-    private (bool isStdOut, bool isStdErr) GetSystemStdSettings(IDumpOutput output)
+    private static (bool isStdOut, bool isStdErr) GetSystemStdSettings(IDumpOutput output)
     {
         bool isStdOut = false;
         bool isStdErr = false;
@@ -88,13 +87,13 @@ file class CustomConsoleOutput : IAnsiConsoleOutput
     public int Width { get; }
     public int Height { get; }
 
-    private bool _enableEncoding;
+    private readonly bool _enableEncoding;
 
-    public CustomConsoleOutput(TextWriter writer, int width, int heigth, bool isTerminal, bool enableEncoding)
+    public CustomConsoleOutput(TextWriter writer, int width, int height, bool isTerminal, bool enableEncoding)
     {
         Writer = writer;
         Width = width;
-        Height = heigth;
+        Height = height;
         IsTerminal = isTerminal;
         _enableEncoding = enableEncoding;
     }
