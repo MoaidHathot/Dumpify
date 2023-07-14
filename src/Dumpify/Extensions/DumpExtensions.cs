@@ -10,11 +10,17 @@ public static class DumpExtensions
 {
     [return: NotNullIfNotNull(nameof(obj))]
     public static T? DumpDebug<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null, OutputConfig? outputConfig = null)
-        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Dumpify.Outputs.Debug, members: members, tableConfig: tableConfig, outputConfig: outputConfig);
+    {
+        outputConfig ??= new OutputConfig { WidthOverride = 250 };
+        return obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Dumpify.Outputs.Debug, members: members, tableConfig: tableConfig, outputConfig: outputConfig);
+    }
 
     [return: NotNullIfNotNull(nameof(obj))]
     public static T? DumpTrace<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null, OutputConfig? outputConfig = null)
-        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Dumpify.Outputs.Trace, members: members, tableConfig: tableConfig, outputConfig: outputConfig);
+    {
+        outputConfig ??= new OutputConfig { WidthOverride = 250 };
+        return obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Dumpify.Outputs.Trace, members: members, tableConfig: tableConfig, outputConfig: outputConfig);
+    }
 
     [return: NotNullIfNotNull(nameof(obj))]
     public static T? DumpConsole<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null, OutputConfig? outputConfig = null)

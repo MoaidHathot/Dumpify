@@ -13,8 +13,8 @@ using System.Text;
 //DumpConfig.Default.Output = Outputs.Debug;
 
 Console.WriteLine("---------------------");
-TestSpecific();
-//TestObjectWithLargeWidth();
+//TestSpecific();
+TestObjectWithLargeWidth();
 //TestSingle();
 // ShowEverything();
 
@@ -23,11 +23,11 @@ void TestSpecific()
 {
     try
     {
-        throw new Exception("Bla bla");
+        throw new Exception("Bla bla", new ArgumentNullException("paramName", "inner bla fla"));
     }
     catch (Exception e)
     {
-        e.Dump(tableConfig: new TableConfig { NoColumnWrapping = true, ExpandTables = true}, outputConfig: new OutputConfig { HeightOverride = 3000});
+        e.Dump();
     }
 }
 
@@ -50,7 +50,7 @@ void TestObjectWithLargeWidth()
         ChildrenArrayList = new ArrayList { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
         FamilyType = typeof(Family),
         FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
-    }.Dump().DumpText();
+    }.Dump().DumpDebug().DumpTrace().DumpText();
     //File.WriteAllText(@"S:\Programming\Github\Dumpify\textDump.txt", family);
 }
 
