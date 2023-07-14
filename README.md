@@ -135,23 +135,16 @@ DumpConfig.Default.MaxDepth = 3;
 * Add configuration for formatting Anonymous Objects type names
 * Cache Spectre.Console styles and colors
 * Text renderer
-* Consider disabling wrapping of Table titles
 * re-introduce labels
 * Better styling of Custom values
 	* Typeof(T) for example, Generic types, etc.
 * Better rendering of Delegates
-* Unifying namespaces of library types
-* Handling all Reflection types
 * Documentation
-* Support .NET Standard 2.0 instad of .NET Standard 2.1
-* Better support for `Nullable<T>`
-* Better support for Reflection types.
 
 
 # To do
 * Live outputs
 * Add custom rendering for more types:
-    - DataTable & DataSets
     - Exceptions, AggregateExceptions, etc...
 * Rethink Generators caching keys
 * Consider using Max Depth for Descriptors
