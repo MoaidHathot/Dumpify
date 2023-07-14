@@ -2,6 +2,7 @@
 using Spectre.Console;
 
 using System.Collections;
+using System.ComponentModel;
 using System.Data;
 using System.Reflection;
 using System.Text;
@@ -12,11 +13,24 @@ using System.Text;
 //DumpConfig.Default.Output = Outputs.Debug;
 
 Console.WriteLine("---------------------");
-TestObjectWithLargeWidth();
-// TestSingle();
+TestSpecific();
+//TestObjectWithLargeWidth();
+//TestSingle();
 // ShowEverything();
 
 #pragma warning disable CS8321
+void TestSpecific()
+{
+    try
+    {
+        throw new Exception("Bla bla");
+    }
+    catch (Exception e)
+    {
+        e.Dump(tableConfig: new TableConfig { NoColumnWrapping = true, ExpandTables = true}, outputConfig: new OutputConfig { HeightOverride = 3000});
+    }
+}
+
 void TestObjectWithLargeWidth()
 {
     var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };

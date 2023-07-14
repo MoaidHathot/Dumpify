@@ -1,4 +1,5 @@
 ﻿using Dumpify.Descriptors;
+using Dumpiyf;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections;
@@ -19,6 +20,7 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         AddCustomTypeDescriptor(new EnumTypeRenderer(this));
         AddCustomTypeDescriptor(new DataTableTypeRenderer(this));
         AddCustomTypeDescriptor(new DataSetTypeRenderer(this));
+        AddCustomTypeDescriptor(new SystemReflectionTypeRenderer(this));
     }
 
     protected override IRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext<SpectreRendererState> context)
