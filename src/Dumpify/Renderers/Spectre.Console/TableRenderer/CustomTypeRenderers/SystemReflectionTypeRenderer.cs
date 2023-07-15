@@ -21,12 +21,19 @@ internal class SystemReflectionTypeRenderer : ICustomTypeRenderer<IRenderable>
         var metadataColor = context.Config.ColorConfig.MetadataInfoColor?.HexString ?? "default";
         var propertyValueColor = context.Config.ColorConfig.PropertyValueColor?.HexString ?? "default";
 
+        if(obj is Type type)
+        {
+
+            var typeName = context.Config.TypeNameProvider.GetTypeName((Type)obj).EscapeMarkup();
+            var c = $"[{metadataColor}]typeof([/][{typeColor}]{Markup.Escape(typeName)}[/][{metadataColor}])[/]";
+            return new Markup(c);
+        }
+
         if (obj is PropertyInfo property)
         {
             var typeName = context.Config.TypeNameProvider.GetTypeName(property.PropertyType).EscapeMarkup();
             var propertyDescription = $"[{typeColor}]{typeName}[/] [{propertyValueColor}]{property.Name.EscapeMarkup()}[/] {{ {(property.SetMethod is not null ? $"[{metadataColor}]set[/]; " : "")}{(property.GetMethod is not null ? $"[{metadataColor}]get[/]; " : "")}}}";
             return new Markup(propertyDescription);
-            //return GeneralMarkup(propertyDescription, context);
         }
 
         if (obj is ConstructorInfo ctor)
@@ -63,5 +70,5 @@ internal class SystemReflectionTypeRenderer : ICustomTypeRenderer<IRenderable>
     }
 
     public (bool shouldHandle, object? handleContext) ShouldHandle(IDescriptor descriptor, object obj)
-        => (descriptor.Type.Namespace?.StartsWith("System.Reflection") ?? false || obj is MemberInfo, null);
+        => (obj is Type || descriptor.Type.FullName == "System.RuntimeType" || (descriptor.Type.Namespace?.StartsWith("System.Reflection") ?? false) || obj is MemberInfo , null);
 }

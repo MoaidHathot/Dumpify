@@ -16,7 +16,6 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         AddCustomTypeDescriptor(new DictionaryTypeRenderer(this));
         AddCustomTypeDescriptor(new ArrayTypeRenderer(this));
         AddCustomTypeDescriptor(new TupleTypeRenderer(this));
-        AddCustomTypeDescriptor(new SystemTypeRenderer(this));
         AddCustomTypeDescriptor(new EnumTypeRenderer(this));
         AddCustomTypeDescriptor(new DataTableTypeRenderer(this));
         AddCustomTypeDescriptor(new DataSetTypeRenderer(this));
