@@ -10,7 +10,7 @@ internal class ObjectTableBuilder
     private readonly IDescriptor _descriptor;
     private readonly object _sourceObject;
 
-    private List<ITableBuilderBehavior> _behaviors = new();
+    private readonly List<ITableBuilderBehavior> _behaviors = new();
 
     private readonly List<IEnumerable<IRenderable>> _rows = new();
     private readonly List<IRenderable> _columnNames = new(2);
@@ -64,7 +64,7 @@ internal class ObjectTableBuilder
     public ObjectTableBuilder SetColumnNames(params string[] columnNames)
         => SetColumnNames((IEnumerable<string>)columnNames);
 
-    public ObjectTableBuilder SetTitle(string? title, Style? style = null)
+    public ObjectTableBuilder SetTitle(string? title, Style? style)
     {
         _title = title switch
         {
@@ -168,7 +168,7 @@ internal class ObjectTableBuilder
 
         if (_context.Config.Label is { } label && _context.CurrentDepth == 0 && object.ReferenceEquals(_context.RootObject, _sourceObject))
         {
-            table.Caption = new TableTitle(Markup.Escape(label));
+            table.Caption = new TableTitle(Markup.Escape(label), new Style(foreground: _context.State.Colors.LabelValueColor));
         }
 
         var columns = GetBehaviorColumns().Concat(_columnNames);

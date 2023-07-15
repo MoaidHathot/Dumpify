@@ -1,5 +1,3 @@
-
-using Dumpify;
 using Spectre.Console;
 
 namespace Dumpify;
@@ -14,4 +12,5 @@ public class SpectreColorConfig : IColorConfig<Color?>
     public required Color? IgnoredValueColor { get; set; }
     public required Color? MetadataInfoColor { get; set; }
     public required Color? MetadataErrorColor { get; set; }
+    public required Color? LabelValueColor { get; set; }
 }

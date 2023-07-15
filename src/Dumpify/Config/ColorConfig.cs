@@ -12,6 +12,7 @@ public class ColorConfig : IColorConfig<DumpColor>
     public static DumpColor? DefaultIgnoredValueColor { get; } = null;
     public static DumpColor? DefaultMetadataInfoColor { get; } = new ("#87D7D7");
     public static DumpColor? DefaultMetadataErrorColor { get; } = new ("#D78700");
+    public static DumpColor? DefaultLabelValueColor { get; } = new ("#87D7D7");
 
     public DumpColor? TypeNameColor { get; set; } = DefaultTypeNameColor;
     public DumpColor? ColumnNameColor { get; set; } = DefaultColumnNameColor;
@@ -21,6 +22,7 @@ public class ColorConfig : IColorConfig<DumpColor>
     public DumpColor? IgnoredValueColor { get; set; } = DefaultIgnoredValueColor;
     public DumpColor? MetadataInfoColor { get; set; } = DefaultMetadataInfoColor;
     public DumpColor? MetadataErrorColor { get; set; } = DefaultMetadataErrorColor;
+    public DumpColor? LabelValueColor { get; set; } = DefaultLabelValueColor;
 
     public static ColorConfig DefaultColors => new ();
     public static ColorConfig NoColors => new (null);
@@ -35,6 +37,7 @@ public class ColorConfig : IColorConfig<DumpColor>
         IgnoredValueColor = value;
         MetadataInfoColor = value;
         MetadataErrorColor = value;
+        LabelValueColor = value;
     }
 
     public ColorConfig()

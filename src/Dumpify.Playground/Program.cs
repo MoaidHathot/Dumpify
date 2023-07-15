@@ -4,8 +4,10 @@ using Spectre.Console;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Drawing;
 using System.Reflection;
 using System.Text;
+using Color = System.Drawing.Color;
 
 //DumpConfig.Default.Renderer = Renderers.Text;
 //DumpConfig.Default.ColorConfig = ColorConfig.NoColors;
@@ -13,22 +15,44 @@ using System.Text;
 //DumpConfig.Default.Output = Outputs.Debug;
 
 Console.WriteLine("---------------------");
-//TestSpecific();
-TestObjectWithLargeWidth();
+TestSpecific();
+//TestObjectWithLargeWidth();
 //TestSingle();
 // ShowEverything();
 
+
+//todo: improve labels, make them work with simple objects as strings (not wrapped in other object) and consider changing colors
+
+
 #pragma warning disable CS8321
+#pragma warning disable CS0168
 void TestSpecific()
 {
-    try
+    //try
+    //{
+    //    throw new Exception("Bla bla", new ArgumentNullException("paramName", "inner bla fla"));
+    //}
+    //catch (Exception e)
+    //{
+    //    e.Dump(maxDepth: 1, label: "Test Ex", colors: new ColorConfig { LabelValueColor = Color.DarkOrange });
+    //}
+
+    //Enumerable.Range(1, 3).Dump("This is Enumerable", colors: new ColorConfig { LabelValueColor = Color.Orange });
+    //Enumerable.Range(1, 3).ToArray().Dump("This is Array", colors: new ColorConfig { LabelValueColor = Color.Orange });
+    //Enumerable.Range(1, 3).ToList().Dump("This is List", colors: new ColorConfig { LabelValueColor = Color.Orange });
+    //1.Dump("This is one", colors: new ColorConfig { LabelValueColor = Color.Fuchsia });
+    //"Moaid".Dump("this is my name");
+    //Guid.NewGuid().Dump("This is Guid", colors: new ColorConfig { LabelValueColor = Color.SlateBlue });
+    new
     {
-        throw new Exception("Bla bla", new ArgumentNullException("paramName", "inner bla fla"));
-    }
-    catch (Exception e)
-    {
-        e.Dump();
-    }
+        Property = typeof(Person).GetProperty("FirstName"),
+        Ctor = typeof(Person).GetConstructors().First(),
+        Type = typeof(Person),
+        Field = typeof(Person).GetFields().First(),
+        Method = typeof(Person).GetMethods().First(),
+    }.Dump("This is a test");
+
+    typeof(Person).Dump("This is a type");
 }
 
 void TestObjectWithLargeWidth()
@@ -323,6 +347,10 @@ public record class Person
     public Person? Spouse { get; set; }
 
     public Profession Profession { get; set; }
+    public string? _fooField;
+
+    public string? FooMethod(int a)
+        => "";
 }
 
 public class Family

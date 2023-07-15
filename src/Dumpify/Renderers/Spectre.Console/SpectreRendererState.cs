@@ -1,5 +1,3 @@
-
-using Dumpify;
 using Spectre.Console;
 
 namespace Dumpify;
@@ -20,6 +18,7 @@ public class SpectreRendererState
             PropertyNameColor = config.ColorConfig.PropertyNameColor.ToSpectreColor(),
             MetadataErrorColor = config.ColorConfig.MetadataErrorColor.ToSpectreColor(),
             PropertyValueColor = config.ColorConfig.PropertyValueColor.ToSpectreColor(),
+            LabelValueColor = config.ColorConfig.LabelValueColor.ToSpectreColor(),
         };
     }
 }

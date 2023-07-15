@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Dumpify;
+﻿namespace Dumpify;
 
 public interface IColorConfig<TColor>
 {
@@ -16,4 +10,5 @@ public interface IColorConfig<TColor>
     TColor? IgnoredValueColor { get; set; }
     TColor? MetadataInfoColor { get; set; }
     TColor? MetadataErrorColor { get; set; }
+    TColor? LabelValueColor { get; set; }
 }

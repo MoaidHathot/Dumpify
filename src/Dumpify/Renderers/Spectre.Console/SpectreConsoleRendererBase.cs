@@ -23,7 +23,22 @@ internal abstract class SpectreConsoleRendererBase : RendererBase<IRenderable, S
         => new Markup(Markup.Escape(value.ToString() ?? ""), new Style(foreground: color));
 
     protected override IRenderable RenderSingleValueDescriptor(object obj, SingleValueDescriptor descriptor, RenderContext<SpectreRendererState> context)
-        => RenderSingleValue(obj is string str ? $"\"{str}\"" : obj, context, context.State.Colors.PropertyValueColor);
+    {
+        var singleValue = RenderSingleValue(obj is string str ? $"\"{str}\"" : obj, context, context.State.Colors.PropertyValueColor);
+
+        if (context.Config.Label is { } label && context.CurrentDepth == 0 && object.ReferenceEquals(context.RootObject, obj))
+        {
+            var builder = new ObjectTableBuilder(context, descriptor, obj);
+            return builder
+                .AddColumnName("Value")
+                .AddRow(descriptor, obj, singleValue)
+                .HideTitle()
+                .HideHeaders()
+                .Build();
+        }
+
+        return singleValue;
+    }
 
     public override IRenderable RenderNullValue(IDescriptor? descriptor, RenderContext<SpectreRendererState> context)
         => RenderSingleValue("null", context, context.State.Colors.NullValueColor);
