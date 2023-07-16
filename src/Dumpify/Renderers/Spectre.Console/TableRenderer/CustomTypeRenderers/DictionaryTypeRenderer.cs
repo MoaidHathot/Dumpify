@@ -125,24 +125,25 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
                 if (genericArgument.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
                 {
                     var method = i.GetMethod("GetEnumerator", BindingFlags.Instance | BindingFlags.Public)!;
-                    var items = (IEnumerable)method.Invoke(obj, null)!;
-
+                    var getEnumeratorResult = method.Invoke(obj, null)!;
                     var list = new List<(object? key, object? value)>();
-
-                    foreach (var item in items)
+                    if (getEnumeratorResult is IEnumerator enumerator)
                     {
-                        var itemType = item.GetType();
+                        while (enumerator.MoveNext())
+                        {
+                            var item = enumerator.Current;
+                            var itemType = item.GetType();
 
-                        var keyProperty = itemType.GetProperty("Key", BindingFlags.Instance | BindingFlags.Public)!;
-                        var key = keyProperty.GetValue(item);
+                            var keyProperty = itemType.GetProperty("Key", BindingFlags.Instance | BindingFlags.Public)!;
+                            var key = keyProperty.GetValue(item);
 
-                        var valueProperty = itemType.GetProperty("Value", BindingFlags.Instance | BindingFlags.Public)!;
-                        var value = valueProperty.GetValue(item);
+                            var valueProperty = itemType.GetProperty("Value", BindingFlags.Instance | BindingFlags.Public)!;
+                            var value = valueProperty.GetValue(item);
 
-                        list.Add((key, value));
+                            list.Add((key, value));
+                        }
+                        return (true, list);
                     }
-
-                    return (true, list);
                 }
             }
         }
