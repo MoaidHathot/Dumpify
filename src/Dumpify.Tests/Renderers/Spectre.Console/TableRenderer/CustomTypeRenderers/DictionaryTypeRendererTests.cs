@@ -9,8 +9,8 @@ namespace Dumpify.Tests.Renderers.Spectre.Console.TableRenderer.CustomTypeRender
 public class DictionaryTypeRendererTests
 {
     [TestMethod]
-    [DynamicData(nameof(GetDataFor_DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIenumerableWithGenericKeyValuePair), DynamicDataSourceType.Method)]
-    public void DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIenumerableWithGenericKeyValuePair(object input, bool expectedShouldHandle, List<(object?, object?)> expectedItem2)
+    [DynamicData(nameof(GetDataFor_DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIEnumerableWithGenericKeyValuePair), DynamicDataSourceType.Method)]
+    public void DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIEnumerableWithGenericKeyValuePair(object input, bool expectedShouldHandle, List<(object?, object?)> expectedItem2)
     {
         //Arrange
         IRendererHandler<IRenderable, SpectreRendererState> handler = default!;
@@ -26,14 +26,14 @@ public class DictionaryTypeRendererTests
         CollectionAssert.AreEquivalent(expectedItem2, (ICollection)result.Item2!);
     }
 
-    private static IEnumerable<object[]> GetDataFor_DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIenumerableWithGenericKeyValuePair()
+    private static IEnumerable<object[]> GetDataFor_DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIEnumerableWithGenericKeyValuePair()
     {
         var resultList = new List<(object, object)>()
         {
             new ("key1", "value1"),
             new ("key2", "value2"),
         };
-        const string jsonstring
+        const string jsonString
         = """
         {
             "key1": "value1",
@@ -42,8 +42,8 @@ public class DictionaryTypeRendererTests
         """;
         const bool shouldHandle = true;
         const bool shouldNotHandle = false;
-        JsonObject systemTextJsonObject = JsonNode.Parse(jsonstring)!.AsObject();
-        JObject newtonsoftJsonObject = JObject.Parse(jsonstring);
+        JsonObject systemTextJsonObject = JsonNode.Parse(jsonString)!.AsObject();
+        JObject newtonsoftJsonObject = JObject.Parse(jsonString);
         yield return new object[]
         {
             new Dictionary<string, string>()
