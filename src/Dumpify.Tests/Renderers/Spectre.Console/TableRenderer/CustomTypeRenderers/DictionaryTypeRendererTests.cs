@@ -10,7 +10,7 @@ public class DictionaryTypeRendererTests
 {
     [TestMethod]
     [DynamicData(nameof(GetDataFor_DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIenumerableWithGenericKeyValuePair), DynamicDataSourceType.Method)]
-    public void DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIenumerableWithGenericKeyValuePair(object input, bool expectedItem1, List<(object?, object?)> expectedItem2)
+    public void DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIenumerableWithGenericKeyValuePair(object input, bool expectedShouldHandle, List<(object?, object?)> expectedItem2)
     {
         //Arrange
         IRendererHandler<IRenderable, SpectreRendererState> handler = default!;
@@ -22,7 +22,7 @@ public class DictionaryTypeRendererTests
         var result = renderer.ShouldHandle(descriptor, input);
 
         //Assert
-        Assert.AreEqual(expectedItem1, result.Item1);
+        Assert.AreEqual(expectedShouldHandle, result.Item1);
         CollectionAssert.AreEquivalent(expectedItem2, (ICollection)result.Item2!);
     }
 
@@ -40,6 +40,8 @@ public class DictionaryTypeRendererTests
             "key2": "value2"
         }
         """;
+        const bool shouldHandle = true;
+        const bool shouldNotHandle = false;
         JsonObject systemTextJsonObject = JsonNode.Parse(jsonstring)!.AsObject();
         JObject newtonsoftJsonObject = JObject.Parse(jsonstring);
         yield return new object[]
@@ -49,7 +51,7 @@ public class DictionaryTypeRendererTests
                 {"key1", "value1"},
                 {"key2", "value2"},
             },
-            true,
+            shouldHandle,
             resultList
         };
         yield return new object[]
@@ -59,13 +61,13 @@ public class DictionaryTypeRendererTests
                 new KeyValuePair<string, string>("key1", "value1"),
                 new KeyValuePair<string, string>("key2", "value2")
             }),
-            true,
+            shouldHandle,
             resultList
         };
         yield return new object[]
         {
             newtonsoftJsonObject,
-            true,
+            shouldHandle,
             new List<(object, object)>()
             {
                 new ("key1", new JValue("value1")),
@@ -75,18 +77,24 @@ public class DictionaryTypeRendererTests
         yield return new object[]
         {
             systemTextJsonObject,
-            true,
+            shouldHandle,
             new List<(object, object)>()
             {
-                new ("key1", systemTextJsonObject.AsEnumerable().FirstOrDefault(x => x.Value!.ToString() == "value1").Value!.AsValue()),
-                new ("key2", systemTextJsonObject.AsEnumerable().FirstOrDefault(x => x.Value!.ToString() == "value2").Value!.AsValue()),
+                new ("key1", systemTextJsonObject.AsEnumerable().First(x => x.Value!.ToString() == "value1").Value!.AsValue()),
+                new ("key2", systemTextJsonObject.AsEnumerable().First(x => x.Value!.ToString() == "value2").Value!.AsValue()),
             }
+        };
+        yield return new object[]
+        {
+            new string[] {"value"},
+            shouldNotHandle,
+            default!
         };
     }
 
     private class TestEnumerable : IEnumerable<KeyValuePair<string, string>>
     {
-        private IEnumerable<KeyValuePair<string, string>> _internalIEnumerable;
+        private readonly IEnumerable<KeyValuePair<string, string>> _internalIEnumerable;
 
         public TestEnumerable(KeyValuePair<string, string>[] inputArray)
         {
@@ -98,7 +106,7 @@ public class DictionaryTypeRendererTests
 
         private class TestEnumerator : IEnumerator<KeyValuePair<string, string>>
         {
-            private IEnumerator<KeyValuePair<string, string>> _internalEnumerator;
+            private readonly IEnumerator<KeyValuePair<string, string>> _internalEnumerator;
 
             public TestEnumerator(IEnumerable<KeyValuePair<string, string>> inputEnumerable)
             {
