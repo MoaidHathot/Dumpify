@@ -4,7 +4,6 @@ using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
 
 namespace Dumpify;
 
@@ -20,6 +19,8 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         AddCustomTypeDescriptor(new DataTableTypeRenderer(this));
         AddCustomTypeDescriptor(new DataSetTypeRenderer(this));
         AddCustomTypeDescriptor(new SystemReflectionTypeRenderer(this));
+        AddCustomTypeDescriptor(new TimeTypesRenderer(this));
+        AddCustomTypeDescriptor(new GuidTypeRenderer(this));
     }
 
     protected override IRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext<SpectreRendererState> context)

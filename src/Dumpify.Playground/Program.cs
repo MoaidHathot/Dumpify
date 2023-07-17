@@ -59,7 +59,18 @@ void TestSpecific()
         Ctors = typeof(Person).GetConstructors(),
         //Members = typeof(Person).GetMembers(),
         FooGuid = Guid.NewGuid(),
+        Enum = Profession.Health,
+        TimeSpan = TimeSpan.MinValue,
+        DateTime = DateTime.Now,
+        DateTimeOffset = DateTimeOffset.Now,
+        DateOnly = DateOnly.FromDateTime(DateTime.Now),
+        TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
+
     }.Dump("Person");
+
+    DateTime.Now.Dump("DT");
+    Guid.NewGuid().Dump("Guid");
+    Guid.NewGuid().Dump();
 }
 
 // void TestObjectWithLargeWidth()
