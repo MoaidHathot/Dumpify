@@ -43,43 +43,39 @@ void TestSpecific()
     //1.Dump("This is one", colors: new ColorConfig { LabelValueColor = Color.Fuchsia });
     //"Moaid".Dump("this is my name");
     //Guid.NewGuid().Dump("This is Guid", colors: new ColorConfig { LabelValueColor = Color.SlateBlue });
-    new
-    {
-        Property = typeof(Person).GetProperty("FirstName"),
-        Ctor = typeof(Person).GetConstructors().First(),
-        Type = typeof(Person),
-        Field = typeof(Person).GetFields().First(),
-        Method = typeof(Person).GetMethods().First(m => m.Name.Contains("FooMethod")),
-        Ctor2 = typeof(Person2).GetConstructors().First(),
-    }.Dump("This is a test");
-
-    typeof(Person).Dump();
-    typeof(Person).Dump("type in label");
-    "sdfs".Dump();
+    //new
+    //{
+    //    Property = typeof(Person).GetProperty("FirstName"),
+    //    Ctor = typeof(Person).GetConstructors().First(),
+    //    Type = typeof(Person),
+    //    Field = typeof(Person).GetFields().First(),
+    //    Method = typeof(Person).GetMethods().First(m => m.Name.Contains("FooMethod")),
+    //    Ctor2 = typeof(Person2).GetConstructors().First(),
+    //}.Dump("This is a test");
 }
 
-void TestObjectWithLargeWidth()
-{
-    var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
-    var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
-    moaid.Spouse = haneeni;
-    haneeni.Spouse = moaid;
-    var family = new Family
-    {
-        Parent1 = moaid,
-        Parent2 = haneeni,
-        FamilyId = 42,
-        ChildrenArray = new[] { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot", Spouse = new Person { FirstName = "Child22", LastName = "Hathot", Spouse = new Person { FirstName = "Child222", LastName = "Hathot", Spouse = new Person { FirstName = "Child2222", LastName = "Hathot", Spouse = new Person
-        {
-            FirstName = "Child22222", LastName = "Hathot#@!%"
-        }}} } } },
-        ChildrenList = new List<Person> { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
-        ChildrenArrayList = new ArrayList { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
-        FamilyType = typeof(Family),
-        FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
-    }.Dump().DumpDebug().DumpTrace().DumpText();
-    //File.WriteAllText(@"S:\Programming\Github\Dumpify\textDump.txt", family);
-}
+// void TestObjectWithLargeWidth()
+// {
+//     var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
+//     var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
+//     moaid.Spouse = haneeni;
+//     haneeni.Spouse = moaid;
+//     var family = new Family
+//     {
+//         Parent1 = moaid,
+//         Parent2 = haneeni,
+//         FamilyId = 42,
+//         ChildrenArray = new[] { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot", Spouse = new Person { FirstName = "Child22", LastName = "Hathot", Spouse = new Person { FirstName = "Child222", LastName = "Hathot", Spouse = new Person { FirstName = "Child2222", LastName = "Hathot", Spouse = new Person
+//         {
+//             FirstName = "Child22222", LastName = "Hathot#@!%"
+//         }}} } } },
+//         ChildrenList = new List<Person> { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
+//         ChildrenArrayList = new ArrayList { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
+//         FamilyType = typeof(Family),
+//         FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
+//     }.Dump().DumpDebug().DumpTrace().DumpText();
+//     //File.WriteAllText(@"S:\Programming\Github\Dumpify\textDump.txt", family);
+// }
 
 void TestSingle()
 {

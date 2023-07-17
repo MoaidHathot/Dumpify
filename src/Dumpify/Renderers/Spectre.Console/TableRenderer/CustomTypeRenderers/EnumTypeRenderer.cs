@@ -18,10 +18,27 @@ internal class EnumTypeRenderer : ICustomTypeRenderer<IRenderable>
     {
         var context = (RenderContext<SpectreRendererState>)baseContext;
 
-        var color = context.Config.ColorConfig.PropertyValueColor?.HexString ?? "default";
+        var propertyValueColor = context.Config.ColorConfig.PropertyValueColor?.HexString ?? "default";
+        var typeColor = context.Config.ColorConfig.TypeNameColor?.HexString ?? "default";
 
         var name = context.Config.TypeNameProvider.GetTypeName(descriptor.Type);
-        return new Markup($"[{color}]{name}.{obj}[/]");
+
+        var markup = new Markup($"[{typeColor}]{name}[/].[{propertyValueColor}]{obj}[/]");
+
+
+        if (context.Config.Label is { } label && context.CurrentDepth == 0 && object.ReferenceEquals(context.RootObject, obj))
+        {
+            var table = new ObjectTableBuilder(context, descriptor, obj)
+                .AddColumnName("Values")
+                .AddRow(descriptor, obj, markup)
+                .HideTitle()
+                .HideHeaders()
+                .Build();
+
+            return table;
+        }
+
+        return markup;
     }
 
     public (bool, object?) ShouldHandle(IDescriptor descriptor, object obj)

@@ -27,7 +27,6 @@ internal class SystemReflectionTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         if (obj is Type type)
         {
-
             var typeName = nameProvider.GetTypeName((Type)obj).EscapeMarkup();
             var c = $"[{metadataColor}]typeof([/][{typeColor}]{Markup.Escape(typeName)}[/][{metadataColor}])[/]";
             return RenderMarkup(new Markup(c), context, descriptor, obj);
@@ -68,7 +67,6 @@ internal class SystemReflectionTypeRenderer : ICustomTypeRenderer<IRenderable>
 
     private IRenderable RenderMarkup(Markup markup, RenderContext<SpectreRendererState> context, IDescriptor descriptor, object sourceObj)
     {
-
         if (context.Config.Label is { } label && context.CurrentDepth == 0 && object.ReferenceEquals(context.RootObject, sourceObj))
         {
             var table = new ObjectTableBuilder(context, descriptor, sourceObj)
