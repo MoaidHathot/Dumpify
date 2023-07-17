@@ -16,13 +16,10 @@ using Color = System.Drawing.Color;
 
 Console.WriteLine("---------------------");
 TestSpecific();
-//TestObjectWithLargeWidth();
-//TestSingle();
+// TestSingle();
 // ShowEverything();
 
-
 //todo: improve labels, make them work with simple objects as strings (not wrapped in other object) and consider changing colors
-
 
 #pragma warning disable CS8321
 #pragma warning disable CS0168
@@ -52,6 +49,17 @@ void TestSpecific()
     //    Method = typeof(Person).GetMethods().First(m => m.Name.Contains("FooMethod")),
     //    Ctor2 = typeof(Person2).GetConstructors().First(),
     //}.Dump("This is a test");
+
+    typeof(Person).Dump();
+    new
+    {
+        Properties = typeof(Person).GetProperties(),
+        Methods = typeof(Person).GetMethods(),
+        Fields = typeof(Person).GetFields(),
+        Ctors = typeof(Person).GetConstructors(),
+        //Members = typeof(Person).GetMembers(),
+        FooGuid = Guid.NewGuid(),
+    }.Dump("Person");
 }
 
 // void TestObjectWithLargeWidth()

@@ -27,7 +27,7 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
     {
         var state = CreateState(obj, descriptor, config);
         var idGenerator = new ObjectIDGenerator();
-        var context = new RenderContext<TState>(config, idGenerator, 0, obj, state);
+        var context = new RenderContext<TState>(config, idGenerator, 0, obj, null, state);
 
         var renderable = obj switch
         {
@@ -126,6 +126,8 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
         {
             return RenderNullValue(customDescriptor, context);
         }
+
+        context = context with { RootObjectTransform = customValue };
 
         var customValueDescriptor = DumpConfig.Default.Generator.Generate(customValue.GetType(), null, memberProvider);
 

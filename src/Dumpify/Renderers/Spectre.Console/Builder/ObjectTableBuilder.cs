@@ -166,7 +166,7 @@ internal class ObjectTableBuilder
             table.HideHeaders();
         }
 
-        if (_context.Config.Label is { } label && _context.CurrentDepth == 0 && object.ReferenceEquals(_context.RootObject, _sourceObject))
+        if (_context.Config.Label is { } label && _context.CurrentDepth == 0 && (object.ReferenceEquals(_context.RootObject, _sourceObject) || _context.RootObjectTransform is not null && object.ReferenceEquals(_context.RootObjectTransform, _sourceObject)))
         {
             table.Caption = new TableTitle(Markup.Escape(label), new Style(foreground: _context.State.Colors.LabelValueColor));
         }

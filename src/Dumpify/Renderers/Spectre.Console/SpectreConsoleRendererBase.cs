@@ -26,7 +26,7 @@ internal abstract class SpectreConsoleRendererBase : RendererBase<IRenderable, S
     {
         var singleValue = RenderSingleValue(obj is string str ? $"\"{str}\"" : obj, context, context.State.Colors.PropertyValueColor);
 
-        if (context.Config.Label is { } label && context.CurrentDepth == 0 && object.ReferenceEquals(context.RootObject, obj))
+        if (context.Config.Label is { } label && context.CurrentDepth == 0 && (object.ReferenceEquals(context.RootObject, obj) || (context.RootObjectTransform is not null && object.ReferenceEquals(context.RootObjectTransform, obj))))
         {
             var builder = new ObjectTableBuilder(context, descriptor, obj);
             return builder
