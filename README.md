@@ -133,7 +133,6 @@ DumpConfig.Default.MaxDepth = 3;
 
 # Features for the future 0.6.0 release
 * Add configuration for formatting Anonymous Objects type names
-* Cache Spectre.Console styles and colors
 * Text renderer
 * re-introduce labels
 * Better styling of Custom values

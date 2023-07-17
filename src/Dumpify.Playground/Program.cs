@@ -49,11 +49,13 @@ void TestSpecific()
         Ctor = typeof(Person).GetConstructors().First(),
         Type = typeof(Person),
         Field = typeof(Person).GetFields().First(),
-        Method = typeof(Person).GetMethods().Where(m => m.Name.Contains("FooMethod")).First(),
+        Method = typeof(Person).GetMethods().First(m => m.Name.Contains("FooMethod")),
         Ctor2 = typeof(Person2).GetConstructors().First(),
     }.Dump("This is a test");
 
-    typeof(Person).Dump("This is a type");
+    typeof(Person).Dump();
+    typeof(Person).Dump("type in label");
+    "sdfs".Dump();
 }
 
 void TestObjectWithLargeWidth()
