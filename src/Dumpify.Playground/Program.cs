@@ -50,7 +50,7 @@ void TestSpecific()
     //    Ctor2 = typeof(Person2).GetConstructors().First(),
     //}.Dump("This is a test");
 
-    typeof(Person).Dump();
+    typeof(Person).Dump("this is a type");
     new
     {
         Properties = typeof(Person).GetProperties(),
@@ -353,6 +353,30 @@ void ShowEverything()
     //var result = DumpConfig.Default.Generator.Generate(family.GetType(), null);
 
     //JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
+    //
+
+
+    typeof(Person).Dump();
+    new
+    {
+        Properties = typeof(Person).GetProperties(),
+        Methods = typeof(Person).GetMethods(),
+        Fields = typeof(Person).GetFields(),
+        Ctors = typeof(Person).GetConstructors(),
+        //Members = typeof(Person).GetMembers(),
+        FooGuid = Guid.NewGuid(),
+        Enum = Profession.Health,
+        TimeSpan = TimeSpan.MinValue,
+        DateTime = DateTime.Now,
+        DateTimeOffset = DateTimeOffset.Now,
+        DateOnly = DateOnly.FromDateTime(DateTime.Now),
+        TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
+
+    }.Dump("Person");
+
+    DateTime.Now.Dump("DT");
+    Guid.NewGuid().Dump("Guid");
+    Guid.NewGuid().Dump();
 }
 #pragma warning restore CS8321
 
