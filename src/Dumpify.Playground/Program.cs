@@ -49,7 +49,8 @@ void TestSpecific()
         Ctor = typeof(Person).GetConstructors().First(),
         Type = typeof(Person),
         Field = typeof(Person).GetFields().First(),
-        Method = typeof(Person).GetMethods().First(),
+        Method = typeof(Person).GetMethods().Where(m => m.Name.Contains("FooMethod")).First(),
+        Ctor2 = typeof(Person2).GetConstructors().First(),
     }.Dump("This is a test");
 
     typeof(Person).Dump("This is a type");
@@ -351,6 +352,14 @@ public record class Person
 
     public string? FooMethod(int a)
         => "";
+}
+
+public class Person2
+{
+    public Person2(int a, string b, double c)
+    {
+
+    }
 }
 
 public class Family

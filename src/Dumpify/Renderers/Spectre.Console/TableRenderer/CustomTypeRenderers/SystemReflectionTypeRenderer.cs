@@ -21,32 +21,36 @@ internal class SystemReflectionTypeRenderer : ICustomTypeRenderer<IRenderable>
         var metadataColor = context.Config.ColorConfig.MetadataInfoColor?.HexString ?? "default";
         var propertyValueColor = context.Config.ColorConfig.PropertyValueColor?.HexString ?? "default";
 
-        if(obj is Type type)
+        var nameProvider = context.Config.TypeNameProvider;
+
+        if (obj is Type type)
         {
 
-            var typeName = context.Config.TypeNameProvider.GetTypeName((Type)obj).EscapeMarkup();
+            var typeName = nameProvider.GetTypeName((Type)obj).EscapeMarkup();
             var c = $"[{metadataColor}]typeof([/][{typeColor}]{Markup.Escape(typeName)}[/][{metadataColor}])[/]";
             return new Markup(c);
         }
 
         if (obj is PropertyInfo property)
         {
-            var typeName = context.Config.TypeNameProvider.GetTypeName(property.PropertyType).EscapeMarkup();
+            var typeName = nameProvider.GetTypeName(property.PropertyType).EscapeMarkup();
             var propertyDescription = $"[{typeColor}]{typeName}[/] [{propertyValueColor}]{property.Name.EscapeMarkup()}[/] {{ {(property.SetMethod is not null ? $"[{metadataColor}]set[/]; " : "")}{(property.GetMethod is not null ? $"[{metadataColor}]get[/]; " : "")}}}";
             return new Markup(propertyDescription);
         }
 
         if (obj is ConstructorInfo ctor)
         {
-            var ctorDescription = $"Constructor {ctor.Name}({string.Join(", ", ctor.GetParameters().Select(p => $"{p.ParameterType} {p.Name}"))})".EscapeMarkup();
-            return GeneralMarkup(ctorDescription, context);
+            var argumentList = string.Join(", ", ctor.GetParameters().Select(p => $"[{typeColor}]{nameProvider.GetTypeName(p.ParameterType).EscapeMarkup()}[/] {p.Name.EscapeMarkup()}"));
+            var ctorTypeName = ctor.DeclaringType is not null ? nameProvider.GetTypeName(ctor.DeclaringType) : ctor.Name;
+            var ctorDescription = $"[{metadataColor}]ctor[/] [{typeColor}]{ctorTypeName.EscapeMarkup()}[/]({argumentList})";
+            return new Markup(ctorDescription);
         }
 
         if (obj is MethodInfo method)
         {
-
-            var methodDescription = $"{method.ReturnType.Name} {method.Name}({string.Join(", ", method.GetParameters().Select(p => $"{p.ParameterType} {p.Name}"))})";
-            return GeneralMarkup(methodDescription, context);
+            var argumentList = string.Join(", ", method.GetParameters().Select(p => $"[{typeColor}]{nameProvider.GetTypeName(p.ParameterType).EscapeMarkup()}[/] {p.Name.EscapeMarkup()}"));
+            var methodDescription = $"[{typeColor}]{nameProvider.GetTypeName(method.ReturnType).EscapeMarkup()}[/] [{propertyValueColor}]{method.Name.EscapeMarkup()}[/]({argumentList})";
+            return new Markup(methodDescription);
         }
 
         if (obj is FieldInfo field)
@@ -56,7 +60,7 @@ internal class SystemReflectionTypeRenderer : ICustomTypeRenderer<IRenderable>
             return new Markup(fieldDescription);
         }
 
-        var formattedTypeName = context.Config.TypeNameProvider.GetTypeName(obj.GetType());
+        var formattedTypeName = nameProvider.GetTypeName(obj.GetType());
         return GeneralMarkup(formattedTypeName, context);
     }
 
@@ -70,5 +74,5 @@ internal class SystemReflectionTypeRenderer : ICustomTypeRenderer<IRenderable>
     }
 
     public (bool shouldHandle, object? handleContext) ShouldHandle(IDescriptor descriptor, object obj)
-        => (obj is Type || descriptor.Type.FullName == "System.RuntimeType" || (descriptor.Type.Namespace?.StartsWith("System.Reflection") ?? false) || obj is MemberInfo , null);
+        => (obj is Type || descriptor.Type.FullName == "System.RuntimeType" || (descriptor.Type.Namespace?.StartsWith("System.Reflection") ?? false) || obj is MemberInfo, null);
 }
