@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net7.0;netstandard2.1;netstandard2.0</TargetFrameworks>
-    <PackageReadmeFile>nuget.md</PackageReadmeFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net7.0;netstandard2.1;netstandard2.0</TargetFrameworks>
+		<PackageReadmeFile>nuget.md</PackageReadmeFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="../../docs/readme/nuget.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="../../docs/readme/nuget.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Spectre.Console" Version="0.46.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Spectre.Console" Version="0.47.0" />
+	</ItemGroup>
 
 </Project>

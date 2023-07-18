@@ -15,9 +15,9 @@ using Color = System.Drawing.Color;
 //DumpConfig.Default.Output = Outputs.Debug;
 
 Console.WriteLine("---------------------");
-TestSpecific();
+// TestSpecific();
 // TestSingle();
-// ShowEverything();
+ShowEverything();
 
 //todo: improve labels, make them work with simple objects as strings (not wrapped in other object) and consider changing colors
 
