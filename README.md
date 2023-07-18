@@ -1,5 +1,10 @@
 # Dumpify
 [![Github version](https://badge.fury.io/nu/Dumpify.svg)](https://badge.fury.io/nu/Dumpify)
+![example workflow](https://github.com/MoaidHathot/Dumpify/actions/workflows/build-dumpify.yml/badge.svg)
+![Publish Nuget](https://github.com/MoaidHathot/Dumpify/actions/workflows/publish-dumpify.yml/badge.svg)
+![Nuget Downloads](https://img.shields.io/nuget/dt/Dumpify)
+![GitHub Repo stars](https://img.shields.io/github/stars/MoaidHathot/Dumpify)
+![GitHub License](https://img.shields.io/github/license/MoaidHathot/Dumpify)
 
 Improve productivity and debuggability by adding `.Dump()` extension methods to **Console Applications**.
 `Dump` any object in a structured and colorful way into the Console, Trace, Debug events or your own custom output.
