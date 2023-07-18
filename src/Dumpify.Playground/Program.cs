@@ -65,6 +65,7 @@ void TestSpecific()
         DateTimeOffset = DateTimeOffset.Now,
         DateOnly = DateOnly.FromDateTime(DateTime.Now),
         TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
+        Lambda1 = (object)(() => 10),
 
     }.Dump("Person");
 

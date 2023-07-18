@@ -131,12 +131,9 @@ DumpConfig.Default.MaxDepth = 3;
 
 
 
-# Features for the future 0.6.0 release
+# Features for the future 0.7.0 release
 * Add configuration for formatting Anonymous Objects type names
 * Text renderer
-* re-introduce labels
-* Better styling of Custom values
-	* Typeof(T) for example, Generic types, etc.
 * Better rendering of Delegates
 * Documentation
 
