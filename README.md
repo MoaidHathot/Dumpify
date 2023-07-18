@@ -140,6 +140,10 @@ DumpConfig.Default.MaxDepth = 3;
 * Add configuration for formatting Anonymous Objects type names
 * Text renderer
 * Better rendering of Delegates
+* Add the option to write type names as a seperate column in tables
+* Write the `Count` values of dictionaries and IEnumerables in the name, e.g `Dictionary<string, string>(3)`
+* Add an option to limit how many elements to render for collections and arrays.
+* **consider** changing the default color scheme to VsCode's
 * Documentation
 
 
