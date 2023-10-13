@@ -40,6 +40,7 @@ public class DumpConfig
 
     public bool UseDescriptors { get; set; } = true;
     public bool ShowHeaders { get; set; } = true;
+    public bool UseAutoLabels { get; set; } = false;
 
     public ColorConfig ColorConfig { get; }
     public TableConfig TableConfig { get; }

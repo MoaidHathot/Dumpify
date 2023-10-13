@@ -15,9 +15,9 @@ using Color = System.Drawing.Color;
 //DumpConfig.Default.Output = Outputs.Debug;
 
 Console.WriteLine("---------------------");
-// TestSpecific();
+TestSpecific();
 // TestSingle();
-ShowEverything();
+// ShowEverything();
 
 //todo: improve labels, make them work with simple objects as strings (not wrapped in other object) and consider changing colors
 
@@ -33,8 +33,11 @@ void TestSpecific()
     //{
     //    e.Dump(maxDepth: 1, label: "Test Ex", colors: new ColorConfig { LabelValueColor = Color.DarkOrange });
     //}
+    //
 
-    //Enumerable.Range(1, 3).Dump("This is Enumerable", colors: new ColorConfig { LabelValueColor = Color.Orange });
+    var str = new { fa = "Hello" }.Dump(autoLabel: "3bla");
+
+    // Enumerable.Range(1, 3).Dump("This is Enumerable", colors: new ColorConfig { LabelValueColor = Color.Orange });
     //Enumerable.Range(1, 3).ToArray().Dump("This is Array", colors: new ColorConfig { LabelValueColor = Color.Orange });
     //Enumerable.Range(1, 3).ToList().Dump("This is List", colors: new ColorConfig { LabelValueColor = Color.Orange });
     //1.Dump("This is one", colors: new ColorConfig { LabelValueColor = Color.Fuchsia });
@@ -50,28 +53,28 @@ void TestSpecific()
     //    Ctor2 = typeof(Person2).GetConstructors().First(),
     //}.Dump("This is a test");
 
-    typeof(Person).Dump("this is a type");
-    new
-    {
-        Properties = typeof(Person).GetProperties(),
-        Methods = typeof(Person).GetMethods(),
-        Fields = typeof(Person).GetFields(),
-        Ctors = typeof(Person).GetConstructors(),
-        //Members = typeof(Person).GetMembers(),
-        FooGuid = Guid.NewGuid(),
-        Enum = Profession.Health,
-        TimeSpan = TimeSpan.MinValue,
-        DateTime = DateTime.Now,
-        DateTimeOffset = DateTimeOffset.Now,
-        DateOnly = DateOnly.FromDateTime(DateTime.Now),
-        TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
-        Lambda1 = (object)(() => 10),
-
-    }.Dump("Person");
-
-    DateTime.Now.Dump("DT");
-    Guid.NewGuid().Dump("Guid");
-    Guid.NewGuid().Dump();
+    // typeof(Person).Dump("this is a type");
+    // new
+    // {
+    //     Properties = typeof(Person).GetProperties(),
+    //     Methods = typeof(Person).GetMethods(),
+    //     Fields = typeof(Person).GetFields(),
+    //     Ctors = typeof(Person).GetConstructors(),
+    //     //Members = typeof(Person).GetMembers(),
+    //     FooGuid = Guid.NewGuid(),
+    //     Enum = Profession.Health,
+    //     TimeSpan = TimeSpan.MinValue,
+    //     DateTime = DateTime.Now,
+    //     DateTimeOffset = DateTimeOffset.Now,
+    //     DateOnly = DateOnly.FromDateTime(DateTime.Now),
+    //     TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
+    //     Lambda1 = (object)(() => 10),
+    //
+    // }.Dump("Person");
+    //
+    // DateTime.Now.Dump("DT");
+    // Guid.NewGuid().Dump("Guid");
+    // Guid.NewGuid().Dump();
 }
 
 // void TestObjectWithLargeWidth()
