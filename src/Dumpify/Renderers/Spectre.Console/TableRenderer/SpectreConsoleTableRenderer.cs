@@ -62,13 +62,19 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
 
     protected override IRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<SpectreRendererState> context)
     {
-        var builder = new ObjectTableBuilder(context, descriptor, obj);
-        builder.AddDefaultColumnNames();
+        var builder = new ObjectTableBuilder(context, descriptor, obj)
+            .AddDefaultColumnNames();
+
+        if (context.Config.TableConfig.ShowMemberTypes)
+        {
+            builder.AddBehavior(new RowTypeTableBuilderBehavior());
+        }
 
         foreach (var property in descriptor.Properties)
         {
-            var renderedValue = GetValueAndRender(obj, property.ValueProvider!, property, context with { CurrentDepth = context.CurrentDepth + 1 });
-            builder.AddRowWithTypeName(property, obj, renderedValue);
+            var value = property.ValueProvider!.GetValue(obj);
+            var renderedValue = GetValueAndRender(obj, property.ValueProvider!, property, context with { CurrentDepth = context.CurrentDepth + 1 }, value);
+            builder.AddRowWithObjectName(property, value, renderedValue);
         }
 
         return builder.Build();

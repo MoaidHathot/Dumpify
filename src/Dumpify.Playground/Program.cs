@@ -15,6 +15,7 @@ using Color = System.Drawing.Color;
 //DumpConfig.Default.Output = Outputs.Debug;
 
 Console.WriteLine("---------------------");
+DumpConfig.Default.TableConfig.ShowMemberTypes = true;
 TestSpecific();
 // TestSingle();
 // ShowEverything();
@@ -36,13 +37,18 @@ void TestSpecific()
     //
 
     var str = new { fa = "Hello" }.Dump(autoLabel: "3bla");
+    DumpConfig.Default.UseAutoLabels = false;
+    var str2 = new { fa = "Hello" }.Dump();
+
+
 
     // Enumerable.Range(1, 3).Dump("This is Enumerable", colors: new ColorConfig { LabelValueColor = Color.Orange });
     //Enumerable.Range(1, 3).ToArray().Dump("This is Array", colors: new ColorConfig { LabelValueColor = Color.Orange });
     //Enumerable.Range(1, 3).ToList().Dump("This is List", colors: new ColorConfig { LabelValueColor = Color.Orange });
     //1.Dump("This is one", colors: new ColorConfig { LabelValueColor = Color.Fuchsia });
-    //"Moaid".Dump("this is my name");
+    //"Moaid".Dump();
     //Guid.NewGuid().Dump("This is Guid", colors: new ColorConfig { LabelValueColor = Color.SlateBlue });
+    //Guid.NewGuid().Dump();
     //new
     //{
     //    Property = typeof(Person).GetProperty("FirstName"),
@@ -53,7 +59,7 @@ void TestSpecific()
     //    Ctor2 = typeof(Person2).GetConstructors().First(),
     //}.Dump("This is a test");
 
-    // typeof(Person).Dump("this is a type");
+    //typeof(Person).Dump();
     // new
     // {
     //     Properties = typeof(Person).GetProperties(),
@@ -79,10 +85,11 @@ void TestSpecific()
 
 // void TestObjectWithLargeWidth()
 // {
-//     var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
-//     var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
-//     moaid.Spouse = haneeni;
-//     haneeni.Spouse = moaid;
+var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
+var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
+moaid.Spouse = haneeni;
+haneeni.Spouse = moaid;
+//moaid.Dump();
 //     var family = new Family
 //     {
 //         Parent1 = moaid,

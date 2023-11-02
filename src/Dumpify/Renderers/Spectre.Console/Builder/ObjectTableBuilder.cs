@@ -83,6 +83,12 @@ internal class ObjectTableBuilder
 
     public ObjectTableBuilder AddRow(IDescriptor? descriptor, object? obj, IEnumerable<IRenderable> renderables)
     {
+        foreach (var behavior in _behaviors)
+        {
+            var additional = behavior.GetAdditionalCells(obj, descriptor, _context);
+            renderables = additional.Concat(renderables);
+        }
+
         _rows.Add(renderables);
 
         return this;
@@ -96,7 +102,7 @@ internal class ObjectTableBuilder
         => AddRow(descriptor, obj, new[] { ToPropertyNameMarkup(keyValue), renderedValue });
 
     //todo: In the future, after the refactoring, this should be an extension method
-    public ObjectTableBuilder AddRowWithTypeName(IDescriptor? descriptor, object? obj, IRenderable renderedValue)
+    public ObjectTableBuilder AddRowWithObjectName(IDescriptor? descriptor, object? obj, IRenderable renderedValue)
         => AddRow(descriptor, obj, new[] { ToPropertyNameMarkup(descriptor?.Name ?? ""), renderedValue });
 
     public ObjectTableBuilder HideHeaders()
@@ -179,7 +185,7 @@ internal class ObjectTableBuilder
 
             if (_context.Config.TableConfig.NoColumnWrapping)
                 tableColumn.NoWrap();
-            
+
             table.AddColumn(tableColumn);
         }
 

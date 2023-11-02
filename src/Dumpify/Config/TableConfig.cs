@@ -6,4 +6,5 @@ public class TableConfig
     public bool ShowTableHeaders { get; set; } = true;
     public bool NoColumnWrapping { get; set; } = false;
     public bool ExpandTables { get; set; } = false;
+    public bool ShowMemberTypes { get; set; } = false;
 }
