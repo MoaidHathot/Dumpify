@@ -22,7 +22,7 @@ Either run `dotnet add package Dumpify`, `Install-Package Dumpify` or use Visual
 * Support circular dependencies and references
 * Support styling and customizations
 * Highly Configurable
-* Support for differnt otuput targets: Console, Trace, Debug, Text, Custom
+* Support for different output targets: Console, Trace, Debug, Text, Custom
 * Fast!
     
 # Examples:
@@ -140,18 +140,18 @@ DumpConfig.Default.MaxDepth = 3;
 * Add configuration for formatting Anonymous Objects type names
 * Text renderer
 * Better rendering of Delegates
-* Add the option to write type names as a seperate column in tables
 * Write the `Count` values of dictionaries and IEnumerables in the name, e.g `Dictionary<string, string>(3)`
 * Add an option to limit how many elements to render for collections and arrays.
-* **consider** changing the default color scheme to VsCode's
+* **consider** changing the default color scheme to VSCode's
 * Documentation
-
+* Consider changing the style/view of ObjectDescriptors without properties (currently empty table)
 
 # To do
 * Live outputs
 * Add custom rendering for more types:
     - Exceptions, AggregateExceptions, etc...
 * Rethink Generators caching keys
+* Ditch `ObjectIdGenerator` and create a custom, modern implementation
 * Consider using Max Depth for Descriptors
 * Refactor Renderers and make it better extendable
 * Add more renderers
@@ -168,4 +168,3 @@ DumpConfig.Default.MaxDepth = 3;
 	* The current CustomDescriptorGenerator must generate a value
 	* Consider ValueTuple
 * Refactor SpectureTableRenderer to share customization code
-* Consider changing the style/view of ObjectDescriptors without properties (currently empty table)
