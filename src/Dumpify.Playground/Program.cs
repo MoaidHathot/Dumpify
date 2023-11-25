@@ -14,6 +14,7 @@ using Color = System.Drawing.Color;
 
 //DumpConfig.Default.Output = Outputs.Debug;
 
+// DumpConfig.Default.TableConfig.ShowRowSeparators = true;
 Console.WriteLine("---------------------");
 TestSpecific();
 // TestSingle();
@@ -35,9 +36,11 @@ void TestSpecific()
     //}
     //
 
-    var str = new { fa = "Hello", bla = "Word!" }.Dump("my label");
+    new { fa = "Hello", bla = "Word!" }.Dump("without separators");
+    new { fa = "Hello", bla = "Word!" }.Dump("with separators", tableConfig: new TableConfig { ShowRowSeparators = true });
     DumpConfig.Default.UseAutoLabels = true;
     DumpConfig.Default.TableConfig.ShowMemberTypes = true;
+    DumpConfig.Default.TableConfig.ShowRowSeparators = true;
     var str2 = new { fa = "Hello", bla = "World!" }.Dump();
 
 

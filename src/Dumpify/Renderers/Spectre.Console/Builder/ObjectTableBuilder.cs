@@ -199,6 +199,11 @@ internal class ObjectTableBuilder
 
         table.RoundedBorder();
 
+        if (_context.Config.TableConfig.ShowRowSeparators)
+        {
+            table.ShowRowSeparators();
+        }
+
         return _context.Config.TableConfig.ExpandTables ? table.Expand() : table.Collapse();
     }
 
