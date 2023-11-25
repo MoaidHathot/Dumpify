@@ -90,7 +90,28 @@ new AdditionValue(1, 2).Dump(members: new MembersConfig { IncludeFields = true, 
 ```
 ![image](https://user-images.githubusercontent.com/8770486/232252840-c5b0ea4c-eae9-4dc2-bd6c-d42ee58505eb.png)
 
+### You can turn on or off row separators and a type column
+```csharp
+//globally
+DumpConfig.Default.TableConfig.ShowMemberTypes = true;
+DumpConfig.Default.TableConfig.ShowRowSeparators = true;
 
+new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
+
+//or Per dump
+new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump(tableConfig: new TableConfig { ShowRowSeparators = true, ShowMemberTypes = true });
+```
+![image](https://github.com/MoaidHathot/Dumpify/assets/8770486/946acfb1-70ca-48bb-b3ad-7aa0e781ba12)
+
+### You can set custom labels or auto-labels
+```csharp
+new { Description = "You can manually specify labels to objects" }.Dump("Manual label");
+
+//Set auto-label globally for all dumps if a custom label wasn't provider
+DumpConfig.Default.UseAutoLabels = true;
+new { Description = "Or set labels automatically with auto-labels" }.Dump();
+```
+![image](https://github.com/MoaidHathot/Dumpify/assets/8770486/534a2c98-67fc-48e1-bea7-d3b7dc56e827)
 
 ### You can customize colors
 ```csharp
