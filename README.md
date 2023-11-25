@@ -166,6 +166,7 @@ DumpConfig.Default.MaxDepth = 3;
 * **consider** changing the default color scheme to VSCode's
 * Documentation
 * Consider changing the style/view of ObjectDescriptors without properties (currently empty table)
+* Fix simplified type names with Collection expressions (IEnumearble<int> col = [1, 2, 3]);
 
 # To do
 * Live outputs
