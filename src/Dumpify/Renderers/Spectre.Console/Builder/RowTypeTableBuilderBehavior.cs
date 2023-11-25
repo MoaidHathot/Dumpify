@@ -10,7 +10,7 @@ public class RowTypeTableBuilderBehavior : ITableBuilderBehavior
 
     public RowTypeTableBuilderBehavior(string columnTypeName = "Type")
     {
-        _columnTypeName = columnTypeName;
+        _columnTypeName = Markup.Escape(columnTypeName);
     }
 
     public IEnumerable<IRenderable> GetAdditionalCells(object? obj, IDescriptor? currentDescriptor, RenderContext<SpectreRendererState> context)
@@ -18,7 +18,7 @@ public class RowTypeTableBuilderBehavior : ITableBuilderBehavior
         var type = obj?.GetType() ?? currentDescriptor?.Type;
         var typeName = type is not null ? context.Config.TypeNameProvider.GetTypeName(type) : "";
 
-        yield return new Markup(typeName, new Style(foreground: context.State.Colors.TypeNameColor));
+        yield return new Markup(Markup.Escape(typeName), new Style(foreground: context.State.Colors.TypeNameColor));
     }
 
     public IEnumerable<IRenderable> GetAdditionalColumns(RenderContext<SpectreRendererState> context)

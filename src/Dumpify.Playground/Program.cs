@@ -14,9 +14,10 @@ using Color = System.Drawing.Color;
 
 //DumpConfig.Default.Output = Outputs.Debug;
 
-// DumpConfig.Default.TableConfig.ShowRowSeparators = true;
+DumpConfig.Default.TableConfig.ShowRowSeparators = true;
+DumpConfig.Default.TableConfig.ShowMemberTypes = true;
 Console.WriteLine("---------------------");
-TestSpecific();
+// TestSpecific();
 // TestSingle();
 // ShowEverything();
 
@@ -92,6 +93,9 @@ var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = 
 var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
 moaid.Spouse = haneeni;
 haneeni.Spouse = moaid;
+
+moaid.Dump();
+moaid.Dump(tableConfig: new TableConfig { ShowTableHeaders = false, ShowRowSeparators = true, ShowMemberTypes = true }, typeNames: new TypeNamingConfig { ShowTypeNames = false });
 //moaid.Dump();
 //     var family = new Family
 //     {
