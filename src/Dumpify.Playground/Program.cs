@@ -14,10 +14,10 @@ using Color = System.Drawing.Color;
 
 //DumpConfig.Default.Output = Outputs.Debug;
 
-DumpConfig.Default.TableConfig.ShowRowSeparators = true;
-DumpConfig.Default.TableConfig.ShowMemberTypes = true;
+// DumpConfig.Default.TableConfig.ShowRowSeparators = true;
+// DumpConfig.Default.TableConfig.ShowMemberTypes = true;
 Console.WriteLine("---------------------");
-// TestSpecific();
+TestSpecific();
 // TestSingle();
 // ShowEverything();
 
@@ -37,12 +37,21 @@ void TestSpecific()
     //}
     //
 
+    new { Description = "You can manually specify labels to objects" }.Dump("Manual label");
+
+    //Set auto-label globally for all dumps if a custom label wasn't provided
+    DumpConfig.Default.UseAutoLabels = true;
+    new { Description = "Or set labels automatically with auto-labels" }.Dump();
+
     new { fa = "Hello", bla = "Word!" }.Dump("without separators");
     new { fa = "Hello", bla = "Word!" }.Dump("with separators", tableConfig: new TableConfig { ShowRowSeparators = true });
     DumpConfig.Default.UseAutoLabels = true;
     DumpConfig.Default.TableConfig.ShowMemberTypes = true;
     DumpConfig.Default.TableConfig.ShowRowSeparators = true;
     var str2 = new { fa = "Hello", bla = "World!" }.Dump();
+
+
+    new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump(tableConfig: new TableConfig { ShowRowSeparators = true, ShowMemberTypes = true });
 
 
 
