@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Spectre.Console" Version="0.48.0" />
+	<PackageVersion Include="FakeItEasy" Version="8.0.0" />
+	<PackageVersion Include="FakeItEasy.Analyzer.CSharp" Version="6.1.1" />
+	<PackageVersion Include="FluentAssertions" Version="6.12.0" />
+	<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+	<PackageVersion Include="MSTest.TestAdapter" Version="3.0.2" />
+	<PackageVersion Include="MSTest.TestFramework" Version="3.0.2" />
+	<PackageVersion Include="coverlet.collector" Version="3.2.0" />
+  </ItemGroup>
+</Project>
+

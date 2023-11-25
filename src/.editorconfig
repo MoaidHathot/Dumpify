@@ -242,3 +242,6 @@ dotnet_naming_rule.private_fields_must_begin_with_underscore_and_be_in_camel_cas
 
 # CS0219: Variable is assigned but its value is never used
 dotnet_diagnostic.CS0219.severity = none
+
+# SYSLIB0050: Type or member is obsolete
+dotnet_diagnostic.SYSLIB0050.severity = none

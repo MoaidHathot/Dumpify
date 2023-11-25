@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <OutputType>Exe</OutputType>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Dumpify\Dumpify.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Dumpify\Dumpify.csproj" />
+	</ItemGroup>
 
 </Project>

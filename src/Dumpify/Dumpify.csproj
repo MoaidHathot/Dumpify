@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net7.0;netstandard2.1;netstandard2.0</TargetFrameworks>
+		<TargetFrameworks>net8.0;netstandard2.1;netstandard2.0</TargetFrameworks>
 		<PackageReadmeFile>nuget.md</PackageReadmeFile>
 	</PropertyGroup>
 
@@ -10,7 +10,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Spectre.Console" Version="0.47.0" />
+		<PackageReference Include="Spectre.Console" />
 	</ItemGroup>
 
 </Project>

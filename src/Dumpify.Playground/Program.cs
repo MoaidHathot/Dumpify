@@ -15,7 +15,6 @@ using Color = System.Drawing.Color;
 //DumpConfig.Default.Output = Outputs.Debug;
 
 Console.WriteLine("---------------------");
-DumpConfig.Default.TableConfig.ShowMemberTypes = true;
 TestSpecific();
 // TestSingle();
 // ShowEverything();
@@ -36,9 +35,10 @@ void TestSpecific()
     //}
     //
 
-    var str = new { fa = "Hello" }.Dump(autoLabel: "3bla");
-    DumpConfig.Default.UseAutoLabels = false;
-    var str2 = new { fa = "Hello" }.Dump();
+    var str = new { fa = "Hello", bla = "Word!" }.Dump("my label");
+    DumpConfig.Default.UseAutoLabels = true;
+    DumpConfig.Default.TableConfig.ShowMemberTypes = true;
+    var str2 = new { fa = "Hello", bla = "World!" }.Dump();
 
 
 
