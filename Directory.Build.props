@@ -28,10 +28,5 @@
 		<RepositoryBranch>main</RepositoryBranch>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageIconUrl>https://raw.githubusercontent.com/MoaidHathot/Dumpify/master/images/icon?sanitize=true</PackageIconUrl>
-		<PackageIcon>images/icon.png</PackageIcon>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<None Include="images/icon.png" Pack="true" PackagePath=""/>
-	</ItemGroup>
 </Project>

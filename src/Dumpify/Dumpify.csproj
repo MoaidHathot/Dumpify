@@ -3,10 +3,12 @@
 	<PropertyGroup>
 		<TargetFrameworks>net8.0;netstandard2.1;netstandard2.0</TargetFrameworks>
 		<PackageReadmeFile>nuget.md</PackageReadmeFile>
+		<PackageIcon>Dumpify-icon.png</PackageIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<None Include="../../docs/readme/nuget.md" Pack="true" PackagePath="\" />
+		<None Include="../../images/Dumpify-icon.png" Pack="true" PackagePath="" />
 	</ItemGroup>
 
 	<ItemGroup>
