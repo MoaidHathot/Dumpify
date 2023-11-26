@@ -142,12 +142,6 @@ DumpConfig.Default.MaxDepth = 3;
 //Much more...
 ```
 
-moaid.Spouse = haneeni;
-haneeni.Spouse = moaid;
-
-moaid.Dump();
-//You can define max depth as well, e.g `moaid.Dump(maxDepth: 2)`
-```
 ![image](https://user-images.githubusercontent.com/8770486/232280616-c6127820-7e2b-448b-81ca-1aded2894cdc.png)
 
 ### Support for Arrays, Dictionaries and Collections
