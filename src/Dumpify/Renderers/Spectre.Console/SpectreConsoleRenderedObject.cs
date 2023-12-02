@@ -57,7 +57,7 @@ internal class SpectreConsoleRenderedObject : IRenderedObject
 
         try
         {
-            isStdOut = output.TextWriter == System.Console.Out;
+            isStdOut = output.TextWriter == Console.Out;
         }
         catch
         {
@@ -67,7 +67,7 @@ internal class SpectreConsoleRenderedObject : IRenderedObject
         try
         {
 
-            isStdErr = output.TextWriter == System.Console.Error;
+            isStdErr = output.TextWriter == Console.Error;
         }
         catch
         {

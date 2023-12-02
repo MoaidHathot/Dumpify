@@ -47,7 +47,7 @@ internal abstract class SpectreConsoleRendererBase : RendererBase<IRenderable, S
         => RenderSingleValue($"[Exceeded max depth {context.Config.MaxDepth}]", context, context.State.Colors.MetadataInfoColor);
 
     protected override IRenderable RenderCircularDependency(object @object, IDescriptor? descriptor, RenderContext<SpectreRendererState> context)
-            => RenderSingleValue($"[Circular Reference]", context, context.State.Colors.MetadataInfoColor);
+            => RenderSingleValue($"[Circular Reference #{context.Config.TypeNameProvider.GetTypeName(@object.GetType())}]", context, context.State.Colors.MetadataInfoColor);
 
     protected override IRenderable RenderNullDescriptor(object obj, RenderContext<SpectreRendererState> context)
             => RenderSingleValue($"[null descriptor] {obj}", context, context.State.Colors.MetadataErrorColor);

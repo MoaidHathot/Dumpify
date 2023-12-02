@@ -7,6 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using Color = System.Drawing.Color;
 
 //DumpConfig.Default.Renderer = Renderers.Text;
@@ -27,6 +28,8 @@ TestSpecific();
 #pragma warning disable CS0168
 void TestSpecific()
 {
+    //new Dictionary<string, int>() { ["1"] = 2, ["2"] = 2, ["3"] = 3 }.Dump();
+    Regex.Match("abc", "[a-z]").Dump();
     //try
     //{
     //    throw new Exception("Bla bla", new ArgumentNullException("paramName", "inner bla fla"));
@@ -37,21 +40,21 @@ void TestSpecific()
     //}
     //
 
-    new { Description = "You can manually specify labels to objects" }.Dump("Manual label");
+    // new { Description = "You can manually specify labels to objects" }.Dump("Manual label");
 
     //Set auto-label globally for all dumps if a custom label wasn't provided
-    DumpConfig.Default.UseAutoLabels = true;
-    new { Description = "Or set labels automatically with auto-labels" }.Dump();
+    // DumpConfig.Default.UseAutoLabels = true;
+    // new { Description = "Or set labels automatically with auto-labels" }.Dump();
 
-    new { fa = "Hello", bla = "Word!" }.Dump("without separators");
-    new { fa = "Hello", bla = "Word!" }.Dump("with separators", tableConfig: new TableConfig { ShowRowSeparators = true });
-    DumpConfig.Default.UseAutoLabels = true;
-    DumpConfig.Default.TableConfig.ShowMemberTypes = true;
-    DumpConfig.Default.TableConfig.ShowRowSeparators = true;
-    var str2 = new { fa = "Hello", bla = "World!" }.Dump();
+    // new { fa = "Hello", bla = "Word!" }.Dump("without separators");
+    // new { fa = "Hello", bla = "Word!" }.Dump("with separators", tableConfig: new TableConfig { ShowRowSeparators = true });
+    // DumpConfig.Default.UseAutoLabels = true;
+    // DumpConfig.Default.TableConfig.ShowMemberTypes = true;
+    // DumpConfig.Default.TableConfig.ShowRowSeparators = true;
+    // var str2 = new { fa = "Hello", bla = "World!" }.Dump();
 
 
-    new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump(tableConfig: new TableConfig { ShowRowSeparators = true, ShowMemberTypes = true });
+    // new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump(tableConfig: new TableConfig { ShowRowSeparators = true, ShowMemberTypes = true });
 
 
 
@@ -103,8 +106,10 @@ var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Professio
 moaid.Spouse = haneeni;
 haneeni.Spouse = moaid;
 
-moaid.Dump();
-moaid.Dump(tableConfig: new TableConfig { ShowTableHeaders = false, ShowRowSeparators = true, ShowMemberTypes = true }, typeNames: new TypeNamingConfig { ShowTypeNames = false });
+// moaid.Dump("sdf");
+// DumpConfig.Default.TableConfig.ShowTableHeaders = false;
+// moaid.Dump("1112");
+// moaid.Dump(tableConfig: new TableConfig { ShowTableHeaders = true, ShowRowSeparators = true, ShowMemberTypes = true }, typeNames: new TypeNamingConfig { ShowTypeNames = false });
 //moaid.Dump();
 //     var family = new Family
 //     {

@@ -77,7 +77,10 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
             return (true, list);
         }
 
-        foreach (var i in descriptor.Type.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+        var nameProvider = new TypeNameProvider(false, true, false, false);
+
+        var enumerableInterfaces = descriptor.Type.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+        foreach (var i in enumerableInterfaces)
         {
             var genericArgument = i.GetGenericArguments()[0];
 
@@ -85,15 +88,22 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
             {
                 if (genericArgument.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
                 {
-                    var method = i.GetMethod("GetEnumerator", BindingFlags.Instance | BindingFlags.Public)!;
+                    var method = i.GetMethod("GetEnumerator", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!;
                     var enumerator = (IEnumerator)method.Invoke(obj, null)!;
+
+                    var (canHandle, propertyProvider) = GetItemProvider(obj, genericArgument, i, enumerator);
+
+                    if (canHandle is not true)
+                    {
+                        return (false, default);
+                    }
 
                     var list = new List<(object? key, object? value)>();
 
                     while (enumerator.MoveNext())
                     {
-                        var item = enumerator.Current;
-                        var itemType = item.GetType();
+                        var item = propertyProvider!.Invoke(enumerator);
+                        var itemType = item!.GetType();
 
                         var keyProperty = itemType.GetProperty("Key", BindingFlags.Instance | BindingFlags.Public)!;
                         var key = keyProperty.GetValue(item);
@@ -110,5 +120,29 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
         }
 
         return (false, null);
+    }
+
+    private static (bool canHandle, Func<object, object>? currentValueProvider) GetItemProvider(object? obj, Type genericArgument, Type enumerableInterface, IEnumerator enumerator)
+    {
+        var currentProperty = enumerator.GetType().GetProperty("Current", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+        //Notice how the if also checks for `currentProperty` nullability
+        if (currentProperty?.PropertyType.IsGenericType is true && currentProperty.PropertyType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
+        {
+            return (true, enumeratorSource => currentProperty.GetValue(enumeratorSource)!);
+        }
+
+        //Should we "fail" gracefully without special rendering and never knowing an issue has happened, or should we really fail and indicate via a rendering failure?
+        if (2 != genericArgument.GenericTypeArguments.Length)
+        {
+            return (false, default);
+        }
+
+        var nameProvider = new TypeNameProvider(false, true, false, false);
+
+        var currentPropertyExternalImplementationName = $"System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<{nameProvider.GetTypeName(genericArgument.GenericTypeArguments[0])},{genericArgument.GenericTypeArguments[1]}>>.Current";
+        currentProperty = enumerator.GetType().GetProperty(currentPropertyExternalImplementationName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+
+        return (currentProperty is not null, enumerableSource => currentProperty!.GetValue(enumerableSource)!);
     }
 }
