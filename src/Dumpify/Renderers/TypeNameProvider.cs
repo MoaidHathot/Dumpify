@@ -29,11 +29,14 @@ internal class TypeNameProvider : ITypeNameProvider
     private readonly bool _useFullTypeNames;
     private readonly bool _simplifyAnonymousObjectNames;
 
-    public TypeNameProvider(bool useAliases, bool useFullTypeNames, bool simplifyAnonymousObjectNames)
+    private readonly string _genericSeparator;
+
+    public TypeNameProvider(bool useAliases, bool useFullTypeNames, bool simplifyAnonymousObjectNames, bool separateArgumentsWithWhitespace)
     {
         _useAliases = useAliases;
         _useFullTypeNames = useFullTypeNames;
         _simplifyAnonymousObjectNames = simplifyAnonymousObjectNames;
+        _genericSeparator = separateArgumentsWithWhitespace ? ", " : ",";
     }
 
     public string GetTypeName(Type type)
@@ -98,7 +101,7 @@ internal class TypeNameProvider : ITypeNameProvider
         }
 
         var prefix = RemoveGenericAnnotations(name);
-        var genericArguments = string.Join(", ", type.GenericTypeArguments.Select(GetTypeName));
+        var genericArguments = string.Join(_genericSeparator, type.GenericTypeArguments.Select(GetTypeName));
 
         return $"{prefix}<{genericArguments}>";
     }

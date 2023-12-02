@@ -40,7 +40,7 @@ namespace Dumpify.Tests.Providers
         [DataRow(typeof(TestType), "TestType", true, true)]
         public void GetTypeNameReturnCorrectResult(Type type, string expectedTypeName, bool useAliases, bool useFullTypeName)
         {
-            var provider = new TypeNameProvider(useAliases, useFullTypeName, false);
+            var provider = new TypeNameProvider(useAliases, useFullTypeName, false, true);
 
             var result = provider.GetTypeName(type);
 
@@ -70,7 +70,7 @@ namespace Dumpify.Tests.Providers
         [DataRow(typeof(List<int>[][][]), 3, "System.Collections.Generic.List<System.int>", true, true)]
         public void GetArrayNameAndRankReturnCorrectResults(Type type, int expectedRank, string expectedElementName, bool useAliases, bool useFullTypeName)
         {
-            var provider = new TypeNameProvider(useAliases, useFullTypeName, false);
+            var provider = new TypeNameProvider(useAliases, useFullTypeName, false, true);
 
             var (name, rank) = provider.GetJaggedArrayNameWithRank(type);
 
@@ -89,7 +89,7 @@ namespace Dumpify.Tests.Providers
         [DataRow(typeof(string), true, true)]
         public void GetArrayNameAndRankThrowsException(Type type, bool useAliases, bool useFullTypeName)
         {
-            var provider = new TypeNameProvider(useAliases, useFullTypeName, false);
+            var provider = new TypeNameProvider(useAliases, useFullTypeName, false, true);
 
             var func = () => provider.GetJaggedArrayNameWithRank(type);
             func.Should().Throw<ArgumentException>();
@@ -106,7 +106,7 @@ namespace Dumpify.Tests.Providers
         [DataRow(false, false, true)]
         public void AnonymousTypeNameAreSimplified(bool useAliases, bool useFullTypeNames, bool simplifyAnonymousObjectNames)
         {
-            var provider = new TypeNameProvider(useAliases, useFullTypeNames, simplifyAnonymousObjectNames);
+            var provider = new TypeNameProvider(useAliases, useFullTypeNames, simplifyAnonymousObjectNames, true);
 
             var obj = new { Foo = "Foo1", Bar = 2 };
 
@@ -145,7 +145,7 @@ namespace Dumpify.Tests.Providers
         [DataRow(false, false, true)]
         public void GetArrayNameAndRankReturnCorrectSimplifiedAnonymousTypeName(bool useAliases, bool useFullTypeName, bool simplifyAnonymousObjectNames)
         {
-            var provider = new TypeNameProvider(useAliases, useFullTypeName, simplifyAnonymousObjectNames);
+            var provider = new TypeNameProvider(useAliases, useFullTypeName, simplifyAnonymousObjectNames, true);
 
             var array1 = Enumerable.Range(0, 3).Select(i => new { Index = i }).ToArray();
             var array2 = Enumerable.Range(1, 3).Select(_ => array1).ToArray();

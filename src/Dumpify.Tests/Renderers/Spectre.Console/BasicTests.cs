@@ -17,6 +17,6 @@ public class BasicTests
 
         var renderer = new SpectreConsoleTableRenderer();
 
-        renderer.Render(moaid, descriptor, new RendererConfig(){ MemberProvider = new MemberProvider(), TypeNameProvider = new TypeNameProvider(true, false, simplifyAnonymousObjectNames: false) });
+        renderer.Render(moaid, descriptor, new RendererConfig(){ MemberProvider = new MemberProvider(), TypeNameProvider = new TypeNameProvider(true, false, simplifyAnonymousObjectNames: false, separateArgumentsWithWhitespace: true) });
     }
 }
