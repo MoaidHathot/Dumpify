@@ -141,16 +141,16 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
         return firstTime is false;
     }
 
-    protected virtual TRenderable GetValueAndRender(object source, IValueProvider valueProvider, IDescriptor? descriptor, RenderContext<TState> context, object? providedValue = null)
+    protected virtual (bool success, object? value, TRenderable renderedValue) GetValueAndRender(object source, IValueProvider valueProvider, IDescriptor? descriptor, RenderContext<TState> context, object? providedValue = null)
     {
         try
         {
             var value = providedValue ?? valueProvider.GetValue(source);
-            return RenderDescriptor(value, descriptor, context);
+            return (true, value, RenderDescriptor(value, descriptor, context));
         }
         catch (Exception ex)
         {
-            return RenderFailedValueReading(ex, valueProvider, descriptor, context);
+            return (false, default, RenderFailedValueReading(ex, valueProvider, descriptor, context));
         }
     }
 

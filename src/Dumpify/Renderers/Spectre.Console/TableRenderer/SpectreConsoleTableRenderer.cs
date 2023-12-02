@@ -72,8 +72,7 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
 
         foreach (var property in descriptor.Properties)
         {
-            var value = property.ValueProvider!.GetValue(obj);
-            var renderedValue = GetValueAndRender(obj, property.ValueProvider!, property, context with { CurrentDepth = context.CurrentDepth + 1 }, value);
+            var (success, value, renderedValue) = GetValueAndRender(obj, property.ValueProvider!, property, context with { CurrentDepth = context.CurrentDepth + 1 });
             builder.AddRowWithObjectName(property, value, renderedValue);
         }
 
