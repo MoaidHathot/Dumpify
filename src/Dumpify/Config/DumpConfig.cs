@@ -1,4 +1,5 @@
-﻿using Dumpify.Descriptors.Generators;
+﻿using Dumpify.Config;
+using Dumpify.Descriptors.Generators;
 using Dumpify.Descriptors.ValueProviders;
 using Dumpify.Extensions;
 using System.Collections.Concurrent;
@@ -24,6 +25,7 @@ public class DumpConfig
         MembersConfig = new MembersConfig();
         TypeNamingConfig = new TypeNamingConfig();
         OutputConfig = new OutputConfig();
+        TypeRenderingConfig = new TypeRenderingConfig();
     }
 
     public void AddCustomTypeHandler(Type type, Func<object, Type, IValueProvider?, IMemberProvider, object?> valueFactory)
@@ -47,4 +49,5 @@ public class DumpConfig
     public MembersConfig MembersConfig { get; }
     public TypeNamingConfig TypeNamingConfig { get; }
     public OutputConfig OutputConfig { get; }
+    public TypeRenderingConfig TypeRenderingConfig { get; }
 }

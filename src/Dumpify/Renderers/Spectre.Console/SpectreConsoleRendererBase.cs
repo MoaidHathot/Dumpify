@@ -3,6 +3,7 @@ using Dumpify.Descriptors.ValueProviders;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace Dumpify;
 
@@ -24,7 +25,14 @@ internal abstract class SpectreConsoleRendererBase : RendererBase<IRenderable, S
 
     protected override IRenderable RenderSingleValueDescriptor(object obj, SingleValueDescriptor descriptor, RenderContext<SpectreRendererState> context)
     {
-        var singleValue = RenderSingleValue(obj is string str ? $"\"{str}\"" : obj, context, context.State.Colors.PropertyValueColor);
+        var quotationChar = context.Config.TypeRenderingConfig.StringQuotationChar;
+        var renderValue = obj switch
+        {
+            string str when context.Config.TypeRenderingConfig.QuoteStringValues => $"{quotationChar}{str}{quotationChar}",
+            _ => obj,
+        };
+
+        var singleValue = RenderSingleValue(renderValue, context, context.State.Colors.PropertyValueColor);
 
         if (context.Config.Label is { } label && context.CurrentDepth == 0 && (object.ReferenceEquals(context.RootObject, obj) || (context.RootObjectTransform is not null && object.ReferenceEquals(context.RootObjectTransform, obj))))
         {

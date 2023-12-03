@@ -1,4 +1,5 @@
 ﻿using Dumpify;
+using Dumpify.Config;
 using Spectre.Console;
 
 using System.Collections;
@@ -28,8 +29,23 @@ TestSpecific();
 #pragma warning disable CS0168
 void TestSpecific()
 {
+    DumpConfig.Default.TypeRenderingConfig.StringQuotationChar = '`';
+    "Hello".Dump();
+    "Hello".Dump("Default");
+    1.Dump();
+    new { Name = "Moaid", LastName = "Hathot", Age = 35 }.Dump("Default");
+    DumpConfig.Default.TypeRenderingConfig.QuoteStringValues = false;
+    "Hello".Dump("Global");
+    "Hello".Dump();
+    1.Dump();
+    new { Name = "Moaid", LastName = "Hathot", Age = 35  }.Dump("Global");
+    DumpConfig.Default.TypeRenderingConfig.QuoteStringValues = true;
+    "Hello".Dump("per dump", typeRenderingConfig: new TypeRenderingConfig { QuoteStringValues = false});
+    "Hello".Dump(typeRenderingConfig: new TypeRenderingConfig { QuoteStringValues = false});
+    1.Dump(typeRenderingConfig: new TypeRenderingConfig { QuoteStringValues = false});
+    new { Name = "Moaid", LastName = "Hathot", Age = 35  }.Dump("per dump", typeRenderingConfig: new TypeRenderingConfig { QuoteStringValues = false});
     //new Dictionary<string, int>() { ["1"] = 2, ["2"] = 2, ["3"] = 3 }.Dump();
-    Regex.Match("abc", "[a-z]").Dump();
+    //Regex.Match("abc", "[a-z]").Dump();
     //try
     //{
     //    throw new Exception("Bla bla", new ArgumentNullException("paramName", "inner bla fla"));
