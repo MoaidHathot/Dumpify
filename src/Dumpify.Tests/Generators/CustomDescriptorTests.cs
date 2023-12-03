@@ -1,23 +1,19 @@
-﻿using Dumpify.Descriptors.ValueProviders;
-using Dumpify.Tests.DTO;
-using System.Collections.Concurrent;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
 
 namespace Dumpify.Tests.Generators;
 
-[TestClass]
 public class CustomDescriptorTests
 {
-    [TestMethod]
-    [DataRow(typeof(StringBuilder))]
-    [DataRow(typeof(DateTime))]
-    [DataRow(typeof(DateTimeOffset))]
-    [DataRow(typeof(DateOnly))]
-    [DataRow(typeof(TimeOnly))]
-    [DataRow(typeof(TimeSpan))]
-    [DataRow(typeof(Type))]
-    [DataRow(typeof(PropertyInfo))]
+    [Theory]
+    [InlineData(typeof(StringBuilder))]
+    [InlineData(typeof(DateTime))]
+    [InlineData(typeof(DateTimeOffset))]
+    [InlineData(typeof(DateOnly))]
+    [InlineData(typeof(TimeOnly))]
+    [InlineData(typeof(TimeSpan))]
+    [InlineData(typeof(Type))]
+    [InlineData(typeof(PropertyInfo))]
     public void ShouldBeCustomValueDescriptor(Type type)
     {
         var generator = new CompositeDescriptorGenerator(new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, IValueProvider?, IMemberProvider, object?>>());
@@ -26,8 +22,8 @@ public class CustomDescriptorTests
         descriptor.Should().BeOfType<CustomDescriptor>($"{type.FullName} is a custom value", descriptor);
     }
 
-    [TestMethod]
-    [DataRow(typeof(BookStatus))]
+    [Theory]
+    [InlineData(typeof(BookStatus))]
     public void EnumsShouldBeCustomValueDescriptor(Type type)
     {
 

@@ -1,13 +1,8 @@
-﻿using Dumpify.Descriptors.ValueProviders;
-using Dumpify.Tests.DTO;
-using System.Collections.Concurrent;
+﻿namespace Dumpify.Tests.Generators;
 
-namespace Dumpify.Tests.Generators;
-
-[TestClass]
 public class ObjectDescriptorTests
 {
-    [TestMethod]
+    [Fact]
     public void PersonHasObjectDescriptor()
     {
         var person = new Person { FirstName = "Moaid", LastName = "Hathot" };
@@ -33,7 +28,7 @@ public class ObjectDescriptorTests
         last.ValueProvider!.Info.Should().BeSameAs(typeof(Person).GetProperty("LastName"));
     }
 
-    [TestMethod]
+    [Fact]
     public void CircularDependencyIsHandled()
     {
         var moaid = new PersonWithSignificantOther { FirstName = "Moaid", LastName = "Hathot" };

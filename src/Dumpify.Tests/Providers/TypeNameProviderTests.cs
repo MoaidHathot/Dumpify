@@ -2,42 +2,41 @@
 
 namespace Dumpify.Tests.Providers
 {
-    [TestClass]
     public class TypeNameProviderTests
     {
-        [TestMethod]
-        [DataRow(typeof(List<int>), "List<Int32>", false, false)]
-        [DataRow(typeof(List<int>), "List<int>", true, false)]
-        [DataRow(typeof(List<int>), "System.Collections.Generic.List<System.Int32>", false, true)]
-        [DataRow(typeof(List<int>), "System.Collections.Generic.List<System.int>", true, true)]
-        [DataRow(typeof(string), "String", false, false)]
-        [DataRow(typeof(string), "string", true, false)]
-        [DataRow(typeof(string), "System.String", false, true)]
-        [DataRow(typeof(string), "System.string", true, true)]
-        [DataRow(typeof(StringBuilder), "StringBuilder", false, false)]
-        [DataRow(typeof(StringBuilder), "StringBuilder", true, false)]
-        [DataRow(typeof(StringBuilder), "System.Text.StringBuilder", false, true)]
-        [DataRow(typeof(StringBuilder), "System.Text.StringBuilder", true, true)]
-        [DataRow(typeof(Dictionary<string, long>), "Dictionary<String, Int64>", false, false)]
-        [DataRow(typeof(Dictionary<string, long>), "Dictionary<string, long>", true, false)]
-        [DataRow(typeof(Dictionary<string, long>), "System.Collections.Generic.Dictionary<System.String, System.Int64>", false, true)]
-        [DataRow(typeof(Dictionary<string, long>), "System.Collections.Generic.Dictionary<System.string, System.long>", true, true)]
-        [DataRow(typeof(Stack<int>), "Stack<Int32>", false, false)]
-        [DataRow(typeof(Stack<int>), "Stack<int>", true, false)]
-        [DataRow(typeof(Stack<int>), "System.Collections.Generic.Stack<System.Int32>", false, true)]
-        [DataRow(typeof(Stack<int>), "System.Collections.Generic.Stack<System.int>", true, true)]
-        [DataRow(typeof(Dictionary<string, Dictionary<string, int>>), "Dictionary<String, Dictionary<String, Int32>>", false, false)]
-        [DataRow(typeof(Dictionary<string, Dictionary<string, int>>), "Dictionary<string, Dictionary<string, int>>", true, false)]
-        [DataRow(typeof(Dictionary<string, Dictionary<string, int>>), "System.Collections.Generic.Dictionary<System.String, System.Collections.Generic.Dictionary<System.String, System.Int32>>", false, true)]
-        [DataRow(typeof(Dictionary<string, Dictionary<string, int>>), "System.Collections.Generic.Dictionary<System.string, System.Collections.Generic.Dictionary<System.string, System.int>>", true, true)]
-        [DataRow(typeof(Func<int>), "Func<Int32>", false, false)]
-        [DataRow(typeof(Func<int>), "Func<int>", true, false)]
-        [DataRow(typeof(Func<int>), "System.Func<System.Int32>", false, true)]
-        [DataRow(typeof(Func<int>), "System.Func<System.int>", true, true)]
-        [DataRow(typeof(TestType), "TestType", false, false)]
-        [DataRow(typeof(TestType), "TestType", true, false)]
-        [DataRow(typeof(TestType), "TestType", false, true)]
-        [DataRow(typeof(TestType), "TestType", true, true)]
+        [Theory]
+        [InlineData(typeof(List<int>), "List<Int32>", false, false)]
+        [InlineData(typeof(List<int>), "List<int>", true, false)]
+        [InlineData(typeof(List<int>), "System.Collections.Generic.List<System.Int32>", false, true)]
+        [InlineData(typeof(List<int>), "System.Collections.Generic.List<System.int>", true, true)]
+        [InlineData(typeof(string), "String", false, false)]
+        [InlineData(typeof(string), "string", true, false)]
+        [InlineData(typeof(string), "System.String", false, true)]
+        [InlineData(typeof(string), "System.string", true, true)]
+        [InlineData(typeof(StringBuilder), "StringBuilder", false, false)]
+        [InlineData(typeof(StringBuilder), "StringBuilder", true, false)]
+        [InlineData(typeof(StringBuilder), "System.Text.StringBuilder", false, true)]
+        [InlineData(typeof(StringBuilder), "System.Text.StringBuilder", true, true)]
+        [InlineData(typeof(Dictionary<string, long>), "Dictionary<String, Int64>", false, false)]
+        [InlineData(typeof(Dictionary<string, long>), "Dictionary<string, long>", true, false)]
+        [InlineData(typeof(Dictionary<string, long>), "System.Collections.Generic.Dictionary<System.String, System.Int64>", false, true)]
+        [InlineData(typeof(Dictionary<string, long>), "System.Collections.Generic.Dictionary<System.string, System.long>", true, true)]
+        [InlineData(typeof(Stack<int>), "Stack<Int32>", false, false)]
+        [InlineData(typeof(Stack<int>), "Stack<int>", true, false)]
+        [InlineData(typeof(Stack<int>), "System.Collections.Generic.Stack<System.Int32>", false, true)]
+        [InlineData(typeof(Stack<int>), "System.Collections.Generic.Stack<System.int>", true, true)]
+        [InlineData(typeof(Dictionary<string, Dictionary<string, int>>), "Dictionary<String, Dictionary<String, Int32>>", false, false)]
+        [InlineData(typeof(Dictionary<string, Dictionary<string, int>>), "Dictionary<string, Dictionary<string, int>>", true, false)]
+        [InlineData(typeof(Dictionary<string, Dictionary<string, int>>), "System.Collections.Generic.Dictionary<System.String, System.Collections.Generic.Dictionary<System.String, System.Int32>>", false, true)]
+        [InlineData(typeof(Dictionary<string, Dictionary<string, int>>), "System.Collections.Generic.Dictionary<System.string, System.Collections.Generic.Dictionary<System.string, System.int>>", true, true)]
+        [InlineData(typeof(Func<int>), "Func<Int32>", false, false)]
+        [InlineData(typeof(Func<int>), "Func<int>", true, false)]
+        [InlineData(typeof(Func<int>), "System.Func<System.Int32>", false, true)]
+        [InlineData(typeof(Func<int>), "System.Func<System.int>", true, true)]
+        [InlineData(typeof(TestType), "TestType", false, false)]
+        [InlineData(typeof(TestType), "TestType", true, false)]
+        [InlineData(typeof(TestType), "TestType", false, true)]
+        [InlineData(typeof(TestType), "TestType", true, true)]
         public void GetTypeNameReturnCorrectResult(Type type, string expectedTypeName, bool useAliases, bool useFullTypeName)
         {
             var provider = new TypeNameProvider(useAliases, useFullTypeName, false, true);
@@ -47,27 +46,27 @@ namespace Dumpify.Tests.Providers
             result.Should().Be(expectedTypeName);
         }
 
-        [TestMethod]
-        [DataRow(typeof(int[]), 1, "Int32", false, false)]
-        [DataRow(typeof(int[]), 1, "System.Int32", false, true)]
-        [DataRow(typeof(int[]), 1, "int", true, false)]
-        [DataRow(typeof(int[]), 1, "System.int", true, true)]
-        [DataRow(typeof(int[][]), 2, "Int32", false, false)]
-        [DataRow(typeof(int[][]), 2, "System.Int32", false, true)]
-        [DataRow(typeof(int[][]), 2, "int", true, false)]
-        [DataRow(typeof(int[][]), 2, "System.int", true, true)]
-        [DataRow(typeof(string[]), 1, "String", false, false)]
-        [DataRow(typeof(string[]), 1, "System.String", false, true)]
-        [DataRow(typeof(string[]), 1, "string", true, false)]
-        [DataRow(typeof(string[]), 1, "System.string", true, true)]
-        [DataRow(typeof(string[][]), 2, "String", false, false)]
-        [DataRow(typeof(string[][]), 2, "System.String", false, true)]
-        [DataRow(typeof(string[][]), 2, "string", true, false)]
-        [DataRow(typeof(string[][]), 2, "System.string", true, true)]
-        [DataRow(typeof(List<int>[][][]), 3, "List<Int32>", false, false)]
-        [DataRow(typeof(List<int>[][][]), 3, "System.Collections.Generic.List<System.Int32>", false, true)]
-        [DataRow(typeof(List<int>[][][]), 3, "List<int>", true, false)]
-        [DataRow(typeof(List<int>[][][]), 3, "System.Collections.Generic.List<System.int>", true, true)]
+        [Theory]
+        [InlineData(typeof(int[]), 1, "Int32", false, false)]
+        [InlineData(typeof(int[]), 1, "System.Int32", false, true)]
+        [InlineData(typeof(int[]), 1, "int", true, false)]
+        [InlineData(typeof(int[]), 1, "System.int", true, true)]
+        [InlineData(typeof(int[][]), 2, "Int32", false, false)]
+        [InlineData(typeof(int[][]), 2, "System.Int32", false, true)]
+        [InlineData(typeof(int[][]), 2, "int", true, false)]
+        [InlineData(typeof(int[][]), 2, "System.int", true, true)]
+        [InlineData(typeof(string[]), 1, "String", false, false)]
+        [InlineData(typeof(string[]), 1, "System.String", false, true)]
+        [InlineData(typeof(string[]), 1, "string", true, false)]
+        [InlineData(typeof(string[]), 1, "System.string", true, true)]
+        [InlineData(typeof(string[][]), 2, "String", false, false)]
+        [InlineData(typeof(string[][]), 2, "System.String", false, true)]
+        [InlineData(typeof(string[][]), 2, "string", true, false)]
+        [InlineData(typeof(string[][]), 2, "System.string", true, true)]
+        [InlineData(typeof(List<int>[][][]), 3, "List<Int32>", false, false)]
+        [InlineData(typeof(List<int>[][][]), 3, "System.Collections.Generic.List<System.Int32>", false, true)]
+        [InlineData(typeof(List<int>[][][]), 3, "List<int>", true, false)]
+        [InlineData(typeof(List<int>[][][]), 3, "System.Collections.Generic.List<System.int>", true, true)]
         public void GetArrayNameAndRankReturnCorrectResults(Type type, int expectedRank, string expectedElementName, bool useAliases, bool useFullTypeName)
         {
             var provider = new TypeNameProvider(useAliases, useFullTypeName, false, true);
@@ -78,15 +77,15 @@ namespace Dumpify.Tests.Providers
             name.Should().Be(expectedElementName);
         }
 
-        [TestMethod]
-        [DataRow(typeof(List<int>), false, false)]
-        [DataRow(typeof(List<int>), false, true)]
-        [DataRow(typeof(List<int>), true, false)]
-        [DataRow(typeof(List<int>), true, true)]
-        [DataRow(typeof(string), false, false)]
-        [DataRow(typeof(string), false, true)]
-        [DataRow(typeof(string), true, false)]
-        [DataRow(typeof(string), true, true)]
+        [Theory]
+        [InlineData(typeof(List<int>), false, false)]
+        [InlineData(typeof(List<int>), false, true)]
+        [InlineData(typeof(List<int>), true, false)]
+        [InlineData(typeof(List<int>), true, true)]
+        [InlineData(typeof(string), false, false)]
+        [InlineData(typeof(string), false, true)]
+        [InlineData(typeof(string), true, false)]
+        [InlineData(typeof(string), true, true)]
         public void GetArrayNameAndRankThrowsException(Type type, bool useAliases, bool useFullTypeName)
         {
             var provider = new TypeNameProvider(useAliases, useFullTypeName, false, true);
@@ -95,15 +94,15 @@ namespace Dumpify.Tests.Providers
             func.Should().Throw<ArgumentException>();
         }
 
-        [TestMethod]
-        [DataRow(true, true, true)]
-        [DataRow(true, true, false)]
-        [DataRow(true, false, true)]
-        [DataRow(true, false, false)]
-        [DataRow(false, true, true)]
-        [DataRow(false, true, false)]
-        [DataRow(false, false, false)]
-        [DataRow(false, false, true)]
+        [Theory]
+        [InlineData(true, true, true)]
+        [InlineData(true, true, false)]
+        [InlineData(true, false, true)]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, true)]
+        [InlineData(false, true, false)]
+        [InlineData(false, false, false)]
+        [InlineData(false, false, true)]
         public void AnonymousTypeNameAreSimplified(bool useAliases, bool useFullTypeNames, bool simplifyAnonymousObjectNames)
         {
             var provider = new TypeNameProvider(useAliases, useFullTypeNames, simplifyAnonymousObjectNames, true);
@@ -134,15 +133,15 @@ namespace Dumpify.Tests.Providers
             }
         }
 
-        [TestMethod]
-        [DataRow(true, true, true)]
-        [DataRow(true, true, false)]
-        [DataRow(true, false, true)]
-        [DataRow(true, false, false)]
-        [DataRow(false, true, true)]
-        [DataRow(false, true, false)]
-        [DataRow(false, false, false)]
-        [DataRow(false, false, true)]
+        [Theory]
+        [InlineData(true, true, true)]
+        [InlineData(true, true, false)]
+        [InlineData(true, false, true)]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, true)]
+        [InlineData(false, true, false)]
+        [InlineData(false, false, false)]
+        [InlineData(false, false, true)]
         public void GetArrayNameAndRankReturnCorrectSimplifiedAnonymousTypeName(bool useAliases, bool useFullTypeName, bool simplifyAnonymousObjectNames)
         {
             var provider = new TypeNameProvider(useAliases, useFullTypeName, simplifyAnonymousObjectNames, true);
@@ -178,12 +177,18 @@ namespace Dumpify.Tests.Providers
         }
 
 
-        [TestMethod]
+        [Fact]
         public void NamespaceOfTestTypeIsNull()
         {
             //Utility test for making sure that the Namespace of `TestType` stays null during future refactoring
             //This is an assumption in other tests, and mainly in GetTypeNameReturnCorrectResult
             typeof(TestType).Namespace.Should().BeNull();
+        }
+
+        [Fact]
+        public void TestFactXunit()
+        {
+
         }
     }
 }

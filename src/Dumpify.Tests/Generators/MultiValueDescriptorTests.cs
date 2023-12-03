@@ -1,12 +1,8 @@
-﻿using Dumpify.Descriptors.ValueProviders;
-using System.Collections.Concurrent;
+﻿namespace Dumpify.Tests.Generators;
 
-namespace Dumpify.Tests.Generators;
-
-[TestClass]
 public class MultiValueDescriptorTests
 {
-    [TestMethod]
+    [Fact]
     public void ZArrayHasMultiValueDescriptor()
     {
         var arr = new[] { 1, 2, 3, };

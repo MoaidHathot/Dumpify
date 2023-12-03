@@ -1,27 +1,23 @@
-using Dumpify.Descriptors.ValueProviders;
-using Dumpify.Tests.DTO;
-using System.Collections.Concurrent;
 using System.Text;
 
 namespace Dumpify.Tests.Generators;
 
-[TestClass]
 public class SingleValueDescriptorTests
 {
-    [TestMethod]
-    [DataRow(typeof(int))]
-    [DataRow(typeof(string))]
-    [DataRow(typeof(bool))]
-    [DataRow(typeof(byte))]
-    [DataRow(typeof(short))]
-    [DataRow(typeof(ushort))]
-    [DataRow(typeof(uint))]
-    [DataRow(typeof(long))]
-    [DataRow(typeof(ulong))]
-    [DataRow(typeof(float))]
-    [DataRow(typeof(double))]
-    [DataRow(typeof(decimal))]
-    [DataRow(typeof(Half))]
+    [Theory]
+    [InlineData(typeof(int))]
+    [InlineData(typeof(string))]
+    [InlineData(typeof(bool))]
+    [InlineData(typeof(byte))]
+    [InlineData(typeof(short))]
+    [InlineData(typeof(ushort))]
+    [InlineData(typeof(uint))]
+    [InlineData(typeof(long))]
+    [InlineData(typeof(ulong))]
+    [InlineData(typeof(float))]
+    [InlineData(typeof(double))]
+    [InlineData(typeof(decimal))]
+    [InlineData(typeof(Half))]
     public void ShouldBeSingleValueDescriptor(Type type)
     {
         var generator = new CompositeDescriptorGenerator(new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, IValueProvider?, IMemberProvider, object?>>());
@@ -30,12 +26,12 @@ public class SingleValueDescriptorTests
         descriptor.Should().BeOfType<SingleValueDescriptor>($"{type.FullName} is a single value", descriptor);
     }
 
-    [TestMethod]
-    [DataRow(typeof(StringBuilder))]
-    [DataRow(typeof(Person))]
-    [DataRow(typeof(List<int>))]
-    [DataRow(typeof(string[]))]
-    [DataRow(typeof(int[]))]
+    [Theory]
+    [InlineData(typeof(StringBuilder))]
+    [InlineData(typeof(Person))]
+    [InlineData(typeof(List<int>))]
+    [InlineData(typeof(string[]))]
+    [InlineData(typeof(int[]))]
     public void ShouldNotBeSingleValueDescriptor(Type type)
     {
         var generator = new CompositeDescriptorGenerator(new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, IValueProvider?, IMemberProvider, object?>>());

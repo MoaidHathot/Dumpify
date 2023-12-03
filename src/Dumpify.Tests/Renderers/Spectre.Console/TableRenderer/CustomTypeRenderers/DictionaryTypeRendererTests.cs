@@ -5,11 +5,10 @@ using System.Text.Json.Nodes;
 
 namespace Dumpify.Tests.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 
-[TestClass]
 public class DictionaryTypeRendererTests
 {
-    [TestMethod]
-    [DynamicData(nameof(GetDataFor_DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIEnumerableWithGenericKeyValuePair), DynamicDataSourceType.Method)]
+    [Theory]
+    [MemberData(nameof(GetDataFor_DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIEnumerableWithGenericKeyValuePair))]
     public void DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIEnumerableWithGenericKeyValuePair(object input, bool expectedShouldHandle, List<(object?, object?)> expectedItem2)
     {
         //Arrange
@@ -22,11 +21,11 @@ public class DictionaryTypeRendererTests
         var result = renderer.ShouldHandle(descriptor, input);
 
         //Assert
-        Assert.AreEqual(expectedShouldHandle, result.Item1);
-        CollectionAssert.AreEquivalent(expectedItem2, (ICollection)result.Item2!);
+        expectedShouldHandle.Should().Be(result.Item1);
+        expectedItem2.Should().BeEquivalentTo((IEnumerable<(object, object)>)result.Item2!);
     }
 
-    private static IEnumerable<object[]> GetDataFor_DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIEnumerableWithGenericKeyValuePair()
+    public static IEnumerable<object[]> GetDataFor_DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIEnumerableWithGenericKeyValuePair()
     {
         var resultList = new List<(object, object)>()
         {

@@ -1,13 +1,8 @@
-﻿using Dumpify.Descriptors.ValueProviders;
-using Dumpify.Tests.DTO;
-using System.Collections.Concurrent;
+﻿namespace Dumpify.Tests.Renderers.Spectre.Console;
 
-namespace Dumpify.Tests.Renderers.Spectre.Console;
-
-[TestClass]
 public class RenderCircularDependencies
 {
-    [TestMethod]
+    [Fact]
     public void RenderCircularDependenciesWithoutCrashes()
     {
         var moaid = new PersonWithSignificantOther { FirstName = "Moaid", LastName = "Hathot" };

@@ -1,13 +1,8 @@
-﻿using Dumpify.Descriptors.ValueProviders;
-using Dumpify.Tests.DTO;
-using System.Collections.Concurrent;
+﻿namespace Dumpify.Tests.Renderers.Spectre.Console;
 
-namespace Dumpify.Tests.Renderers.Spectre.Console;
-
-[TestClass]
 public class BasicTests
 {
-    [TestMethod]
+    [Fact]
     public void HandleNullProperties()
     {
         var moaid = new PersonWithSignificantOther { FirstName = "Moaid", LastName = "Hathot" };
