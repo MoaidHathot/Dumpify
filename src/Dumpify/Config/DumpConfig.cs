@@ -1,5 +1,4 @@
-﻿using Dumpify.Config;
-using Dumpify.Descriptors.Generators;
+﻿using Dumpify.Descriptors.Generators;
 using Dumpify.Descriptors.ValueProviders;
 using Dumpify.Extensions;
 using System.Collections.Concurrent;

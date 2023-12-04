@@ -1,4 +1,4 @@
-﻿namespace Dumpify.Config;
+﻿namespace Dumpify;
 
 public class TypeRenderingConfig
 {

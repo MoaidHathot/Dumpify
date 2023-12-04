@@ -1,12 +1,11 @@
 ﻿using Dumpify;
-using Dumpify.Config;
-using Spectre.Console;
 
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using Color = System.Drawing.Color;
@@ -30,20 +29,42 @@ TestSpecific();
 void TestSpecific()
 {
     DumpConfig.Default.TypeRenderingConfig.StringQuotationChar = '`';
-    "Hello".Dump();
-    "Hello".Dump("Default");
-    1.Dump();
-    new { Name = "Moaid", LastName = "Hathot", Age = 35 }.Dump("Default");
-    DumpConfig.Default.TypeRenderingConfig.QuoteStringValues = false;
-    "Hello".Dump("Global");
-    "Hello".Dump();
-    1.Dump();
-    new { Name = "Moaid", LastName = "Hathot", Age = 35  }.Dump("Global");
-    DumpConfig.Default.TypeRenderingConfig.QuoteStringValues = true;
-    "Hello".Dump("per dump", typeRenderingConfig: new TypeRenderingConfig { QuoteStringValues = false});
-    "Hello".Dump(typeRenderingConfig: new TypeRenderingConfig { QuoteStringValues = false});
-    1.Dump(typeRenderingConfig: new TypeRenderingConfig { QuoteStringValues = false});
-    new { Name = "Moaid", LastName = "Hathot", Age = 35  }.Dump("per dump", typeRenderingConfig: new TypeRenderingConfig { QuoteStringValues = false});
+
+    var direct = new TestDirect();
+    var explici = new TestExplicit();
+
+    direct.Add(new KeyValuePair<string, int>("1", 1));
+    direct.Add(new KeyValuePair<string, int>("2", 2));
+    direct.Add(new KeyValuePair<string, int>("3", 3));
+    direct.Add(new KeyValuePair<string, int>("4", 4));
+
+
+    explici.Add(new KeyValuePair<string, int>("1", 1));
+    explici.Add(new KeyValuePair<string, int>("2", 2));
+    explici.Add(new KeyValuePair<string, int>("3", 3));
+    explici.Add(new KeyValuePair<string, int>("4", 4));
+
+
+    Regex.Matches("abc", "[a-z]").Dump();
+    //direct.Dump("Direct");
+    explici.Dump("Explicit");
+
+
+    //DumpConfig.Default.TypeRenderingConfig.StringQuotationChar = '\'';
+    //"Hello".Dump();
+    //"Hello".Dump("Default");
+    //1.Dump();
+    //new { Name = "Moaid", LastName = "Hathot", Age = 35 }.Dump("Default");
+    //DumpConfig.Default.TypeRenderingConfig.QuoteStringValues = false;
+    //"Hello".Dump("Global");
+    //"Hello".Dump();
+    //1.Dump();
+    //new { Name = "Moaid", LastName = "Hathot", Age = 35  }.Dump("Global");
+    //DumpConfig.Default.TypeRenderingConfig.QuoteStringValues = true;
+    //"Hello".Dump("per dump", typeRenderingConfig: new TypeRenderingConfig { QuoteStringValues = false});
+    //"Hello".Dump(typeRenderingConfig: new TypeRenderingConfig { QuoteStringValues = false});
+    //1.Dump(typeRenderingConfig: new TypeRenderingConfig { QuoteStringValues = false});
+    //new { Name = "Moaid", LastName = "Hathot", Age = 35  }.Dump("per dump", typeRenderingConfig: new TypeRenderingConfig { QuoteStringValues = false });
     //new Dictionary<string, int>() { ["1"] = 2, ["2"] = 2, ["3"] = 3 }.Dump();
     //Regex.Match("abc", "[a-z]").Dump();
     //try
@@ -489,7 +510,7 @@ public class Device
 }
 
 
-class Test : ICollection<KeyValuePair<string, int>>
+class TestDirect : ICollection<KeyValuePair<string, int>>
 {
     private List<(string key, int value)> _list = new();
 
@@ -516,4 +537,73 @@ class Test : ICollection<KeyValuePair<string, int>>
 
     public int Count => _list.Count;
     public bool IsReadOnly { get; } = false;
+}
+
+class TestExplicit : IEnumerable<(string, int)>, IEnumerable<KeyValuePair<string, int>>
+{
+    private List<(string key, int value)> _list = new();
+
+    IEnumerator<(string, int)> IEnumerable<(string, int)>.GetEnumerator()
+        => _list.GetEnumerator();
+
+    //IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
+    //    => new TestEnumerator(_list);
+
+    public IEnumerator GetEnumerator()
+        => new TestEnumerator(_list);
+
+    IEnumerator<KeyValuePair<string, int>> IEnumerable<KeyValuePair<string, int>>.GetEnumerator()
+        => _list.Select(l => new KeyValuePair<string, int>(l.key, l.value)).GetEnumerator();
+
+    IEnumerator<KeyValuePair<string, int>> GetExplicitEnumerator()
+        => _list.Select(l => new KeyValuePair<string, int>(l.key, l.value)).GetEnumerator();
+
+
+    public void Add(KeyValuePair<string, int> item)
+        => _list.Add((item.Key, item.Value));
+
+    public void Clear()
+        => _list.Clear();
+
+    public bool Contains(KeyValuePair<string, int> item)
+        => _list.Contains((item.Key, item.Value));
+
+    public void CopyTo(KeyValuePair<string, int>[] array, int arrayIndex)
+        => throw new NotImplementedException();
+
+    public bool Remove(KeyValuePair<string, int> item)
+        => throw new NotImplementedException();
+
+    public int Count => _list.Count;
+    public bool IsReadOnly { get; } = false;
+
+
+    private class TestEnumerator : IEnumerator<KeyValuePair<string, string>>
+    {
+        private readonly List<(string key, int value)> _list;
+        private readonly IEnumerator<(string key, int value)> _enumerator;
+
+        public TestEnumerator(List<(string key, int value)> list)
+        {
+            _list = list;
+            _enumerator = _list.GetEnumerator();
+        }
+
+        public void Dispose()
+        {
+
+        }
+
+        public bool MoveNext()
+            => _enumerator.MoveNext();
+
+        public void Reset()
+            => _enumerator.Reset();
+
+        public KeyValuePair<string, string> Current => new KeyValuePair<string, string>(_enumerator.Current.key, _enumerator.Current.value.ToString());
+
+        object IEnumerator.Current => _enumerator.Current;
+    }
+
+    //private TestWrapper : 
 }
