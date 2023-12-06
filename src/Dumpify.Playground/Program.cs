@@ -28,26 +28,27 @@ TestSpecific();
 #pragma warning disable CS0168
 void TestSpecific()
 {
-    DumpConfig.Default.TypeRenderingConfig.StringQuotationChar = '`';
+    new TestVirtual().Dump();
+    // DumpConfig.Default.TypeRenderingConfig.StringQuotationChar = '`';
+    //
+    // var direct = new TestDirect();
+    // var explici = new TestExplicit();
+    //
+    // direct.Add(new KeyValuePair<string, int>("1", 1));
+    // direct.Add(new KeyValuePair<string, int>("2", 2));
+    // direct.Add(new KeyValuePair<string, int>("3", 3));
+    // direct.Add(new KeyValuePair<string, int>("4", 4));
+    //
+    //
+    // explici.Add(new KeyValuePair<string, int>("1", 1));
+    // explici.Add(new KeyValuePair<string, int>("2", 2));
+    // explici.Add(new KeyValuePair<string, int>("3", 3));
+    // explici.Add(new KeyValuePair<string, int>("4", 4));
+    //
 
-    var direct = new TestDirect();
-    var explici = new TestExplicit();
-
-    direct.Add(new KeyValuePair<string, int>("1", 1));
-    direct.Add(new KeyValuePair<string, int>("2", 2));
-    direct.Add(new KeyValuePair<string, int>("3", 3));
-    direct.Add(new KeyValuePair<string, int>("4", 4));
-
-
-    explici.Add(new KeyValuePair<string, int>("1", 1));
-    explici.Add(new KeyValuePair<string, int>("2", 2));
-    explici.Add(new KeyValuePair<string, int>("3", 3));
-    explici.Add(new KeyValuePair<string, int>("4", 4));
-
-
-    Regex.Matches("abc", "[a-z]").Dump();
+    // Regex.Matches("abc", "[a-z]").Dump();
     //direct.Dump("Direct");
-    explici.Dump("Explicit");
+    // explici.Dump("Explicit");
 
 
     //DumpConfig.Default.TypeRenderingConfig.StringQuotationChar = '\'';
@@ -606,4 +607,11 @@ class TestExplicit : IEnumerable<(string, int)>, IEnumerable<KeyValuePair<string
     }
 
     //private TestWrapper : 
+}
+
+public class TestVirtual
+{
+    public string Foo { get; set; } = "Moaid";
+    public virtual string Bar { get; set; } = "Hello";
+    public string Baz { set { _ = value; } }
 }

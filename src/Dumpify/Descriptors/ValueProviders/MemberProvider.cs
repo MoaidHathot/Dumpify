@@ -13,7 +13,7 @@ internal sealed record MemberProvider : IMemberProvider
     public MemberProvider()
         : this(true, false, true, false)
     {
-        
+
     }
     public MemberProvider(bool includeProperties, bool includeFields, bool includePublicMembers, bool includeNonPublicMembers)
     {
@@ -36,6 +36,7 @@ internal sealed record MemberProvider : IMemberProvider
         {
             var properties = type.GetProperties(flags)
                 .Where(p => p.GetIndexParameters().Length == 0)
+                .Where(p => p.GetMethod is not null)
                 .Select(p => new PropertyValueProvider(p));
 
             members = members.Concat(properties);
