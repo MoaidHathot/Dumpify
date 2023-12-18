@@ -28,7 +28,8 @@ TestSpecific();
 #pragma warning disable CS0168
 void TestSpecific()
 {
-    new TestVirtual().Dump();
+    'a'.Dump();
+    //new TestVirtual().Dump();
     // DumpConfig.Default.TypeRenderingConfig.StringQuotationChar = '`';
     //
     // var direct = new TestDirect();
