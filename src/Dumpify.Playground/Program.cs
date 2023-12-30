@@ -29,6 +29,9 @@ TestSpecific();
 void TestSpecific()
 {
     'a'.Dump();
+    Enumerable.Range(0, 10).Select(i => (char)(i + 'a')).Dump();
+    Enumerable.Range(0, 10).Select(i => (char)(i + 'a')).ToArray().Dump();
+    "this is a string".Dump();
     //new TestVirtual().Dump();
     // DumpConfig.Default.TypeRenderingConfig.StringQuotationChar = '`';
     //

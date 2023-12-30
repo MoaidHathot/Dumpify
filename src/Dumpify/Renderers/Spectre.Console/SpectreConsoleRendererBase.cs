@@ -25,10 +25,12 @@ internal abstract class SpectreConsoleRendererBase : RendererBase<IRenderable, S
 
     protected override IRenderable RenderSingleValueDescriptor(object obj, SingleValueDescriptor descriptor, RenderContext<SpectreRendererState> context)
     {
-        var quotationChar = context.Config.TypeRenderingConfig.StringQuotationChar;
+        var stringQuotationChar = context.Config.TypeRenderingConfig.StringQuotationChar;
+        var charQuotationChar = context.Config.TypeRenderingConfig.CharQuotationChar;
         var renderValue = obj switch
         {
-            string str when context.Config.TypeRenderingConfig.QuoteStringValues => $"{quotationChar}{str}{quotationChar}",
+            string str when context.Config.TypeRenderingConfig.QuoteStringValues => $"{stringQuotationChar}{str}{stringQuotationChar}",
+            char ch when context.Config.TypeRenderingConfig.QuoteCharValues => $"{charQuotationChar}{ch}{charQuotationChar}",
             _ => obj,
         };
 
