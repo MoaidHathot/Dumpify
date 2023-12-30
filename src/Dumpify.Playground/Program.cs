@@ -28,6 +28,8 @@ TestSpecific();
 #pragma warning disable CS0168
 void TestSpecific()
 {
+    ((nuint)5).Dump();
+    ((nint)5).Dump();
     'a'.Dump();
     Enumerable.Range(0, 10).Select(i => (char)(i + 'a')).Dump();
     Enumerable.Range(0, 10).Select(i => (char)(i + 'a')).ToArray().Dump();
