@@ -20,9 +20,6 @@
 		<Deterministic>true</Deterministic>
 		<DebugSymbols>true</DebugSymbols>
 		<DebugType>embedded</DebugType>
-		<MinVerSkip Condition="'$(Configuration)' == 'Debug'">true</MinVerSkip>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Package Info">
@@ -39,12 +36,12 @@
 		<PackageIconUrl>https://raw.githubusercontent.com/MoaidHathot/Dumpify/master/images/icon?sanitize=true</PackageIconUrl>
 	</PropertyGroup>
 
-	  <PropertyGroup Label="SourceLink" Condition="'$(GITHUB_ACTIONS)' == 'true'" Label="Deterministic Build">
+	  <PropertyGroup Label="SourceLink" Condition="'$(GITHUB_ACTIONS)' == 'true'">
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 	  </PropertyGroup>
 
-	  <PropertyGroup Label="Deterministic Build" Condition="'$(GITHUB_ACTIONS)' == 'true'" Label="Deterministic Build">
+	  <PropertyGroup Label="Deterministic Build" Condition="'$(GITHUB_ACTIONS)' == 'true'">
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 	  </PropertyGroup>
 </Project>
