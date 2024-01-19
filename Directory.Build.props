@@ -16,7 +16,16 @@
 		<BaseName>MoaidHathot.Dumpify</BaseName>
 	</PropertyGroup>
 
-	<PropertyGroup>
+	<PropertyGroup Label="Settings">
+		<Deterministic>true</Deterministic>
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>embedded</DebugType>
+		<MinVerSkip Condition="'$(Configuration)' == 'Debug'">true</MinVerSkip>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<PropertyGroup Label="Package Info">
 		<Product>Dumpify</Product>
 		<Authors>Moaid Hathot</Authors>
 		<Title>Dumpify</Title>
@@ -29,4 +38,13 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageIconUrl>https://raw.githubusercontent.com/MoaidHathot/Dumpify/master/images/icon?sanitize=true</PackageIconUrl>
 	</PropertyGroup>
+
+	  <PropertyGroup Label="SourceLink" Condition="'$(GITHUB_ACTIONS)' == 'true'" Label="Deterministic Build">
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+	  </PropertyGroup>
+
+	  <PropertyGroup Label="Deterministic Build" Condition="'$(GITHUB_ACTIONS)' == 'true'" Label="Deterministic Build">
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+	  </PropertyGroup>
 </Project>
