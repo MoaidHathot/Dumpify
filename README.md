@@ -101,7 +101,7 @@ new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
 //or Per dump
 new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump(tableConfig: new TableConfig { ShowRowSeparators = true, ShowMemberTypes = true });
 ```
-![image](https://github.com/MoaidHathot/Dumpify/assets/8770486/946acfb1-70ca-48bb-b3ad-7aa0e781ba12)
+![image](https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/screenshots/row-separator.png)
 
 ### You can set custom labels or auto-labels
 ```csharp
@@ -111,7 +111,7 @@ new { Description = "You can manually specify labels to objects" }.Dump("Manual 
 DumpConfig.Default.UseAutoLabels = true;
 new { Description = "Or set labels automatically with auto-labels" }.Dump();
 ```
-![image](https://github.com/MoaidHathot/Dumpify/assets/8770486/534a2c98-67fc-48e1-bea7-d3b7dc56e827)
+![image](https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/screenshots/custom-label-and-auto-labels.png)
 
 ### You can customize colors
 ```csharp
