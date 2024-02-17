@@ -1,5 +1,5 @@
 ﻿using Dumpify;
-
+using System.Buffers;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
@@ -26,14 +26,23 @@ TestSpecific();
 
 #pragma warning disable CS8321
 #pragma warning disable CS0168
+
 void TestSpecific()
 {
-    ((nuint)5).Dump();
-    ((nint)5).Dump();
-    'a'.Dump();
-    Enumerable.Range(0, 10).Select(i => (char)(i + 'a')).Dump();
-    Enumerable.Range(0, 10).Select(i => (char)(i + 'a')).ToArray().Dump();
-    "this is a string".Dump();
+    var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
+    var moaid2 = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
+
+    Person[] arr = [moaid, moaid];
+    arr.Dump();
+
+    //var value = SearchValues.Create("a");
+    //value.Dump();
+    // ((nuint)5).Dump();
+    // ((nint)5).Dump();
+    //'a'.Dump(typeNames: new TypeNamingConfig { });
+    // Enumerable.Range(0, 10).Select(i => (char)(i + 'a')).Dump();
+    // Enumerable.Range(0, 10).Select(i => (char)(i + 'a')).ToArray().Dump();
+    // "this is a string".Dump();
     //new TestVirtual().Dump();
     // DumpConfig.Default.TypeRenderingConfig.StringQuotationChar = '`';
     //
@@ -405,8 +414,8 @@ void ShowEverything()
 
     new Exception("This is an exception", new ArgumentNullException("blaParam", "This is inner exception")).Dump();
 
-    new AdditionValue(1, 10).Dump(members: new() { IncludeFields = true, IncludeNonPublicMembers = true, IncludeProperties = false });
-    new AdditionValue(1, 10).Dump(members: new() { IncludeFields = true, IncludeNonPublicMembers = true });
+    new AdditionValue(1, 10).Dump(members: new() { IncludeFields = true, IncludeNonePublicMembers = true, IncludeProperties = false });
+    new AdditionValue(1, 10).Dump(members: new() { IncludeFields = true, IncludeNonePublicMembers = true });
 
     //arr.Dump();
     //moaid.Dump();
