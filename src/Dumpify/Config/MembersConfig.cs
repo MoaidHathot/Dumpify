@@ -2,8 +2,8 @@
 
 public class MembersConfig
 {
-    public bool IncludePublicMembers { get; init; } = true;
-    public bool IncludeNonPublicMembers { get; init; } = false;
-    public bool IncludeProperties { get; init; } = true;
-    public bool IncludeFields { get; init; } = false;
+    public bool IncludePublicMembers { get; set; } = true;
+    public bool IncludeNonePublicMembers { get; set; } = false;
+    public bool IncludeProperties { get; set; } = true;
+    public bool IncludeFields { get; set; } = false;
 }

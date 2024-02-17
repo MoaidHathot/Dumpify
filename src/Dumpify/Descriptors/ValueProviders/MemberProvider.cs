@@ -14,6 +14,7 @@ internal sealed record MemberProvider : IMemberProvider
     {
 
     }
+
     public MemberProvider(bool includeProperties, bool includeFields, bool includePublicMembers, bool includeNonPublicMembers)
     {
         _includeProperties = includeProperties;

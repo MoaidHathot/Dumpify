@@ -57,7 +57,7 @@ public static class DumpExtensions
             TableConfig = tableConfig ?? defaultConfig.TableConfig,
             TypeNamingConfig = typeNamingConfig,
             TypeRenderingConfig = typeRenderingConfig ?? defaultConfig.TypeRenderingConfig,
-            MemberProvider = new MemberProvider(membersConfig.IncludeProperties, membersConfig.IncludeFields, membersConfig.IncludePublicMembers, membersConfig.IncludeNonPublicMembers),
+            MemberProvider = new MemberProvider(membersConfig.IncludeProperties, membersConfig.IncludeFields, membersConfig.IncludePublicMembers, membersConfig.IncludeNonePublicMembers),
             TypeNameProvider = new TypeNameProvider(typeNamingConfig.UseAliases, typeNamingConfig.UseFullName, typeNamingConfig.SimplifyAnonymousObjectNames, typeNamingConfig.SeparateTypesWithSpace),
         };
 
