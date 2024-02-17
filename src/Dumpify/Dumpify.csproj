@@ -8,7 +8,7 @@
 
 	<ItemGroup>
 		<None Include="../../docs/readme/nuget.md" Pack="true" PackagePath="\" />
-		<None Include="../../images/Dumpify-logo-styled.png" Pack="true" PackagePath="" />
+		<None Include="../../assets/Dumpify-logo-styled.png" Pack="true" PackagePath="" />
 	</ItemGroup>
 
 	<ItemGroup>
