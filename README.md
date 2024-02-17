@@ -1,4 +1,6 @@
 # Dumpify
+<img src="https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/Dumpify-logo-styled.png" alt="drawing" width="200" />
+
 [![Github version](https://badge.fury.io/nu/Dumpify.svg)](https://badge.fury.io/nu/Dumpify)
 ![example workflow](https://github.com/MoaidHathot/Dumpify/actions/workflows/build-dumpify.yml/badge.svg)
 ![Publish Nuget](https://github.com/MoaidHathot/Dumpify/actions/workflows/publish-dumpify.yml/badge.svg)
