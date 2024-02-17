@@ -102,6 +102,7 @@ new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
 new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump(tableConfig: new TableConfig { ShowRowSeparators = true, ShowMemberTypes = true });
 ```
 ![image](https://github.com/MoaidHathot/Dumpify/assets/8770486/946acfb1-70ca-48bb-b3ad-7aa0e781ba12)
+![row-separator](https://github.com/MoaidHathot/Dumpify/assets/8770486/bab70a5f-1480-42ba-b962-686bf8d61d65)
 
 ### You can set custom labels or auto-labels
 ```csharp
