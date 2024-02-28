@@ -16,6 +16,16 @@ The library is published as a [Nuget](https://www.nuget.org/packages/Dumpify)
 
 Either run `dotnet add package Dumpify`, `Install-Package Dumpify` or use Visual Studio's [NuGet Package Manager](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-visual-studio)
 
+# Overview Video
+ An overview video hosted on the `Open at Microsoft` show<br><br>
+<a href="https://www.youtube.com/watch?v=ERWAMSgz-vc">
+	<img src = "https://github.com/MoaidHathot/Dumpify/assets/8770486/2fcdc3eb-1c09-465a-99ba-19c267565bea" width = "400" />
+<br>	
+</a>
+
+![https://www.youtube.com/watch?v=ERWAMSgz-vc](https://www.youtube.com/watch?v=ERWAMSgz-vc)
+
+
 
 # Features
 * Dump any object in a structured, colorful way to Console, Debug, Trace or any other custom output
