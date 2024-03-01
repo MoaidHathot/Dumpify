@@ -9,37 +9,155 @@ namespace Dumpify;
 public static class DumpExtensions
 {
     [return: NotNullIfNotNull(nameof(obj))]
-    public static T? DumpDebug<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null, OutputConfig? outputConfig = null, TypeRenderingConfig? typeRenderingConfig = null, [CallerArgumentExpression(nameof(obj))] string? autoLabel = null)
+    public static T? DumpDebug<T>(
+        this T? obj,
+        string? label = null,
+        int? maxDepth = null,
+        IRenderer? renderer = null,
+        bool? useDescriptors = null,
+        ColorConfig? colors = null,
+        MembersConfig? members = null,
+        TypeNamingConfig? typeNames = null,
+        TableConfig? tableConfig = null,
+        OutputConfig? outputConfig = null,
+        TypeRenderingConfig? typeRenderingConfig = null,
+        [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
+    )
     {
         outputConfig ??= new OutputConfig { WidthOverride = 250 };
-        return obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Dumpify.Outputs.Debug, members: members, tableConfig: tableConfig, outputConfig: outputConfig, typeRenderingConfig: typeRenderingConfig, autoLabel: autoLabel);
+        return obj.Dump(
+            label: label,
+            maxDepth: maxDepth,
+            renderer: renderer,
+            useDescriptors: useDescriptors,
+            typeNames: typeNames,
+            colors: colors,
+            output: Dumpify.Outputs.Debug,
+            members: members,
+            tableConfig: tableConfig,
+            outputConfig: outputConfig,
+            typeRenderingConfig: typeRenderingConfig,
+            autoLabel: autoLabel
+        );
     }
 
     [return: NotNullIfNotNull(nameof(obj))]
-    public static T? DumpTrace<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null, OutputConfig? outputConfig = null, TypeRenderingConfig? typeRenderingConfig = null, [CallerArgumentExpression(nameof(obj))] string? autoLabel = null)
+    public static T? DumpTrace<T>(
+        this T? obj,
+        string? label = null,
+        int? maxDepth = null,
+        IRenderer? renderer = null,
+        bool? useDescriptors = null,
+        ColorConfig? colors = null,
+        MembersConfig? members = null,
+        TypeNamingConfig? typeNames = null,
+        TableConfig? tableConfig = null,
+        OutputConfig? outputConfig = null,
+        TypeRenderingConfig? typeRenderingConfig = null,
+        [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
+    )
     {
         outputConfig ??= new OutputConfig { WidthOverride = 250 };
-        return obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Dumpify.Outputs.Trace, members: members, tableConfig: tableConfig, outputConfig: outputConfig, typeRenderingConfig: typeRenderingConfig, autoLabel: autoLabel);
+        return obj.Dump(
+            label: label,
+            maxDepth: maxDepth,
+            renderer: renderer,
+            useDescriptors: useDescriptors,
+            typeNames: typeNames,
+            colors: colors,
+            output: Dumpify.Outputs.Trace,
+            members: members,
+            tableConfig: tableConfig,
+            outputConfig: outputConfig,
+            typeRenderingConfig: typeRenderingConfig,
+            autoLabel: autoLabel
+        );
     }
 
     [return: NotNullIfNotNull(nameof(obj))]
-    public static T? DumpConsole<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null, OutputConfig? outputConfig = null, TypeRenderingConfig? typeRenderingConfig = null, [CallerArgumentExpression(nameof(obj))] string? autoLabel = null)
-        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Dumpify.Outputs.Console, members: members, tableConfig: tableConfig, outputConfig: outputConfig, typeRenderingConfig: typeRenderingConfig, autoLabel: autoLabel);
+    public static T? DumpConsole<T>(
+        this T? obj,
+        string? label = null,
+        int? maxDepth = null,
+        IRenderer? renderer = null,
+        bool? useDescriptors = null,
+        ColorConfig? colors = null,
+        MembersConfig? members = null,
+        TypeNamingConfig? typeNames = null,
+        TableConfig? tableConfig = null,
+        OutputConfig? outputConfig = null,
+        TypeRenderingConfig? typeRenderingConfig = null,
+        [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
+    ) =>
+        obj.Dump(
+            label: label,
+            maxDepth: maxDepth,
+            renderer: renderer,
+            useDescriptors: useDescriptors,
+            typeNames: typeNames,
+            colors: colors,
+            output: Dumpify.Outputs.Console,
+            members: members,
+            tableConfig: tableConfig,
+            outputConfig: outputConfig,
+            typeRenderingConfig: typeRenderingConfig,
+            autoLabel: autoLabel
+        );
 
-    public static string DumpText<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null, OutputConfig? outputConfig = null, TypeRenderingConfig? typeRenderingConfig = null, [CallerArgumentExpression(nameof(obj))] string? autoLabel = null)
+    public static string DumpText<T>(
+        this T? obj,
+        string? label = null,
+        int? maxDepth = null,
+        IRenderer? renderer = null,
+        bool? useDescriptors = null,
+        ColorConfig? colors = null,
+        MembersConfig? members = null,
+        TypeNamingConfig? typeNames = null,
+        TableConfig? tableConfig = null,
+        OutputConfig? outputConfig = null,
+        TypeRenderingConfig? typeRenderingConfig = null,
+        [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
+    )
     {
         using var writer = new StringWriter();
 
         colors ??= ColorConfig.NoColors;
         outputConfig ??= new OutputConfig { WidthOverride = 1000, HeightOverride = 1000 };
 
-        _ = obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: new DumpOutput(writer), members: members, tableConfig: tableConfig, outputConfig: outputConfig, typeRenderingConfig: typeRenderingConfig, autoLabel: autoLabel);
+        _ = obj.Dump(
+            label: label,
+            maxDepth: maxDepth,
+            renderer: renderer,
+            useDescriptors: useDescriptors,
+            typeNames: typeNames,
+            colors: colors,
+            output: new DumpOutput(writer),
+            members: members,
+            tableConfig: tableConfig,
+            outputConfig: outputConfig,
+            typeRenderingConfig: typeRenderingConfig,
+            autoLabel: autoLabel
+        );
 
         return writer.ToString().Trim();
     }
 
     [return: NotNullIfNotNull(nameof(obj))]
-    public static T? Dump<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, IDumpOutput? output = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null, OutputConfig? outputConfig = null, TypeRenderingConfig? typeRenderingConfig = null, [CallerArgumentExpression(nameof(obj))] string? autoLabel = null)
+    public static T? Dump<T>(
+        this T? obj,
+        string? label = null,
+        int? maxDepth = null,
+        IRenderer? renderer = null,
+        bool? useDescriptors = null,
+        ColorConfig? colors = null,
+        IDumpOutput? output = null,
+        MembersConfig? members = null,
+        TypeNamingConfig? typeNames = null,
+        TableConfig? tableConfig = null,
+        OutputConfig? outputConfig = null,
+        TypeRenderingConfig? typeRenderingConfig = null,
+        [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
+    )
     {
         var defaultConfig = DumpConfig.Default;
 
@@ -57,8 +175,18 @@ public static class DumpExtensions
             TableConfig = tableConfig ?? defaultConfig.TableConfig,
             TypeNamingConfig = typeNamingConfig,
             TypeRenderingConfig = typeRenderingConfig ?? defaultConfig.TypeRenderingConfig,
-            MemberProvider = new MemberProvider(membersConfig.IncludeProperties, membersConfig.IncludeFields, membersConfig.IncludePublicMembers, membersConfig.IncludeNonePublicMembers),
-            TypeNameProvider = new TypeNameProvider(typeNamingConfig.UseAliases, typeNamingConfig.UseFullName, typeNamingConfig.SimplifyAnonymousObjectNames, typeNamingConfig.SeparateTypesWithSpace),
+            MemberProvider = new MemberProvider(
+                membersConfig.IncludeProperties,
+                membersConfig.IncludeFields,
+                membersConfig.IncludePublicMembers,
+                membersConfig.IncludeNonePublicMembers
+            ),
+            TypeNameProvider = new TypeNameProvider(
+                typeNamingConfig.UseAliases,
+                typeNamingConfig.UseFullName,
+                typeNamingConfig.SimplifyAnonymousObjectNames,
+                typeNamingConfig.SeparateTypesWithSpace
+            ),
         };
 
         outputConfig ??= defaultConfig.OutputConfig;
@@ -82,16 +210,29 @@ public static class DumpExtensions
             return obj;
         }
 
-        if (TryRenderSafely(obj, renderer, descriptor, rendererConfig, output, out var renderedObject))
+        if (
+            TryRenderSafely(
+                obj,
+                renderer,
+                descriptor,
+                rendererConfig,
+                output,
+                out var renderedObject
+            )
+        )
         {
-
             OutputSafely(obj, renderedObject, output, outputConfig);
         }
 
         return obj;
     }
 
-    private static void OutputSafely(object? obj, IRenderedObject rendered, IDumpOutput output, OutputConfig config)
+    private static void OutputSafely(
+        object? obj,
+        IRenderedObject rendered,
+        IDumpOutput output,
+        OutputConfig config
+    )
     {
         try
         {
@@ -99,14 +240,23 @@ public static class DumpExtensions
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[Failed to output rendered object {obj?.GetType().FullName} - {obj}]. {ex.Message}");
+            Console.WriteLine(
+                $"[Failed to output rendered object {obj?.GetType().FullName} - {obj}]. {ex.Message}"
+            );
 #if DEBUG
             Console.WriteLine(ex);
 #endif
         }
     }
 
-    private static bool TryRenderSafely<T>(T? obj, IRenderer renderer, IDescriptor? descriptor, RendererConfig config, IDumpOutput output, [NotNullWhen(true)] out IRenderedObject? renderedObject)
+    private static bool TryRenderSafely<T>(
+        T? obj,
+        IRenderer renderer,
+        IDescriptor? descriptor,
+        RendererConfig config,
+        IDumpOutput output,
+        [NotNullWhen(true)] out IRenderedObject? renderedObject
+    )
     {
         renderedObject = default;
 
@@ -126,18 +276,29 @@ public static class DumpExtensions
         }
     }
 
-    private static bool TryGenerate<T>(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider, out IDescriptor? descriptor)
+    private static bool TryGenerate<T>(
+        Type type,
+        IValueProvider? valueProvider,
+        IMemberProvider memberProvider,
+        out IDescriptor? descriptor
+    )
     {
         descriptor = null;
 
         try
         {
-            descriptor = DumpConfig.Default.Generator.Generate(type, valueProvider: valueProvider, memberProvider: memberProvider);
+            descriptor = DumpConfig.Default.Generator.Generate(
+                type,
+                valueProvider: valueProvider,
+                memberProvider: memberProvider
+            );
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[Failed to Generate descriptor for {typeof(T)} and Property: {valueProvider}]. {ex.Message}");
+            Console.WriteLine(
+                $"[Failed to Generate descriptor for {typeof(T)} and Property: {valueProvider}]. {ex.Message}"
+            );
 #if DEBUG
             Console.WriteLine(ex);
 #endif
