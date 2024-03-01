@@ -1,14 +1,8 @@
 ﻿using Dumpify;
 using System.Buffers;
 using System.Collections;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Reflection;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
-using System.Text.RegularExpressions;
-using Color = System.Drawing.Color;
 
 //DumpConfig.Default.Renderer = Renderers.Text;
 //DumpConfig.Default.ColorConfig = ColorConfig.NoColors;
@@ -29,13 +23,24 @@ TestSpecific();
 
 void TestSpecific()
 {
-    var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
-    var moaid2 = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
+    var moaid = new Person
+    {
+        FirstName = "Moaid",
+        LastName = "Hathot",
+        Profession = Profession.Software
+    };
+
+    var moaid2 = new Person
+    {
+        FirstName = "Moaid",
+        LastName = "Hathot",
+        Profession = Profession.Software
+    };
 
     Person[] arr = [moaid, moaid];
     arr.Dump();
 
-    //var value = SearchValues.Create("a");
+    var value = SearchValues.Create("a");
     //value.Dump();
     // ((nuint)5).Dump();
     // ((nint)5).Dump();
@@ -154,8 +159,18 @@ void TestSpecific()
 
 // void TestObjectWithLargeWidth()
 // {
-var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
-var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
+var moaid = new Person
+{
+    FirstName = "Moaid",
+    LastName = "Hathot",
+    Profession = Profession.Software
+};
+var haneeni = new Person
+{
+    FirstName = "Haneeni",
+    LastName = "Shibli",
+    Profession = Profession.Health
+};
 moaid.Spouse = haneeni;
 haneeni.Spouse = moaid;
 
@@ -183,7 +198,6 @@ haneeni.Spouse = moaid;
 
 void TestSingle()
 {
-
     new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
 
     DateTime.Now.Dump();
@@ -192,8 +206,18 @@ void TestSingle()
     DateTimeOffset.UtcNow.Dump();
     TimeSpan.FromSeconds(10).Dump();
 
-    var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
-    var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
+    var moaid = new Person
+    {
+        FirstName = "Moaid",
+        LastName = "Hathot",
+        Profession = Profession.Software
+    };
+    var haneeni = new Person
+    {
+        FirstName = "Haneeni",
+        LastName = "Shibli",
+        Profession = Profession.Health
+    };
     moaid.Spouse = haneeni;
     haneeni.Spouse = moaid;
 
@@ -216,7 +240,6 @@ void TestSingle()
     map.Add("Four", "4");
     map.Add("Five", "5");
     map.Dump();
-
 
     var map2 = new Dictionary<string, Person>();
     map2.Add("Moaid", new Person { FirstName = "Moaid", LastName = "Hathot" });
@@ -281,17 +304,44 @@ void TestSingle()
     set.Dump("Test Label 3");
 
     var arr = new[] { 1, 2, 3, 4 }.Dump();
-    var arr2d = new int[,] { { 1, 2 }, { 3, 4 } }.Dump();
-    var arr3d = new int[,,] { { { 1, 2 }, { 3, 4 } }, { { 3, 4 }, { 5, 6 } }, { { 6, 7 }, { 8, 9 } } }.Dump();
+    var arr2d = new int[,]
+    {
+        { 1, 2 },
+        { 3, 4 }
+    }.Dump();
+    var arr3d = new int[,,]
+    {
+        {
+            { 1, 2 },
+            { 3, 4 }
+        },
+        {
+            { 3, 4 },
+            { 5, 6 }
+        },
+        {
+            { 6, 7 },
+            { 8, 9 }
+        }
+    }.Dump();
 }
 
 void ShowEverything()
 {
-    var moaid = new Person { FirstName = "Moaid", LastName = "Hathot", Profession = Profession.Software };
-    var haneeni = new Person { FirstName = "Haneeni", LastName = "Shibli", Profession = Profession.Health };
+    var moaid = new Person
+    {
+        FirstName = "Moaid",
+        LastName = "Hathot",
+        Profession = Profession.Software
+    };
+    var haneeni = new Person
+    {
+        FirstName = "Haneeni",
+        LastName = "Shibli",
+        Profession = Profession.Health
+    };
     moaid.Spouse = haneeni;
     haneeni.Spouse = moaid;
-
 
     //DumpConfig.Default.Output = Outputs.Debug; //Outputs.Trace, Outputs.Console
     //moaid.Dump(output: Outputs.Trace);
@@ -313,9 +363,31 @@ void ShowEverything()
         Parent1 = moaid,
         Parent2 = haneeni,
         FamilyId = 42,
-        ChildrenArray = new[] { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot", Spouse = new Person { FirstName = "Child22", LastName = "Hathot", Spouse = new Person { FirstName = "Child222", LastName = "Hathot" } } } },
-        ChildrenList = new List<Person> { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
-        ChildrenArrayList = new ArrayList { new Person { FirstName = "Child1", LastName = "Hathot" }, new Person { FirstName = "Child2", LastName = "Hathot" } },
+        ChildrenArray = new[]
+        {
+            new Person { FirstName = "Child1", LastName = "Hathot" },
+            new Person
+            {
+                FirstName = "Child2",
+                LastName = "Hathot",
+                Spouse = new Person
+                {
+                    FirstName = "Child22",
+                    LastName = "Hathot",
+                    Spouse = new Person { FirstName = "Child222", LastName = "Hathot" }
+                }
+            }
+        },
+        ChildrenList = new List<Person>
+        {
+            new Person { FirstName = "Child1", LastName = "Hathot" },
+            new Person { FirstName = "Child2", LastName = "Hathot" }
+        },
+        ChildrenArrayList = new ArrayList
+        {
+            new Person { FirstName = "Child1", LastName = "Hathot" },
+            new Person { FirstName = "Child2", LastName = "Hathot" }
+        },
         FamilyType = typeof(Family),
         FamilyNameBuilder = new StringBuilder("This is the built Family Name"),
     };
@@ -339,8 +411,10 @@ void ShowEverything()
 
     stack.Dump();
 
-
-    moaid.Dump(tableConfig: new TableConfig { ShowTableHeaders = false }, typeNames: new TypeNamingConfig { ShowTypeNames = false });
+    moaid.Dump(
+        tableConfig: new TableConfig { ShowTableHeaders = false },
+        typeNames: new TypeNamingConfig { ShowTypeNames = false }
+    );
     moaid.Dump();
 
     new int[][] { new int[] { 1, 2, 3, 4 }, new int[] { 1, 2, 3, 4, 5 } }.Dump();
@@ -361,11 +435,19 @@ void ShowEverything()
     //new HashSet<string> { "Moaid", "Hathot", "shibli" }.Dump();
 
 
-    new Dictionary<Person, string> { [new Person { FirstName = "Moaid", LastName = "Hathot" }] = "Moaid Hathot", [new Person { FirstName = "Haneeni", LastName = "Shibli" }] = "Haneeni Shibli", [new Person { FirstName = "Waseem", LastName = "Hathot" }] = "Waseem Hathot", }.Dump();
+    new Dictionary<Person, string>
+    {
+        [new Person { FirstName = "Moaid", LastName = "Hathot" }] = "Moaid Hathot",
+        [new Person { FirstName = "Haneeni", LastName = "Shibli" }] = "Haneeni Shibli",
+        [new Person { FirstName = "Waseem", LastName = "Hathot" }] = "Waseem Hathot",
+    }.Dump();
 
-
-    new Dictionary<string, Person> { ["Moaid"] = new Person { FirstName = "Moaid", LastName = "Hathot" }, ["Haneeni"] = new Person { FirstName = "Haneeni", LastName = "Shibli" }, ["Waseem"] = new Person { FirstName = "Waseem", LastName = "Hathot" }, }.Dump(colors: ColorConfig.NoColors);
-
+    new Dictionary<string, Person>
+    {
+        ["Moaid"] = new Person { FirstName = "Moaid", LastName = "Hathot" },
+        ["Haneeni"] = new Person { FirstName = "Haneeni", LastName = "Shibli" },
+        ["Waseem"] = new Person { FirstName = "Waseem", LastName = "Hathot" },
+    }.Dump(colors: ColorConfig.NoColors);
 
     new Dictionary<string, string>
     {
@@ -398,8 +480,11 @@ void ShowEverything()
     //var arr = new[,,] { { { 1, 2, 4 } }, { { 3, 4, 6 } }, { {1, 2, 88 } } }.Dump();
 
     var arr = new[] { 1, 2, 3, 4 }.Dump();
-    var arr2d = new int[,] { { 1, 2 }, { 3, 4 } }.Dump();
-
+    var arr2d = new int[,]
+    {
+        { 1, 2 },
+        { 3, 4 }
+    }.Dump();
 
     DumpConfig.Default.TableConfig.ShowArrayIndices = false;
 
@@ -412,10 +497,22 @@ void ShowEverything()
 
     //new[] { "Hello", "World", "This", "Is", "Dumpy" }.Dump(renderer: Renderers.Text);
 
-    new Exception("This is an exception", new ArgumentNullException("blaParam", "This is inner exception")).Dump();
+    new Exception(
+        "This is an exception",
+        new ArgumentNullException("blaParam", "This is inner exception")
+    ).Dump();
 
-    new AdditionValue(1, 10).Dump(members: new() { IncludeFields = true, IncludeNonePublicMembers = true, IncludeProperties = false });
-    new AdditionValue(1, 10).Dump(members: new() { IncludeFields = true, IncludeNonePublicMembers = true });
+    new AdditionValue(1, 10).Dump(
+        members: new()
+        {
+            IncludeFields = true,
+            IncludeNonPublicMembers = true,
+            IncludeProperties = false
+        }
+    );
+    new AdditionValue(1, 10).Dump(
+        members: new() { IncludeFields = true, IncludeNonPublicMembers = true }
+    );
 
     //arr.Dump();
     //moaid.Dump();
@@ -456,7 +553,6 @@ void ShowEverything()
         DateTimeOffset = DateTimeOffset.Now,
         DateOnly = DateOnly.FromDateTime(DateTime.Now),
         TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
-
     }.Dump("Person");
 
     DateTime.Now.Dump("DT");
@@ -465,7 +561,12 @@ void ShowEverything()
 }
 #pragma warning restore CS8321
 
-public enum Profession { Software, Health };
+public enum Profession
+{
+    Software,
+    Health
+};
+
 public record class Person
 {
     public required string FirstName { get; set; }
@@ -476,16 +577,12 @@ public record class Person
     public Profession Profession { get; set; }
     public string? _fooField;
 
-    public string? FooMethod(int a)
-        => "";
+    public string? FooMethod(int a) => "";
 }
 
 public class Person2
 {
-    public Person2(int a, string b, double c)
-    {
-
-    }
+    public Person2(int a, string b, double c) { }
 }
 
 public class Family
@@ -525,31 +622,25 @@ public class Device
     public bool isPowered { get; set; }
 }
 
-
 class TestDirect : ICollection<KeyValuePair<string, int>>
 {
     private List<(string key, int value)> _list = new();
 
-    public IEnumerator<KeyValuePair<string, int>> GetEnumerator()
-        => _list.Select(l => new KeyValuePair<string, int>(l.key, l.value)).GetEnumerator();
+    public IEnumerator<KeyValuePair<string, int>> GetEnumerator() =>
+        _list.Select(l => new KeyValuePair<string, int>(l.key, l.value)).GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-        => GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public void Add(KeyValuePair<string, int> item)
-        => _list.Add((item.Key, item.Value));
+    public void Add(KeyValuePair<string, int> item) => _list.Add((item.Key, item.Value));
 
-    public void Clear()
-        => _list.Clear();
+    public void Clear() => _list.Clear();
 
-    public bool Contains(KeyValuePair<string, int> item)
-        => _list.Contains((item.Key, item.Value));
+    public bool Contains(KeyValuePair<string, int> item) => _list.Contains((item.Key, item.Value));
 
-    public void CopyTo(KeyValuePair<string, int>[] array, int arrayIndex)
-        => throw new NotImplementedException();
+    public void CopyTo(KeyValuePair<string, int>[] array, int arrayIndex) =>
+        throw new NotImplementedException();
 
-    public bool Remove(KeyValuePair<string, int> item)
-        => throw new NotImplementedException();
+    public bool Remove(KeyValuePair<string, int> item) => throw new NotImplementedException();
 
     public int Count => _list.Count;
     public bool IsReadOnly { get; } = false;
@@ -559,40 +650,32 @@ class TestExplicit : IEnumerable<(string, int)>, IEnumerable<KeyValuePair<string
 {
     private List<(string key, int value)> _list = new();
 
-    IEnumerator<(string, int)> IEnumerable<(string, int)>.GetEnumerator()
-        => _list.GetEnumerator();
+    IEnumerator<(string, int)> IEnumerable<(string, int)>.GetEnumerator() => _list.GetEnumerator();
 
     //IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
     //    => new TestEnumerator(_list);
 
-    public IEnumerator GetEnumerator()
-        => new TestEnumerator(_list);
+    public IEnumerator GetEnumerator() => new TestEnumerator(_list);
 
-    IEnumerator<KeyValuePair<string, int>> IEnumerable<KeyValuePair<string, int>>.GetEnumerator()
-        => _list.Select(l => new KeyValuePair<string, int>(l.key, l.value)).GetEnumerator();
+    IEnumerator<KeyValuePair<string, int>> IEnumerable<KeyValuePair<string, int>>.GetEnumerator() =>
+        _list.Select(l => new KeyValuePair<string, int>(l.key, l.value)).GetEnumerator();
 
-    IEnumerator<KeyValuePair<string, int>> GetExplicitEnumerator()
-        => _list.Select(l => new KeyValuePair<string, int>(l.key, l.value)).GetEnumerator();
+    IEnumerator<KeyValuePair<string, int>> GetExplicitEnumerator() =>
+        _list.Select(l => new KeyValuePair<string, int>(l.key, l.value)).GetEnumerator();
 
+    public void Add(KeyValuePair<string, int> item) => _list.Add((item.Key, item.Value));
 
-    public void Add(KeyValuePair<string, int> item)
-        => _list.Add((item.Key, item.Value));
+    public void Clear() => _list.Clear();
 
-    public void Clear()
-        => _list.Clear();
+    public bool Contains(KeyValuePair<string, int> item) => _list.Contains((item.Key, item.Value));
 
-    public bool Contains(KeyValuePair<string, int> item)
-        => _list.Contains((item.Key, item.Value));
+    public void CopyTo(KeyValuePair<string, int>[] array, int arrayIndex) =>
+        throw new NotImplementedException();
 
-    public void CopyTo(KeyValuePair<string, int>[] array, int arrayIndex)
-        => throw new NotImplementedException();
-
-    public bool Remove(KeyValuePair<string, int> item)
-        => throw new NotImplementedException();
+    public bool Remove(KeyValuePair<string, int> item) => throw new NotImplementedException();
 
     public int Count => _list.Count;
     public bool IsReadOnly { get; } = false;
-
 
     private class TestEnumerator : IEnumerator<KeyValuePair<string, string>>
     {
@@ -605,28 +688,30 @@ class TestExplicit : IEnumerable<(string, int)>, IEnumerable<KeyValuePair<string
             _enumerator = _list.GetEnumerator();
         }
 
-        public void Dispose()
-        {
+        public void Dispose() { }
 
-        }
+        public bool MoveNext() => _enumerator.MoveNext();
 
-        public bool MoveNext()
-            => _enumerator.MoveNext();
+        public void Reset() => _enumerator.Reset();
 
-        public void Reset()
-            => _enumerator.Reset();
-
-        public KeyValuePair<string, string> Current => new KeyValuePair<string, string>(_enumerator.Current.key, _enumerator.Current.value.ToString());
+        public KeyValuePair<string, string> Current =>
+            new KeyValuePair<string, string>(
+                _enumerator.Current.key,
+                _enumerator.Current.value.ToString()
+            );
 
         object IEnumerator.Current => _enumerator.Current;
     }
 
-    //private TestWrapper : 
+    //private TestWrapper :
 }
 
 public class TestVirtual
 {
     public string Foo { get; set; } = "Moaid";
     public virtual string Bar { get; set; } = "Hello";
-    public string Baz { set { _ = value; } }
+    public string Baz
+    {
+        set { _ = value; }
+    }
 }
