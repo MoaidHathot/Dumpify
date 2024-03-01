@@ -86,7 +86,7 @@ public class AdditionValue
 }
 
 
-new AdditionValue(1, 2).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonePublicMembers = true });
+new AdditionValue(1, 2).Dump(members: new MembersConfig { IncludeFields = true, IncludeNonPublicMembers = true });
 ```
 ![image](https://user-images.githubusercontent.com/8770486/232252840-c5b0ea4c-eae9-4dc2-bd6c-d42ee58505eb.png)
 

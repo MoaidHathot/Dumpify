@@ -7,20 +7,22 @@ internal sealed record MemberProvider : IMemberProvider
     private readonly bool _includeProperties;
     private readonly bool _includeFields;
     private readonly bool _includePublicMembers;
-    private readonly bool _includeNonePublicMembers;
+    private readonly bool _includeNonPublicMembers;
 
     public MemberProvider()
-        : this(true, false, true, false)
-    {
+        : this(true, false, true, false) { }
 
-    }
-
-    public MemberProvider(bool includeProperties, bool includeFields, bool includePublicMembers, bool includeNonePublicMembers)
+    public MemberProvider(
+        bool includeProperties,
+        bool includeFields,
+        bool includePublicMembers,
+        bool includeNonPublicMembers
+    )
     {
         _includeProperties = includeProperties;
         _includeFields = includeFields;
         _includePublicMembers = includePublicMembers;
-        _includeNonePublicMembers = includeNonePublicMembers;
+        _includeNonPublicMembers = includeNonPublicMembers;
     }
 
     public IEnumerable<IValueProvider> GetMembers(Type type)
@@ -28,7 +30,7 @@ internal sealed record MemberProvider : IMemberProvider
         var flags = BindingFlags.Instance;
 
         flags |= _includePublicMembers ? BindingFlags.Public : BindingFlags.Default;
-        flags |= _includeNonePublicMembers ? BindingFlags.NonPublic : BindingFlags.Default;
+        flags |= _includeNonPublicMembers ? BindingFlags.NonPublic : BindingFlags.Default;
 
         var members = Enumerable.Empty<IValueProvider>();
 
@@ -44,8 +46,7 @@ internal sealed record MemberProvider : IMemberProvider
 
         if (_includeFields)
         {
-            var fields = type.GetFields(flags)
-                .Select(f => new FieldValueProvider(f));
+            var fields = type.GetFields(flags).Select(f => new FieldValueProvider(f));
 
             members = members.Concat(fields);
         }
@@ -60,9 +61,17 @@ internal sealed record MemberProvider : IMemberProvider
             return false;
         }
 
-        return _includeProperties == other._includeProperties && _includeFields == other._includeFields && _includePublicMembers == other._includePublicMembers && _includeNonePublicMembers == other._includeNonePublicMembers;
+        return _includeProperties == other._includeProperties
+            && _includeFields == other._includeFields
+            && _includePublicMembers == other._includePublicMembers
+            && _includeNonPublicMembers == other._includeNonPublicMembers;
     }
 
-    public override int GetHashCode()
-        => (_includeProperties, _includeFields, _includePublicMembers, _includeNonePublicMembers).GetHashCode();
+    public override int GetHashCode() =>
+        (
+            _includeProperties,
+            _includeFields,
+            _includePublicMembers,
+            _includeNonPublicMembers
+        ).GetHashCode();
 }
