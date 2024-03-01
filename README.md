@@ -1,4 +1,6 @@
 # Dumpify
+<img src="https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/Dumpify-logo-styled.png" alt="drawing" width="200" />
+
 [![Github version](https://badge.fury.io/nu/Dumpify.svg)](https://badge.fury.io/nu/Dumpify)
 ![example workflow](https://github.com/MoaidHathot/Dumpify/actions/workflows/build-dumpify.yml/badge.svg)
 ![Publish Nuget](https://github.com/MoaidHathot/Dumpify/actions/workflows/publish-dumpify.yml/badge.svg)
@@ -13,6 +15,16 @@ Improve productivity and debuggability by adding `.Dump()` extension methods to 
 The library is published as a [Nuget](https://www.nuget.org/packages/Dumpify)
 
 Either run `dotnet add package Dumpify`, `Install-Package Dumpify` or use Visual Studio's [NuGet Package Manager](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-visual-studio)
+
+# Overview Video
+ An overview video hosted on the `Open at Microsoft` show<br><br>
+<a href="https://www.youtube.com/watch?v=ERWAMSgz-vc">
+	<img src = "https://github.com/MoaidHathot/Dumpify/assets/8770486/2fcdc3eb-1c09-465a-99ba-19c267565bea" width = "400" />
+<br>	
+</a>
+
+![https://www.youtube.com/watch?v=ERWAMSgz-vc](https://www.youtube.com/watch?v=ERWAMSgz-vc)
+
 
 
 # Features
