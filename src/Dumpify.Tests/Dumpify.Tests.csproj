@@ -4,18 +4,20 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <OutputType>Library</OutputType>
 	</PropertyGroup>
 
-     <ItemGroup>
-		 <Using Include="FluentAssertions" />
-		 <Using Include="Xunit" />
-		 <Using Include="Dumpify" />
-		 <Using Include="Dumpify.Tests.DTO" />
-		 <Using Include="Dumpify.Descriptors" />
-		 <Using Include="Dumpify.Descriptors.Generators" />
-		 <Using Include="Dumpify.Descriptors.ValueProviders" />
-		 <Using Include="System.Collections.Concurrent" />
-    </ItemGroup>
+	<ItemGroup>
+		<Using Include="FluentAssertions" />
+		<Using Include="Xunit" />
+		<Using Include="Dumpify" />
+		<Using Include="Dumpify.Tests.DTO" />
+		<Using Include="Dumpify.Descriptors" />
+		<Using Include="Dumpify.Descriptors.Generators" />
+		<Using Include="Dumpify.Descriptors.ValueProviders" />
+		<Using Include="System.Collections.Concurrent" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="FakeItEasy" />
@@ -32,9 +34,10 @@
 		<PackageReference Include="xunit" />
 		<PackageReference Include="xunit.analyzers" />
 		<PackageReference Include="xunit.runner.visualstudio">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Verify.Xunit" />
 	</ItemGroup>
 
 	<ItemGroup>

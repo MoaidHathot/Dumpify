@@ -40,6 +40,8 @@ void TestSpecific()
     Person[] arr = [moaid, moaid];
     arr.Dump();
 
+    moaid.FooMethod(3);
+
     var value = SearchValues.Create("a");
     //value.Dump();
     // ((nuint)5).Dump();
