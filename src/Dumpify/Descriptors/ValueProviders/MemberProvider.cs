@@ -8,21 +8,24 @@ internal sealed record MemberProvider : IMemberProvider
     private readonly bool _includeFields;
     private readonly bool _includePublicMembers;
     private readonly bool _includeNonPublicMembers;
+    private readonly bool _includeVirtualMembers;
 
     public MemberProvider()
-        : this(true, false, true, false) { }
+        : this(true, false, true, false, true) { }
 
     public MemberProvider(
         bool includeProperties,
         bool includeFields,
         bool includePublicMembers,
-        bool includeNonPublicMembers
+        bool includeNonPublicMembers,
+        bool includeVirtualMembers
     )
     {
         _includeProperties = includeProperties;
         _includeFields = includeFields;
         _includePublicMembers = includePublicMembers;
         _includeNonPublicMembers = includeNonPublicMembers;
+        _includeVirtualMembers = includeVirtualMembers;
     }
 
     public IEnumerable<IValueProvider> GetMembers(Type type)
@@ -38,10 +41,14 @@ internal sealed record MemberProvider : IMemberProvider
         {
             var properties = type.GetProperties(flags)
                 .Where(p => p.GetIndexParameters().Length == 0)
-                .Where(p => p.GetMethod is not null)
-                .Select(p => new PropertyValueProvider(p));
+                .Where(p => p.GetMethod is not null);
 
-            members = members.Concat(properties);
+            if (!_includeVirtualMembers)
+                properties = properties.Where(p => !IsVirtualProperty(p));
+
+            var providers = properties.Select(p => new PropertyValueProvider(p));
+
+            members = members.Concat(providers);
         }
 
         if (_includeFields)
@@ -62,9 +69,10 @@ internal sealed record MemberProvider : IMemberProvider
         }
 
         return _includeProperties == other._includeProperties
-            && _includeFields == other._includeFields
-            && _includePublicMembers == other._includePublicMembers
-            && _includeNonPublicMembers == other._includeNonPublicMembers;
+               && _includeFields == other._includeFields
+               && _includePublicMembers == other._includePublicMembers
+               && _includeNonPublicMembers == other._includeNonPublicMembers
+               && _includeVirtualMembers == other._includeVirtualMembers;
     }
 
     public override int GetHashCode() =>
@@ -72,6 +80,10 @@ internal sealed record MemberProvider : IMemberProvider
             _includeProperties,
             _includeFields,
             _includePublicMembers,
-            _includeNonPublicMembers
+            _includeNonPublicMembers,
+            _includeVirtualMembers
         ).GetHashCode();
+    
+    private bool IsVirtualProperty(PropertyInfo propertyInfo) =>
+        propertyInfo.GetAccessors().Any(accessor => accessor.IsVirtual);
 }
