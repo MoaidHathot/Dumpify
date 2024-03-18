@@ -179,7 +179,8 @@ public static class DumpExtensions
                 membersConfig.IncludeProperties,
                 membersConfig.IncludeFields,
                 membersConfig.IncludePublicMembers,
-                membersConfig.IncludeNonPublicMembers
+                membersConfig.IncludeNonPublicMembers,
+                membersConfig.IncludeVirtualMembers
             ),
             TypeNameProvider = new TypeNameProvider(
                 typeNamingConfig.UseAliases,
