@@ -102,6 +102,23 @@ new AdditionValue(1, 2).Dump(members: new MembersConfig { IncludeFields = true, 
 ```
 ![image](https://user-images.githubusercontent.com/8770486/232252840-c5b0ea4c-eae9-4dc2-bd6c-d42ee58505eb.png)
 
+### You can provide a custom filter to determine if members should be included or not
+```csharp
+public class Person
+{
+    public string Name { get; set; }
+
+    [JsonIgnore]
+    public string SensitiveData { get; set; }
+}
+
+new Person()
+{
+    Name = "Moaid",
+    SensitiveData = "We don't want this to show up"
+}.Dump(members: new MembersConfig { MemberFilter = member => !member.Info.CustomAttributes.Any(a => a.AttributeType == typeof(JsonIgnoreAttribute)) });
+```
+
 ### You can turn on or off row separators and a type column
 ```csharp
 //globally
