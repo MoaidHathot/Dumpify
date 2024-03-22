@@ -4,6 +4,9 @@ using System.Collections;
 using System.Data;
 using System.Text;
 
+int[] arr = [1, 2, 3, 4];
+arr.Dump(tableConfig: new () { MaxCollectionCount = 2 });
+
 //DumpConfig.Default.Renderer = Renderers.Text;
 //DumpConfig.Default.ColorConfig = ColorConfig.NoColors;
 

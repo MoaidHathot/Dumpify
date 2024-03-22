@@ -80,6 +80,14 @@ new Dictionary<string, string>
 ```
 ![image](https://user-images.githubusercontent.com/8770486/232251913-add4a0d8-3355-44f6-ba94-5dfbf8d8e2ac.png)
 
+You can ensure that arrays, dictionaries and collections don't output too much by allowing results to be truncated. Do this by setting the `MaxCollectionCount` property in the tableConfig.
+
+```csharp
+int[] arr = [1, 2, 3, 4];
+
+// Outputs only the first two elements and a message that says: ... truncated 2 items
+arr.Dump(tableConfig: new () { MaxCollectionCount = 2 });
+```
 
 ### You can turn on or off fields and private members
 ```csharp
