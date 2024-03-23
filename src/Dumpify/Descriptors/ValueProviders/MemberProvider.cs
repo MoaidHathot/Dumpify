@@ -9,23 +9,25 @@ internal sealed record MemberProvider : IMemberProvider
     private readonly bool _includePublicMembers;
     private readonly bool _includeNonPublicMembers;
     private readonly bool _includeVirtualMembers;
+    private readonly Func<IValueProvider, bool>? _memberFilter;
 
     public MemberProvider()
-        : this(true, false, true, false, true) { }
+        : this(true, false, true, false, true, null) { }
 
     public MemberProvider(
         bool includeProperties,
         bool includeFields,
         bool includePublicMembers,
         bool includeNonPublicMembers,
-        bool includeVirtualMembers
-    )
+        bool includeVirtualMembers,
+        Func<IValueProvider, bool>? memberFilter)
     {
         _includeProperties = includeProperties;
         _includeFields = includeFields;
         _includePublicMembers = includePublicMembers;
         _includeNonPublicMembers = includeNonPublicMembers;
         _includeVirtualMembers = includeVirtualMembers;
+        _memberFilter = memberFilter;
     }
 
     public IEnumerable<IValueProvider> GetMembers(Type type)
@@ -58,6 +60,11 @@ internal sealed record MemberProvider : IMemberProvider
             members = members.Concat(fields);
         }
 
+        if(_memberFilter != null)
+        {
+            members = members.Where(member => _memberFilter(member));
+        }
+
         return members;
     }
 
@@ -72,7 +79,8 @@ internal sealed record MemberProvider : IMemberProvider
                && _includeFields == other._includeFields
                && _includePublicMembers == other._includePublicMembers
                && _includeNonPublicMembers == other._includeNonPublicMembers
-               && _includeVirtualMembers == other._includeVirtualMembers;
+               && _includeVirtualMembers == other._includeVirtualMembers
+               && Equals(_memberFilter, other._memberFilter);
     }
 
     public override int GetHashCode() =>
@@ -81,7 +89,8 @@ internal sealed record MemberProvider : IMemberProvider
             _includeFields,
             _includePublicMembers,
             _includeNonPublicMembers,
-            _includeVirtualMembers
+            _includeVirtualMembers,
+            _memberFilter
         ).GetHashCode();
     
     private bool IsVirtualProperty(PropertyInfo propertyInfo) =>
