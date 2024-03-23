@@ -1,4 +1,5 @@
 ﻿using Dumpify.Descriptors;
+using Dumpify.Descriptors.ValueProviders;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
@@ -41,9 +42,10 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         var showIndexes = context.Config.TableConfig.ShowArrayIndices;
 
-        if (showIndexes)
+        RowIndicesTableBuilderBehavior? rowIndicesBehavior = showIndexes ? new() : null;
+        if (rowIndicesBehavior != null)
         {
-            builder.AddBehavior(new RowIndicesTableBuilderBehavior());
+            builder.AddBehavior(rowIndicesBehavior);
         }
 
         var elementName = mvd.ElementsType is null ? "" : context.Config.TypeNameProvider.GetTypeName(mvd.ElementsType);
@@ -54,7 +56,10 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
             builder.HideHeaders();
         }
 
-        for (var index = 0; index < obj.Length; ++index)
+        int maxCollectionCount = context.Config.TableConfig.MaxCollectionCount;
+        int length = obj.Length > maxCollectionCount ? maxCollectionCount : obj.Length;
+
+        for (var index = 0; index < length; ++index)
         {
             var item = obj.GetValue(index);
 
@@ -65,6 +70,19 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
             var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
 
             builder.AddRow(itemsDescriptor, item, renderedItem);
+        }
+
+        if(obj.Length > maxCollectionCount)
+        {
+            if (rowIndicesBehavior != null)
+            {
+                rowIndicesBehavior.AddHideIndexForRow(maxCollectionCount);
+            }
+
+            string truncatedNotificationText = $"... truncated {obj.Length - maxCollectionCount} items";
+            var labelDescriptor = new LabelDescriptor(typeof(string), null);
+            var renderedItem = _handler.RenderDescriptor(truncatedNotificationText, labelDescriptor, context);
+            builder.AddRow(labelDescriptor, truncatedNotificationText, renderedItem);
         }
 
         return builder.Build();
@@ -79,32 +97,42 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
             return RenderHighRankArrays(obj, descriptor, context);
         }
 
+        RowIndicesTableBuilderBehavior rowIndicesBehavior = new ();
         var builder = new ObjectTableBuilder(context, descriptor, obj)
             .HideTitle()
-            .AddBehavior(new RowIndicesTableBuilderBehavior());
+            .AddBehavior(rowIndicesBehavior);
 
-        var rows = obj.GetLength(0);
-        var collumns = obj.GetLength(1);
+        var rowsAll = obj.GetLength(0);
+        var columnsAll = obj.GetLength(1);
+
+        int maxCollectionCount = context.Config.TableConfig.MaxCollectionCount;
+        int rows = rowsAll > maxCollectionCount ? maxCollectionCount : rowsAll;
+        int columns = columnsAll > maxCollectionCount ? maxCollectionCount : columnsAll;
 
         var colorConfig = context.Config.ColorConfig;
 
         if (context.Config.TypeNamingConfig.ShowTypeNames is true)
         {
             var (typeName, rank) = context.Config.TypeNameProvider.GetJaggedArrayNameWithRank(descriptor.Type);
-            builder.SetTitle($"{typeName}[{rows},{collumns}]");
+            builder.SetTitle($"{typeName}[{rowsAll},{columnsAll}]");
         }
 
         var columnStyle = new Style(foreground: colorConfig.ColumnNameColor.ToSpectreColor());
-        for (var col = 0; col < collumns; ++col)
+        for (var col = 0; col < columns; ++col)
         {
             builder.AddColumnName(col.ToString(), columnStyle);
+        }
+
+        if (columnsAll > maxCollectionCount)
+        {
+            builder.AddColumnName($"... +{columnsAll - maxCollectionCount}", columnStyle);
         }
 
         for (var row = 0; row < rows; ++row)
         {
             var cells = new List<IRenderable>(2);
 
-            for (var col = 0; col < collumns; ++col)
+            for (var col = 0; col < columns; ++col)
             {
                 var item = obj.GetValue(row, col);
 
@@ -114,6 +142,30 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
                 var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
                 cells.Add(renderedItem);
             }
+
+            if (columnsAll > maxCollectionCount)
+            {
+                var labelDescriptor = new LabelDescriptor(typeof(string), null);
+                var renderedItem = _handler.RenderDescriptor(string.Empty, labelDescriptor, context);
+                cells.Add(renderedItem);
+            }
+
+            builder.AddRow(null, null, cells);
+        }
+
+        if (rowsAll > maxCollectionCount)
+        {
+            var cells = new List<IRenderable>(2);
+            var labelDescriptor = new LabelDescriptor(typeof(string), null);
+
+            for (int i = 0; i <= columns; i++)
+            {
+                var renderedCell = _handler.RenderDescriptor(string.Empty, labelDescriptor, context);
+                cells.Add(renderedCell);
+            }
+
+            var truncatedNotificationText = $"... +{rowsAll - maxCollectionCount}";
+            rowIndicesBehavior.AddHideIndexForRow(maxCollectionCount, truncatedNotificationText);
 
             builder.AddRow(null, null, cells);
         }

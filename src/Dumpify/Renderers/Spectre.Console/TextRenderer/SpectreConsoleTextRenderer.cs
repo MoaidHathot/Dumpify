@@ -36,6 +36,9 @@ internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
     protected override IRenderable RenderSingleValue(object value, RenderContext<SpectreRendererState> context, Color? color)
         => new TextRenderableAdapter(value.ToString() ?? "", new Style(foreground: color));
 
+    protected override IRenderable RenderLabelDescriptor(object obj, LabelDescriptor descriptor, RenderContext<SpectreRendererState> context)
+        => new Markup(Markup.Escape(obj.ToString() ?? ""));
+
     protected override IRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext<SpectreRendererState> context)
     {
         var items = (IEnumerable)obj;
