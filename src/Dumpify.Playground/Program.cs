@@ -44,6 +44,9 @@ void TestSpecific()
     new TestVirtual().Dump();
     new TestVirtual().Dump("explcit include", members: new MembersConfig { IncludeVirtualMembers = true });
     new TestVirtual().Dump("explcit exclude", members: new MembersConfig { IncludeVirtualMembers = false });
+
+    moaid2.Dump(members: new MembersConfig { MemberFilter = member => member.Name != nameof(Person.FirstName) });
+    moaid2.Dump(members: new MembersConfig { MemberFilter = member => member.Name != nameof(Person.LastName) });
     //value.Dump();
     // ((nuint)5).Dump();
     // ((nint)5).Dump();

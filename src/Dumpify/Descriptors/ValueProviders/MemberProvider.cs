@@ -12,7 +12,7 @@ internal sealed record MemberProvider : IMemberProvider
     private readonly Func<IValueProvider, bool>? _memberFilter;
 
     public MemberProvider()
-        : this(true, false, true, false, true, null) { }
+        : this(includeProperties: true, includeFields: false, includePublicMembers: true, includeNonPublicMembers: false, includeVirtualMembers: true, memberFilter: null) { }
 
     public MemberProvider(
         bool includeProperties,
@@ -57,7 +57,7 @@ internal sealed record MemberProvider : IMemberProvider
             members = members.Concat(fields);
         }
 
-        if (_memberFilter != null)
+        if (_memberFilter is not null)
         {
             members = members.Where(member => _memberFilter(member));
         }
