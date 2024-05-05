@@ -38,9 +38,12 @@ void TestSpecific()
     };
 
     Person[] arr = [moaid, moaid];
-    arr.Dump();
+    // arr.Dump();
 
-    var value = SearchValues.Create("a");
+    // var value = SearchValues.Create("lskdjflskdfj").Dump();
+    new TestVirtual().Dump();
+    new TestVirtual().Dump("explcit include", members: new MembersConfig { IncludeVirtualMembers = true });
+    new TestVirtual().Dump("explcit exclude", members: new MembersConfig { IncludeVirtualMembers = false });
     //value.Dump();
     // ((nuint)5).Dump();
     // ((nint)5).Dump();

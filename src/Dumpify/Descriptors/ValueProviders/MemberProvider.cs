@@ -43,14 +43,11 @@ internal sealed record MemberProvider : IMemberProvider
         {
             var properties = type.GetProperties(flags)
                 .Where(p => p.GetIndexParameters().Length == 0)
-                .Where(p => p.GetMethod is not null);
+                .Where(p => p.GetMethod is not null)
+                .Where(ShouldIncludeProperty)
+                .Select(p => new PropertyValueProvider(p));
 
-            if (!_includeVirtualMembers)
-                properties = properties.Where(p => !IsVirtualProperty(p));
-
-            var providers = properties.Select(p => new PropertyValueProvider(p));
-
-            members = members.Concat(providers);
+            members = members.Concat(properties);
         }
 
         if (_includeFields)
@@ -60,7 +57,7 @@ internal sealed record MemberProvider : IMemberProvider
             members = members.Concat(fields);
         }
 
-        if(_memberFilter != null)
+        if (_memberFilter != null)
         {
             members = members.Where(member => _memberFilter(member));
         }
@@ -92,7 +89,10 @@ internal sealed record MemberProvider : IMemberProvider
             _includeVirtualMembers,
             _memberFilter
         ).GetHashCode();
-    
-    private bool IsVirtualProperty(PropertyInfo propertyInfo) =>
-        propertyInfo.GetAccessors().Any(accessor => accessor.IsVirtual);
+
+    private bool IsVirtualProperty(PropertyInfo property)
+        => property.GetMethod?.IsVirtual is true;
+
+    private bool ShouldIncludeProperty(PropertyInfo propertyInfo)
+        => _includeVirtualMembers || !IsVirtualProperty(propertyInfo);
 }
