@@ -28,9 +28,12 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         Type? valueType = null;
 
-        var memberProvider = context.Config.MemberProvider;
+        var pairs = ((IEnumerable<(object? key, object? value)>)handleContext!).ToList();
 
-        foreach (var pair in ((IEnumerable<(object? key, object? value)>)handleContext!))
+        int maxCollectionCount = context.Config.TableConfig.MaxCollectionCount;
+        int length = pairs.Count > maxCollectionCount ? maxCollectionCount : pairs.Count;
+
+        foreach (var pair in pairs.Take(length))
         {
             var keyType = pair.key?.GetType();
             var keyDescriptor = keyType is null ? null : DumpConfig.Default.Generator.Generate(keyType, null, context.Config.MemberProvider);
@@ -50,6 +53,16 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
             };
 
             tableBuilder.AddRow(valueDescriptor, value, keyRenderable, renderedValue);
+        }
+
+        if (pairs.Count > maxCollectionCount)
+        {
+            string truncatedNotificationText = $"... truncated {pairs.Count - maxCollectionCount} items";
+
+            var labelDescriptor = new LabelDescriptor(typeof(string), null);
+            var renderedValue = _handler.RenderDescriptor(truncatedNotificationText, labelDescriptor, context);
+            var keyRenderable = _handler.RenderDescriptor(string.Empty, labelDescriptor, context);
+            tableBuilder.AddRow(labelDescriptor, truncatedNotificationText, keyRenderable, renderedValue);
         }
 
         return tableBuilder.Build();
