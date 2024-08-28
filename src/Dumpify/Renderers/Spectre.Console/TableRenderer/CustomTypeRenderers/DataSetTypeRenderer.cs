@@ -33,12 +33,21 @@ internal class DataSetTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         tableBuilder.AddColumnName(title, new Style(foreground: context.State.Colors.TypeNameColor));
 
-        foreach (DataTable dataTable in dataSet.Tables)
+        int maxCollectionCount = context.Config.TableConfig.MaxCollectionCount;
+        int length = dataSet.Tables.Count > maxCollectionCount ? maxCollectionCount : dataSet.Tables.Count;
+
+        for(int i = 0; i < length; i++)
         {
+            var dataTable = dataSet.Tables[i];
             var tableDescriptor = DumpConfig.Default.Generator.Generate(typeof(DataTable), null, context.Config.MemberProvider);
             var renderedItem = _handler.RenderDescriptor(dataTable, tableDescriptor, context);
 
             tableBuilder.AddRow(tableDescriptor, dataTable, renderedItem);
+        }
+
+        if(dataSet.Tables.Count > maxCollectionCount)
+        {
+            tableBuilder.AddRow(null, null, new Markup($"... truncated {dataSet.Tables.Count - maxCollectionCount} more tables"));
         }
 
         return tableBuilder.Build();
