@@ -11,8 +11,10 @@ using System.Text;
 
 // DumpConfig.Default.TableConfig.ShowRowSeparators = true;
 // DumpConfig.Default.TableConfig.ShowMemberTypes = true;
+new DirectoryInfo("C:\\Program Files").Dump();
 Console.WriteLine("---------------------");
-TestSpecific();
+
+// TestSpecific();
 // TestSingle();
 // ShowEverything();
 
@@ -21,8 +23,16 @@ TestSpecific();
 #pragma warning disable CS8321
 #pragma warning disable CS0168
 
+
 void TestSpecific()
 {
+    {
+        {
+            {
+
+            }
+        }
+    }
     var moaid = new Person
     {
         FirstName = "Moaid",
@@ -37,8 +47,21 @@ void TestSpecific()
         Profession = Profession.Software
     };
 
-    Person[] arr = [moaid, moaid];
-    // arr.Dump();
+    var haneen = new Person
+    {
+        FirstName = "Haneen",
+        LastName = "Shibli",
+        Profession = Profession.Health
+    };
+
+    Person[] arr = [moaid, moaid2, haneen];
+    arr.Dump();
+
+    if(moaid.FirstName.Equals("Moaid"))
+    {
+        return;
+    }
+
 
     // var value = SearchValues.Create("lskdjflskdfj").Dump();
     new TestVirtual().Dump();
