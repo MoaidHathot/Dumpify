@@ -12,12 +12,31 @@ using System.Text;
 // DumpConfig.Default.TableConfig.ShowMemberTypes = true;
 // new DirectoryInfo("C:\\Program Files").Dump();
 // (1, 2, 3, 4, ("1", "b"), 5, 6, 7, 8, 9, 10, 11, 12, 13, "14", "15", 16, 17, 18).Dump("ValueTuple", tableConfig: new TableConfig {  MaxCollectionCount = 4 });
-(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, "14", "15", 16, 17, 18).Dump("ValueTuple 1");
-(1, 2, 3, 4, ("1", "b"), 5, 6, 7, 8, 9, 10, 11, 12, 13, "14", "15", 16, 17, 18).Dump("ValueTuple");
-Tuple.Create(1, 2, 3, 4, 5, 6, 7, Tuple.Create(8, 9, 10, 11)).Dump("System.Tuple");
+// (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, "14", "15", 16, 17, 18).Dump("ValueTuple 1");
+// (1, 2, 3, 4, ("1", "b"), 5, 6, 7, 8, 9, 10, 11, 12, 13, "14", "15", 16, 17, 18).Dump("ValueTuple");
+// Tuple.Create(1, 2, 3, 4, 5, 6, 7, Tuple.Create(8, 9, 10, 11)).Dump("System.Tuple");
 // new[] { 1, 2, 3,  4, 5, 6, 7, 8, 9, 10 }.Dump(tableConfig: new TableConfig { MaxCollectionCount = 3 });
 Console.WriteLine("---------------------");
+    var moaid1 = new Person
+    {
+        FirstName = "Moaid",
+        LastName = "Hathot",
+        Profession = Profession.Software
+    };
 
+    var haneeni1 = new Person
+    {
+        FirstName = "Haneeni",
+        LastName = "Shibli",
+        Profession = Profession.Health
+    };
+
+moaid1.Spouse = haneeni1;
+haneeni1.Spouse = moaid1;
+
+new [] { moaid1, haneeni1 }.Dump();
+
+moaid1.Dump();
 // TestSpecific();
 // TestSingle();
 // ShowEverything();
@@ -34,7 +53,6 @@ DumpConfig.Default.AddCustomTypeHandler(typeof(byte[]), (obj, t, valueProvider, 
 
 //var foo = new { Name = "Moaid", LastName = "Hathot", Age = 35, Content = Enumerable.Range(0, 10).Select(i => (char)(i + 'a')).ToArray() };
 //foo.Dump("Test");
-
 
 void TestSpecific()
 {

@@ -210,7 +210,6 @@ DumpConfig.Default.MaxDepth = 3;
 * Add custom rendering for more types:
     - Exceptions, AggregateExceptions, etc...
 * Rethink Generators caching keys
-* Ditch `ObjectIdGenerator` and create a custom, modern implementation
 * Consider using Max Depth for Descriptors
 * Refactor Renderers and make it better extendable
 * Add more renderers
