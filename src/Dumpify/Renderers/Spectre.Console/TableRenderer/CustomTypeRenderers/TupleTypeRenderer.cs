@@ -53,7 +53,7 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
         while (index < expansion.Length)
         {
             var type = expansion[index];
-            if(IsValueTuple(type))
+            if(0 == (index % 7) && IsValueTuple(type))
             {
                 var descriptor = DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider)!;
                 expansion = descriptor.Type.GetGenericArguments();
