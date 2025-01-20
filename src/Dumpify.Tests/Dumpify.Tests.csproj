@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
 
-     <ItemGroup>
+	 <ItemGroup>
 		 <Using Include="FluentAssertions" />
 		 <Using Include="Xunit" />
 		 <Using Include="Dumpify" />
@@ -15,7 +15,7 @@
 		 <Using Include="Dumpify.Descriptors.Generators" />
 		 <Using Include="Dumpify.Descriptors.ValueProviders" />
 		 <Using Include="System.Collections.Concurrent" />
-    </ItemGroup>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="FakeItEasy" />

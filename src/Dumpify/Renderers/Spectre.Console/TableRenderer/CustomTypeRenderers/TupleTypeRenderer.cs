@@ -25,7 +25,8 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         var tuple = (ITuple)obj;
 
-        var genericArguments = descriptor.Type.GetGenericArguments();
+        //var genericArguments = descriptor.Type.GetGenericArguments();
+        var genericArguments = GetGenericArgumentExpansions(descriptor.Type.GetGenericArguments(), context).ToArray();
 
         var memberProvider = context.Config.MemberProvider;
         for (var index = 0; index < tuple.Length; ++index)
@@ -45,6 +46,56 @@ internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
         }
 
         return tableBuilder.Build();
+    }
+
+    private static IEnumerable<Type> GetGenericArgumentExpansions(Type[] genericArguments, RenderContext<SpectreRendererState> context)
+    {
+        var expansion = genericArguments;
+        var index = 0;
+
+        while (index < expansion.Length)
+        {
+            var type = expansion[index];
+            if(IsValueTuple(type))
+            {
+                var descriptor = DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider)!;
+                expansion = descriptor.Type.GetGenericArguments();
+                index = 0;
+                continue;
+            }
+
+            yield return type;
+            ++index;
+        }
+    }
+
+    private static bool IsValueTuple(Type type)
+    {
+        if (type is null)
+        {
+            return false;
+        }
+
+        if (type == typeof(ValueTuple))
+        {
+            return true;
+        }
+
+        if (type.IsGenericType)
+        {
+            Type genericDefinition = type.GetGenericTypeDefinition();
+
+            return genericDefinition == typeof(ValueTuple<>) ||
+                   genericDefinition == typeof(ValueTuple<,>) ||
+                   genericDefinition == typeof(ValueTuple<,,>) ||
+                   genericDefinition == typeof(ValueTuple<,,,>) ||
+                   genericDefinition == typeof(ValueTuple<,,,,>) ||
+                   genericDefinition == typeof(ValueTuple<,,,,,>) ||
+                   genericDefinition == typeof(ValueTuple<,,,,,,>) ||
+                   genericDefinition == typeof(ValueTuple<,,,,,,,>);
+        }
+
+        return false;
     }
 
     public (bool, object?) ShouldHandle(IDescriptor descriptor, object obj)

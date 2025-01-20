@@ -1,11 +1,9 @@
 ﻿using Dumpify;
-using System.Buffers;
 using System.Collections;
 using System.Data;
 using System.Text;
 
-int[] arr = [1, 2, 3, 4];
-arr.Dump(tableConfig: new () { MaxCollectionCount = 2 });
+"Getting Started: Adding AI in .NET Applications".Dump();
 
 //DumpConfig.Default.Renderer = Renderers.Text;
 //DumpConfig.Default.ColorConfig = ColorConfig.NoColors;
@@ -14,8 +12,11 @@ arr.Dump(tableConfig: new () { MaxCollectionCount = 2 });
 
 // DumpConfig.Default.TableConfig.ShowRowSeparators = true;
 // DumpConfig.Default.TableConfig.ShowMemberTypes = true;
+// new DirectoryInfo("C:\\Program Files").Dump();
+(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, "14", "15", 16, 17, 18).Dump();
 Console.WriteLine("---------------------");
-TestSpecific();
+
+// TestSpecific();
 // TestSingle();
 // ShowEverything();
 
@@ -24,8 +25,25 @@ TestSpecific();
 #pragma warning disable CS8321
 #pragma warning disable CS0168
 
+DumpConfig.Default.AddCustomTypeHandler(typeof(byte[]), (obj, t, valueProvider, memberProvider) => {
+        "sdfdsf".Dump();
+    return ((Byte[])obj).Take(3).ToArray();
+});
+
+var foo = new { Name = "Moaid", LastName = "Hathot", Age = 35, Content = Enumerable.Range(0, 10).Select(i => (char)(i + 'a')).ToArray() };
+
+foo.Dump("Test");
+
+
 void TestSpecific()
 {
+    {
+        {
+            {
+
+            }
+        }
+    }
     var moaid = new Person
     {
         FirstName = "Moaid",
@@ -40,8 +58,21 @@ void TestSpecific()
         Profession = Profession.Software
     };
 
-    Person[] arr = [moaid, moaid];
-    // arr.Dump();
+    var haneen = new Person
+    {
+        FirstName = "Haneen",
+        LastName = "Shibli",
+        Profession = Profession.Health
+    };
+
+    Person[] arr = [moaid, moaid2, haneen];
+    arr.Dump();
+
+    if(moaid.FirstName.Equals("Moaid"))
+    {
+        return;
+    }
+
 
     // var value = SearchValues.Create("lskdjflskdfj").Dump();
     new TestVirtual().Dump();
