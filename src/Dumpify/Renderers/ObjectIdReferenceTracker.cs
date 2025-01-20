@@ -4,15 +4,14 @@ public class ObjectIdReferenceTracker : IObjectIdTracker
 {
 	private readonly Dictionary<object, long> _objects = new(ReferenceEqualityComparer.Instance);
 
-    public (bool firstTime, long id) Track(object obj)
+	public (bool firstTime, long id) Track(object obj)
 	{
-		if(_objects.TryAdd(obj, _objects.Count + 1))
+		if(_objects.TryGetValue(obj, out var id))
 		{
-			return (true, _objects.Count);
+			return (false, id);
 		}
-		else
-		{
-			return (false, _objects[obj]);
-		}
+
+		_objects.Add(obj, _objects.Count + 1);
+		return (true, _objects.Count);
 	}
 }
