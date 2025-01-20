@@ -3,8 +3,6 @@ using System.Collections;
 using System.Data;
 using System.Text;
 
-"Getting Started: Adding AI in .NET Applications".Dump();
-
 //DumpConfig.Default.Renderer = Renderers.Text;
 //DumpConfig.Default.ColorConfig = ColorConfig.NoColors;
 
@@ -13,8 +11,9 @@ using System.Text;
 // DumpConfig.Default.TableConfig.ShowRowSeparators = true;
 // DumpConfig.Default.TableConfig.ShowMemberTypes = true;
 // new DirectoryInfo("C:\\Program Files").Dump();
-(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, "14", "15", 16, 17, 18).Dump();
-Tuple.Create(1, 2, 3, 4, 5, 6, 7, Tuple.Create(8, 9, 10, 11)).Dump();
+//(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, "14", "15", 16, 17, 18).Dump("ValueTuple", tableConfig: new TableConfig {  MaxCollectionCount = 4 });
+//Tuple.Create(1, 2, 3, 4, 5, 6, 7, Tuple.Create(8, 9, 10, 11)).Dump("System.Tuple");
+new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }.Dump(tableConfig: new TableConfig { MaxCollectionCount = 3 });
 Console.WriteLine("---------------------");
 
 // TestSpecific();
@@ -31,9 +30,8 @@ DumpConfig.Default.AddCustomTypeHandler(typeof(byte[]), (obj, t, valueProvider, 
     return ((Byte[])obj).Take(3).ToArray();
 });
 
-var foo = new { Name = "Moaid", LastName = "Hathot", Age = 35, Content = Enumerable.Range(0, 10).Select(i => (char)(i + 'a')).ToArray() };
-
-foo.Dump("Test");
+//var foo = new { Name = "Moaid", LastName = "Hathot", Age = 35, Content = Enumerable.Range(0, 10).Select(i => (char)(i + 'a')).ToArray() };
+//foo.Dump("Test");
 
 
 void TestSpecific()
