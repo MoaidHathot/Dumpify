@@ -14,6 +14,7 @@ using System.Text;
 // DumpConfig.Default.TableConfig.ShowMemberTypes = true;
 // new DirectoryInfo("C:\\Program Files").Dump();
 (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, "14", "15", 16, 17, 18).Dump();
+Tuple.Create(1, 2, 3, 4, 5, 6, 7, Tuple.Create(8, 9, 10, 11)).Dump();
 Console.WriteLine("---------------------");
 
 // TestSpecific();
