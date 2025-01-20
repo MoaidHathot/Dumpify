@@ -81,7 +81,7 @@ internal class ObjectTableBuilder
     public ObjectTableBuilder SetTitle(string? title)
         => SetTitle(title, new Style(foreground: _context.State.Colors.TypeNameColor));
 
-    public ObjectTableBuilder AddRow(IDescriptor? descriptor, object? obj, IEnumerable<IRenderable> renderables)
+    public ObjectTableBuilder AddRow(IDescriptor? descriptor, object? obj, params IEnumerable<IRenderable> renderables)
     {
         foreach (var behavior in _behaviors)
         {
@@ -93,9 +93,6 @@ internal class ObjectTableBuilder
 
         return this;
     }
-
-    public ObjectTableBuilder AddRow(IDescriptor? descriptor, object? obj, params IRenderable[] renderables)
-        => AddRow(descriptor, obj, (IEnumerable<IRenderable>)renderables);
 
     //todo: In the future, after the refactoring, this should be an extension method
     public ObjectTableBuilder AddRow(IDescriptor? descriptor, object? obj, string keyValue, IRenderable renderedValue)
@@ -172,11 +169,6 @@ internal class ObjectTableBuilder
             table.HideHeaders();
         }
 
-        if (_context.Config.Label is { } label && _context.CurrentDepth == 0 && (object.ReferenceEquals(_context.RootObject, _sourceObject) || _context.RootObjectTransform is not null && object.ReferenceEquals(_context.RootObjectTransform, _sourceObject)))
-        {
-            table.Caption = new TableTitle(Markup.Escape(label), new Style(foreground: _context.State.Colors.LabelValueColor));
-        }
-
         var columns = GetBehaviorColumns().Concat(_columnNames);
 
         foreach (var column in columns)
@@ -207,6 +199,24 @@ internal class ObjectTableBuilder
         return _context.Config.TableConfig.ExpandTables ? table.Expand() : table.Collapse();
     }
 
-    public Table Build()
-        => CreateTable();
+    private IRenderable SetLabel(Table table)
+    {
+        if (_context.Config.Label is { } label && _context.CurrentDepth == 0 && (object.ReferenceEquals(_context.RootObject, _sourceObject) || _context.RootObjectTransform is not null && object.ReferenceEquals(_context.RootObjectTransform, _sourceObject)))
+        {
+            table.Caption = new TableTitle(Markup.Escape(label), new Style(foreground: _context.State.Colors.LabelValueColor));
+            var panel = new Panel(table);
+            panel.Header = new PanelHeader(label, Justify.Center);
+            panel.BorderStyle = new Style(foreground: _context.State.Colors.LabelValueColor);
+            return panel;
+        }
+
+        return table;
+    }
+
+    public IRenderable Build()
+    {
+        var table = CreateTable();
+        SetLabel(table);
+        return table;
+    }
 }

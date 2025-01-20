@@ -11,16 +11,40 @@ using System.Text;
 // DumpConfig.Default.TableConfig.ShowRowSeparators = true;
 // DumpConfig.Default.TableConfig.ShowMemberTypes = true;
 // new DirectoryInfo("C:\\Program Files").Dump();
-//(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, "14", "15", 16, 17, 18).Dump("ValueTuple", tableConfig: new TableConfig {  MaxCollectionCount = 4 });
+// "Moaid".Dump("Mine");
+// (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, "14", "15", 16, 17, 18).Dump("ValueTuple");
 //Tuple.Create(1, 2, 3, 4, 5, 6, 7, Tuple.Create(8, 9, 10, 11)).Dump("System.Tuple");
-new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }.Dump(tableConfig: new TableConfig { MaxCollectionCount = 3 });
-Console.WriteLine("---------------------");
+// new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }.Dump("MoaidLabel", tableConfig: new TableConfig { MaxCollectionCount = 3 });
+// new { Name = "Moaid", LastName = "Hathot", Age = 35 }.Dump("MoaidLabel", tableConfig: new TableConfig { MaxCollectionCount = 3 });
+// Console.WriteLine("---------------------");
 
 // TestSpecific();
 // TestSingle();
 // ShowEverything();
 
 //todo: improve labels, make them work with simple objects as strings (not wrapped in other object) and consider changing colors
+
+    var moaid = new Person
+    {
+        FirstName = "Moaid",
+        LastName = "Hathot",
+        Profession = Profession.Software
+    };
+
+    var haneeni = new Person
+    {
+        FirstName = "Haneeni",
+        LastName = "Shibli",
+        Profession = Profession.Health
+    };
+
+moaid.Spouse = haneeni;
+haneeni.Spouse = moaid;
+
+// moaid.Dump("Moaid");
+// haneeni.Dump("Haneeni");
+
+// new { Moaid = moaid, Haneeni = haneeni }.Dump("Family");
 
 #pragma warning disable CS8321
 #pragma warning disable CS0168
@@ -33,6 +57,12 @@ DumpConfig.Default.AddCustomTypeHandler(typeof(byte[]), (obj, t, valueProvider, 
 //var foo = new { Name = "Moaid", LastName = "Hathot", Age = 35, Content = Enumerable.Range(0, 10).Select(i => (char)(i + 'a')).ToArray() };
 //foo.Dump("Test");
 
+TestObjectBuilder();
+void TestObjectBuilder()
+{
+    Console.WriteLine("----");
+    moaid.Dump();
+}
 
 void TestSpecific()
 {
@@ -173,23 +203,23 @@ void TestSpecific()
     //}.Dump("This is a test");
 
     //typeof(Person).Dump();
-    // new
-    // {
-    //     Properties = typeof(Person).GetProperties(),
-    //     Methods = typeof(Person).GetMethods(),
-    //     Fields = typeof(Person).GetFields(),
-    //     Ctors = typeof(Person).GetConstructors(),
-    //     //Members = typeof(Person).GetMembers(),
-    //     FooGuid = Guid.NewGuid(),
-    //     Enum = Profession.Health,
-    //     TimeSpan = TimeSpan.MinValue,
-    //     DateTime = DateTime.Now,
-    //     DateTimeOffset = DateTimeOffset.Now,
-    //     DateOnly = DateOnly.FromDateTime(DateTime.Now),
-    //     TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
-    //     Lambda1 = (object)(() => 10),
-    //
-    // }.Dump("Person");
+    //new
+    //{
+    //    Properties = typeof(Person).GetProperties(),
+    //    Methods = typeof(Person).GetMethods(),
+    //    Fields = typeof(Person).GetFields(),
+    //    Ctors = typeof(Person).GetConstructors(),
+    //    //Members = typeof(Person).GetMembers(),
+    //    FooGuid = Guid.NewGuid(),
+    //    Enum = Profession.Health,
+    //    TimeSpan = TimeSpan.MinValue,
+    //    DateTime = DateTime.Now,
+    //    DateTimeOffset = DateTimeOffset.Now,
+    //    DateOnly = DateOnly.FromDateTime(DateTime.Now),
+    //    TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
+    //    Lambda1 = (object)(() => 10),
+
+    //}.Dump("Person");
     //
     // DateTime.Now.Dump("DT");
     // Guid.NewGuid().Dump("Guid");
@@ -198,20 +228,20 @@ void TestSpecific()
 
 // void TestObjectWithLargeWidth()
 // {
-var moaid = new Person
-{
-    FirstName = "Moaid",
-    LastName = "Hathot",
-    Profession = Profession.Software
-};
-var haneeni = new Person
-{
-    FirstName = "Haneeni",
-    LastName = "Shibli",
-    Profession = Profession.Health
-};
-moaid.Spouse = haneeni;
-haneeni.Spouse = moaid;
+//var moaid = new Person
+//{
+//    FirstName = "Moaid",
+//    LastName = "Hathot",
+//    Profession = Profession.Software
+//};
+//var haneeni = new Person
+//{
+//    FirstName = "Haneeni",
+//    LastName = "Shibli",
+//    Profession = Profession.Health
+//};
+//moaid.Spouse = haneeni;
+//haneeni.Spouse = moaid;
 
 // moaid.Dump("sdf");
 // DumpConfig.Default.TableConfig.ShowTableHeaders = false;

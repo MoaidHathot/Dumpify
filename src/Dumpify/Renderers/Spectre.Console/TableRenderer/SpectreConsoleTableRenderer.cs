@@ -4,7 +4,6 @@ using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Drawing;
 
 namespace Dumpify;
 
@@ -101,5 +100,17 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         }
 
         return builder.Build();
+
+        // var inverted = new Dumpify.InvertedTableBuilder(context, descriptor, obj);
+        //
+        //
+        // foreach (var property in descriptor.Properties)
+        // {
+        //     var (success, value, renderedValue) = GetValueAndRender(obj, property.ValueProvider!, property, context with { CurrentDepth = context.CurrentDepth + 1 });
+        //     inverted.WithHeader(property.Name);
+        //     inverted.WithEntry(property, value, renderedValue, property.Name, [renderedValue]);
+        // }
+        // 
+        // return inverted.Build();
     }
 }
