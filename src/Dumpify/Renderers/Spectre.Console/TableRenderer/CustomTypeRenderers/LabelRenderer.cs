@@ -19,8 +19,8 @@ internal class LabelRenderer : ICustomTypeRenderer<IRenderable>
         var context = (RenderContext<SpectreRendererState>)baseContext;
 
         var propertyValueColor = context.Config.ColorConfig.PropertyValueColor?.HexString ?? "default";
-        
-        var markup = new Markup($"[{propertyValueColor}]{obj}[/]");
+
+        var markup = Markup.FromInterpolated($"[{propertyValueColor}]{obj}[/]");
         return markup;
     }
 

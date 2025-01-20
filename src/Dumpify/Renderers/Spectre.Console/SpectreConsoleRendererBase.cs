@@ -3,7 +3,6 @@ using Dumpify.Descriptors.ValueProviders;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 
 namespace Dumpify;
 

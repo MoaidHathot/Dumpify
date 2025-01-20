@@ -1,7 +1,4 @@
-﻿using Dumpify;
-using Dumpify.Descriptors;
-using Dumpify.Extensions;
-using Spectre.Console;
+﻿using Dumpify.Descriptors;
 using Spectre.Console.Rendering;
 using System.Runtime.CompilerServices;
 
