@@ -1,7 +1,6 @@
 ﻿using Dumpify.Descriptors;
 using Dumpify.Descriptors.ValueProviders;
 using System.Collections.Concurrent;
-using System.Runtime.Serialization;
 
 namespace Dumpify;
 
@@ -26,7 +25,7 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
     public IRenderedObject Render(object? obj, IDescriptor? descriptor, RendererConfig config)
     {
         var state = CreateState(obj, descriptor, config);
-        var idGenerator = new ObjectIDGenerator();
+        var idGenerator = new ObjectIdReferenceTracker();
         var context = new RenderContext<TState>(config, idGenerator, 0, obj, null, state);
 
         var renderable = obj switch
@@ -135,9 +134,10 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
         return RenderDescriptor(customValue, customValueDescriptor, context);
     }
 
-    private bool ObjectAlreadyRendered(object @object, ObjectIDGenerator tracker)
+    private bool ObjectAlreadyRendered(object @object, IObjectIdTracker tracker)
     {
-        tracker.GetId(@object, out var firstTime);
+        // tracker.GetId(@object, out var firstTime);
+        var (firstTime, id) = tracker.Track(@object);
 
         return firstTime is false;
     }
