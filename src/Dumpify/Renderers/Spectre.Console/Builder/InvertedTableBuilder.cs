@@ -11,7 +11,7 @@ public class InvertedTableBuilder : IRenderableBuilder
     private readonly object _sourceObject;
 
     private readonly HashSet<(string header, Style? style)> _headers = new();
-    private readonly List<(string header, IDescriptor? descriptor, object? obj, IRenderable? renderedObj)> _entries = [];
+    private readonly List<(IDescriptor? descriptor, object? obj, IEnumerable<(string header, IRenderable? renderedObj)> entries)> _entries = [];
 
     private (string? title, Style? style)? _title = default;
     private (string? label, Style? style)? _label = default;
@@ -26,10 +26,14 @@ public class InvertedTableBuilder : IRenderableBuilder
     public IRenderable Build()
     {
         var table = new Table();
-        BuildTitle(table);
+        table.Title = BuildTitle(table);
 
         var columnMapping = BuildColumns(table);
-        BuildRows(table, columnMapping);
+        var rows = BuildRows(table, columnMapping);
+        foreach (var row in rows)
+        {
+            table.AddRow(row);
+        }
 
         table.RoundedBorder();
 
@@ -39,10 +43,23 @@ public class InvertedTableBuilder : IRenderableBuilder
         }
 
         table = _context.Config.TableConfig.ExpandTables ? table.Expand() : table.Collapse();
-        return table;
+
+        var tagged = CreateLabeled(table);
+        return tagged;
     }
 
-    private void BuildLabel(Table table)
+    private void EnsureAllColumnsExist(Table table)
+    {
+        foreach(var entry in _entries)
+        {
+            foreach(var (header, _) in entry.entries)
+            {
+                WithHeader(header);
+            }
+        }
+    }
+
+    private IRenderable CreateLabeled(Table table)
     {
         if (_label?.label is { } label && _context.CurrentDepth == 0 && (object.ReferenceEquals(_context.RootObject, _sourceObject) || _context.RootObjectTransform is not null && object.ReferenceEquals(_context.RootObjectTransform, _sourceObject)))
         {
@@ -50,32 +67,47 @@ public class InvertedTableBuilder : IRenderableBuilder
             var panel = new Panel(table);
             panel.Header = new PanelHeader(label, Justify.Center);
             panel.BorderStyle = new Style(foreground: _context.State.Colors.LabelValueColor);
+
+            return panel;
         }
+
+        return table;
     }
 
-    private void BuildRows(Table table, Dictionary<string, int> columnMap)
+    private IEnumerable<IRenderable[]> BuildRows(Table table, Dictionary<string, int> columnMap)
     {
-        var row = new IRenderable[_headers.Count];
-
-        foreach (var entry in _entries)
+        foreach (var entryRow in _entries)
         {
-            if (columnMap.TryGetValue(entry.header, out var index))
+            var row = new IRenderable[_headers.Count];
+            foreach (var entry in entryRow.entries)
             {
-                Console.WriteLine(index);
-                row[index] = entry.renderedObj!;
-            }
-            else
-            {
-                Console.WriteLine("No index found for " + entry.header);
+                if (columnMap.TryGetValue(entry.header, out var index))
+                {
+                    row[index] = entry.renderedObj!;
+                }
+                else
+                {
+                    //Todo: throw exception
+                    Console.WriteLine("No index found for " + entry.header);
+                }
             }
 
+            for(var index = 0; index < row.Length; index++)
+            {
+                if (row[index] is null)
+                {
+                    row[index] = new Markup("");
+                }
+            }
+
+            yield return row;
         }
-
-        table.AddRow(row);
     }
 
     private Dictionary<string, int> BuildColumns(Table table)
     {
+        EnsureAllColumnsExist(table);
+
         var columnMap = new Dictionary<string, int>();
 
         foreach (var (header, style) in _headers)
@@ -94,7 +126,7 @@ public class InvertedTableBuilder : IRenderableBuilder
         return columnMap;
     }
 
-    private void BuildTitle(Table table)
+    private TableTitle? BuildTitle(Table table)
     {
         if (_context.Config.TypeNamingConfig.ShowTypeNames is true)
         {
@@ -107,18 +139,16 @@ public class InvertedTableBuilder : IRenderableBuilder
                 not null => string.IsNullOrWhiteSpace(_title.Value.title) ? null : new TableTitle(_title.Value.title!, _title.Value.style),
             };
 
-            if (title is not null)
-            {
-
-                table.Title = title;
-            }
+            return title;
         }
+
+        return null;
     }
 
-    public IRenderableBuilder WithEntry(IDescriptor? descriptor, object? obj, IRenderable? renderedObj, string header, IEnumerable<IRenderable> entry, Style? headerStyle = null)
+    public IRenderableBuilder WithEntry(IDescriptor? descriptor, object? obj, IEnumerable<(string header, IRenderable? renderedObject)> entries, Style? headerStyle = null)
     {
-        Console.WriteLine(_headers.Add((header, headerStyle)));
-        _entries.Add((header, descriptor, obj, renderedObj));
+        Console.WriteLine($"Adding descriptor {descriptor?.Name} with {entries.Count()} entries");
+        _entries.Add((descriptor, obj, entries));
         return this;
     }
 

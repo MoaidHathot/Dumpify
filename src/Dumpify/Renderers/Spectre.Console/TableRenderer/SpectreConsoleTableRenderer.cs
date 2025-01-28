@@ -85,32 +85,41 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
 
     protected override IRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<SpectreRendererState> context)
     {
-        var builder = new ObjectTableBuilder(context, descriptor, obj)
-            .AddDefaultColumnNames();
-
-        if (context.Config.TableConfig.ShowMemberTypes)
-        {
-            builder.AddBehavior(new RowTypeTableBuilderBehavior());
-        }
-
-        foreach (var property in descriptor.Properties)
-        {
-            var (success, value, renderedValue) = GetValueAndRender(obj, property.ValueProvider!, property, context with { CurrentDepth = context.CurrentDepth + 1 });
-            builder.AddRowWithObjectName(property, value, renderedValue);
-        }
-
-        return builder.Build();
-
-        // var inverted = new Dumpify.InvertedTableBuilder(context, descriptor, obj);
+        Console.WriteLine("hwer");
+        // var builder = new ObjectTableBuilder(context, descriptor, obj)
+        //     .AddDefaultColumnNames();
         //
+        // if (context.Config.TableConfig.ShowMemberTypes)
+        // {
+        //     builder.AddBehavior(new RowTypeTableBuilderBehavior());
+        // }
         //
         // foreach (var property in descriptor.Properties)
         // {
         //     var (success, value, renderedValue) = GetValueAndRender(obj, property.ValueProvider!, property, context with { CurrentDepth = context.CurrentDepth + 1 });
-        //     inverted.WithHeader(property.Name);
-        //     inverted.WithEntry(property, value, renderedValue, property.Name, [renderedValue]);
+        //     builder.AddRowWithObjectName(property, value, renderedValue);
         // }
-        // 
-        // return inverted.Build();
+        //
+        // return builder.Build();
+
+        var inverted = new Dumpify.InvertedTableBuilder(context, descriptor, obj);
+
+        var renderables = descriptor
+            .Properties
+            .Select(property => (header: property.Name, renderedValue: GetValueAndRender(obj, property.ValueProvider!, property, context with { CurrentDepth = context.CurrentDepth + 1 })))
+            .Select(property => (property.header, property.renderedValue.renderedValue))
+            .ToArray();
+
+        inverted.WithEntry(descriptor, obj, renderables);
+            
+
+        // foreach (var property in descriptor.Properties)
+        // {
+        //     var (success, value, renderedValue) = GetValueAndRender(obj, property.ValueProvider!, property, context with { CurrentDepth = context.CurrentDepth + 1 });
+        //     // inverted.WithHeader(property.Name);
+        //     // inverted.WithEntry(property, value, [(property.Name, renderedValue)]);
+        // }
+
+        return inverted.Build();
     }
 }

@@ -136,13 +136,13 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
 
     private bool ObjectAlreadyRendered(object @object, IObjectIdTracker tracker)
     {
-        // tracker.GetId(@object, out var firstTime);
         var (firstTime, id) = tracker.Track(@object);
 
         return firstTime is false;
     }
 
-    protected virtual (bool success, object? value, TRenderable renderedValue) GetValueAndRender(object source, IValueProvider valueProvider, IDescriptor? descriptor, RenderContext<TState> context, object? providedValue = null)
+    //todo- after the Inverted tablet test, remember to change "renderedValue" to be non-nullable as it was before
+    protected virtual (bool success, object? value, TRenderable? renderedValue) GetValueAndRender(object source, IValueProvider valueProvider, IDescriptor? descriptor, RenderContext<TState> context, object? providedValue = null)
     {
         try
         {
