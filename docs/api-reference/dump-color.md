@@ -144,13 +144,13 @@ These are used internally by Dumpify's rendering system.
 // Set up a dark theme
 var colorConfig = DumpConfig.Default.ColorConfig;
 
-colorConfig.NullValueColor = "#6B7280";      // Gray for null
-colorConfig.StringValueColor = "#10B981";    // Green for strings
-colorConfig.NumericValueColor = "#F59E0B";   // Amber for numbers
-colorConfig.BoolTrueColor = "#22C55E";       // Green for true
-colorConfig.BoolFalseColor = "#EF4444";      // Red for false
-colorConfig.PropertyValueColor = "#3B82F6";  // Blue for properties
-colorConfig.MetadataInfoColor = "#8B5CF6";   // Purple for metadata
+colorConfig.NullValueColor = "#6B7280";       // Gray for null
+colorConfig.PropertyValueColor = "#10B981";   // Green for property values
+colorConfig.PropertyNameColor = "#3B82F6";    // Blue for property names
+colorConfig.TypeNameColor = "#E5C07B";        // Yellow for type names
+colorConfig.ColumnNameColor = "#61AFEF";      // Blue for column headers
+colorConfig.MetadataInfoColor = "#8B5CF6";    // Purple for metadata
+colorConfig.LabelValueColor = "#D7AFD7";      // Pink for labels
 ```
 
 ### Using System.Drawing.Color Constants

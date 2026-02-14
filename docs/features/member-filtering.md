@@ -23,7 +23,7 @@ Dumpify allows you to control which members (properties and fields) are displaye
 | `IncludePublicMembers` | `bool` | `true` | Include public members |
 | `IncludeNonPublicMembers` | `bool` | `false` | Include private/protected members |
 | `IncludeVirtualMembers` | `bool` | `true` | Include virtual properties |
-| `MemberFilter` | `Func<MemberInfo, bool>?` | `null` | Custom filter function |
+| `MemberFilter` | `Func<IValueProvider, bool>?` | `null` | Custom filter function |
 
 ---
 
@@ -117,12 +117,9 @@ DumpConfig.Default.MembersConfig.IncludeVirtualMembers = false;
 // Or use a custom filter for more control
 DumpConfig.Default.MembersConfig.MemberFilter = member =>
 {
-    var property = member as PropertyInfo;
-    if (property == null) return true;
-    
     // Exclude if it's a navigation property (another entity type)
-    return !typeof(IEnumerable).IsAssignableFrom(property.PropertyType) 
-        || property.PropertyType == typeof(string);
+    return !typeof(IEnumerable).IsAssignableFrom(member.MemberType) 
+        || member.MemberType == typeof(string);
 };
 ```
 
@@ -130,7 +127,7 @@ DumpConfig.Default.MembersConfig.MemberFilter = member =>
 
 ## Custom Member Filters
 
-Use `MemberFilter` for fine-grained control:
+Use `MemberFilter` for fine-grained control. The filter receives an `IValueProvider` which has `Name`, `Info` (the `MemberInfo`), and `MemberType` properties:
 
 ```csharp
 DumpConfig.Default.MembersConfig.MemberFilter = member =>
@@ -160,7 +157,7 @@ public class User
 
 // Filter out properties with [NoDump] attribute
 DumpConfig.Default.MembersConfig.MemberFilter = member =>
-    !member.GetCustomAttributes(typeof(NoDumpAttribute), true).Any();
+    !member.Info.GetCustomAttributes(typeof(NoDumpAttribute), true).Any();
 ```
 
 ### Filter by Type
@@ -168,15 +165,12 @@ DumpConfig.Default.MembersConfig.MemberFilter = member =>
 ```csharp
 DumpConfig.Default.MembersConfig.MemberFilter = member =>
 {
-    var property = member as PropertyInfo;
-    if (property == null) return true;
-    
     // Exclude Stream properties
-    if (typeof(Stream).IsAssignableFrom(property.PropertyType))
+    if (typeof(Stream).IsAssignableFrom(member.MemberType))
         return false;
     
     // Exclude Task properties
-    if (typeof(Task).IsAssignableFrom(property.PropertyType))
+    if (typeof(Task).IsAssignableFrom(member.MemberType))
         return false;
     
     return true;
@@ -270,10 +264,7 @@ DumpConfig.Default.MembersConfig.MemberFilter = member =>
 ```csharp
 DumpConfig.Default.MembersConfig.MemberFilter = member =>
 {
-    var property = member as PropertyInfo;
-    if (property == null) return true;
-    
-    var type = property.PropertyType;
+    var type = member.MemberType;
     return type.IsPrimitive || type == typeof(string) || type == typeof(decimal);
 };
 ```
@@ -284,11 +275,8 @@ DumpConfig.Default.MembersConfig.MemberFilter = member =>
 // Show everything except navigation properties
 DumpConfig.Default.MembersConfig.MemberFilter = member =>
 {
-    var property = member as PropertyInfo;
-    if (property == null) return true;
-    
     // Keep primitives, strings, DateTimes, etc.
-    var type = property.PropertyType;
+    var type = member.MemberType;
     if (type.IsPrimitive || type == typeof(string) || 
         type == typeof(DateTime) || type == typeof(Guid))
         return true;

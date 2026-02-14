@@ -63,12 +63,12 @@ var color = new DumpColor("#FF5733");
 var color = DumpColor.FromHexString("#FF5733");
 ```
 
-### From Spectre.Console Color
+### From System.Drawing.Color
 
 ```csharp
-using Spectre.Console;
+using System.Drawing;
 
-var color = new DumpColor(Color.RoyalBlue);
+var color = new DumpColor(Color.RoyalBlue1);
 ```
 
 ### Implicit Conversion
@@ -77,7 +77,7 @@ var color = new DumpColor(Color.RoyalBlue);
 // From string
 DumpColor color = "#FF5733";
 
-// From Spectre.Console Color
+// From System.Drawing.Color
 DumpColor color = Color.Gold;
 ```
 
@@ -126,10 +126,10 @@ DumpConfig.Default.ColorConfig.NullValueColor = new DumpColor("#FF6347");
 obj.Dump();
 ```
 
-### Using Spectre.Console Colors
+### Using System.Drawing.Color Constants
 
 ```csharp
-using Spectre.Console;
+using System.Drawing;
 
 obj.Dump(colors: new ColorConfig 
 { 
