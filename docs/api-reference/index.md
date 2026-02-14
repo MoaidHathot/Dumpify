@@ -1,3 +1,12 @@
+---
+layout: default
+title: API Reference
+nav_order: 4
+has_children: true
+description: "Detailed API documentation for Dumpify"
+permalink: /api-reference/
+---
+
 # API Reference
 
 This section provides detailed documentation for all public APIs in Dumpify.

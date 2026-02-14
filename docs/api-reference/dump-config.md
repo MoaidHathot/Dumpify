@@ -1,3 +1,10 @@
+---
+layout: default
+title: DumpConfig
+parent: API Reference
+nav_order: 2
+---
+
 # DumpConfig Reference
 
 `DumpConfig` is the global singleton class that controls default behavior for all Dumpify operations.

@@ -1,3 +1,10 @@
+---
+layout: default
+title: Collections
+parent: Features
+nav_order: 2
+---
+
 # Collections
 
 Dumpify provides intelligent rendering for all common .NET collection types, displaying them as organized, easy-to-read tables.
@@ -34,7 +41,7 @@ var people = new[]
 people.Dump();
 ```
 
-![Array Of Objects](https://raw.githubusercontent.com/MoaidHathworker/Dumpify/main/assets/2-arrayOfObjects.png)
+![Array Of Objects](https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/2-arrayOfObjects.png)
 
 ### Multi-Dimensional Arrays
 
@@ -123,7 +130,7 @@ var company = new
 company.Dump();
 ```
 
-![Nested Objects](https://raw.githubusercontent.com/MoaidHathworker/Dumpify/main/assets/3-nestedObjects.png)
+![Nested Objects](https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/3-nestedObjects.png)
 
 ---
 

@@ -1,3 +1,10 @@
+---
+layout: default
+title: Advanced Usage
+parent: Examples
+nav_order: 2
+---
+
 # Advanced Usage Examples
 
 This guide covers advanced Dumpify usage patterns for complex scenarios.
@@ -18,43 +25,39 @@ This guide covers advanced Dumpify usage patterns for complex scenarios.
 
 ### Inline Configuration
 
-Use the `configBuilder` parameter to customize a single dump:
+Pass configuration parameters directly to customize a single dump:
 
 ```csharp
 var data = GetComplexData();
 
-data.Dump(config => config
-    .SetMaxDepth(2)
-    .UseTableConfig(table => table
-        .ShowTableHeaders(false)
-        .SetColumnSeparator(" | "))
-    .UseColorConfig(color => color
-        .SetPropertyValueColor(Color.Aqua)));
+data.Dump(
+    maxDepth: 2,
+    tableConfig: new TableConfig
+    {
+        ShowTableHeaders = false
+    },
+    colors: new ColorConfig
+    {
+        PropertyValueColor = "#00FFFF"
+    }
+);
 ```
 
-### Reusable Configuration
+### Global Configuration
 
-Create a `DumpConfig` instance for repeated use:
+Configure `DumpConfig.Default` for settings that apply to all dumps:
 
 ```csharp
-var debugConfig = new DumpConfig
-{
-    MaxDepth = 5,
-    TableConfig = new TableConfig
-    {
-        ShowHeaders = true,
-        ExpandTables = true
-    },
-    ColorConfig = new ColorConfig
-    {
-        PropertyValueColor = new DumpColor("#00FFFF")
-    }
-};
+// Configure globally at application startup
+DumpConfig.Default.MaxDepth = 5;
+DumpConfig.Default.TableConfig.ShowTableHeaders = true;
+DumpConfig.Default.TableConfig.ExpandTables = true;
+DumpConfig.Default.ColorConfig.PropertyValueColor = "#00FFFF";
 
-// Use the same config multiple times
-item1.Dump(debugConfig);
-item2.Dump(debugConfig);
-item3.Dump(debugConfig);
+// All subsequent dumps use these settings
+item1.Dump();
+item2.Dump();
+item3.Dump();
 ```
 
 ## Color Customization
@@ -64,36 +67,50 @@ item3.Dump(debugConfig);
 ```csharp
 using System.Drawing;
 
-data.Dump(config => config.UseColorConfig(color => color
-    .SetLabelColor(Color.Yellow)
-    .SetTypeNameColor(Color.Cyan)
-    .SetPropertyNameColor(Color.LightGreen)
-    .SetPropertyValueColor(Color.White)
-    .SetNullValueColor(Color.Gray)
-    .SetMetadataInfoColor(Color.DarkGray)
-    .SetMetadataErrorColor(Color.Red)));
+var colorConfig = new ColorConfig
+{
+    LabelValueColor = new DumpColor(Color.Yellow),
+    TypeNameColor = new DumpColor(Color.Cyan),
+    PropertyNameColor = new DumpColor(Color.LightGreen),
+    PropertyValueColor = new DumpColor(Color.White),
+    NullValueColor = new DumpColor(Color.Gray),
+    MetadataInfoColor = new DumpColor(Color.DarkGray),
+    MetadataErrorColor = new DumpColor(Color.Red)
+};
+
+data.Dump(colors: colorConfig);
 ```
 
 ### Using Hex Strings
 
 ```csharp
-data.Dump(config => config.UseColorConfig(color => color
-    .SetLabelColor("#FFD700")      // Gold
-    .SetTypeNameColor("#00CED1")    // Dark Turquoise
-    .SetPropertyNameColor("#98FB98") // Pale Green
-    .SetPropertyValueColor("#FFFFFF")
-    .SetNullValueColor("#808080")));
+var colorConfig = new ColorConfig
+{
+    LabelValueColor = "#FFD700",      // Gold
+    TypeNameColor = "#00CED1",        // Dark Turquoise
+    PropertyNameColor = "#98FB98",    // Pale Green
+    PropertyValueColor = "#FFFFFF",
+    NullValueColor = "#808080"
+};
+
+data.Dump(colors: colorConfig);
 ```
 
 ### Using DumpColor
 
 ```csharp
+using System.Drawing;
+
 var accentColor = new DumpColor(Color.Coral);
 var dimColor = new DumpColor("#666666");
 
-data.Dump(config => config.UseColorConfig(color => color
-    .SetPropertyValueColor(accentColor)
-    .SetMetadataInfoColor(dimColor)));
+var colorConfig = new ColorConfig
+{
+    PropertyValueColor = accentColor,
+    MetadataInfoColor = dimColor
+};
+
+data.Dump(colors: colorConfig);
 ```
 
 ### Themed Configurations
@@ -102,24 +119,24 @@ data.Dump(config => config.UseColorConfig(color => color
 // Dark theme
 var darkTheme = new ColorConfig
 {
-    LabelColor = new DumpColor("#BB86FC"),
-    TypeNameColor = new DumpColor("#03DAC6"),
-    PropertyNameColor = new DumpColor("#CF6679"),
-    PropertyValueColor = new DumpColor("#FFFFFF"),
-    NullValueColor = new DumpColor("#666666")
+    LabelValueColor = "#BB86FC",
+    TypeNameColor = "#03DAC6",
+    PropertyNameColor = "#CF6679",
+    PropertyValueColor = "#FFFFFF",
+    NullValueColor = "#666666"
 };
 
 // Light theme (for light terminal backgrounds)
 var lightTheme = new ColorConfig
 {
-    LabelColor = new DumpColor("#6200EE"),
-    TypeNameColor = new DumpColor("#018786"),
-    PropertyNameColor = new DumpColor("#B00020"),
-    PropertyValueColor = new DumpColor("#000000"),
-    NullValueColor = new DumpColor("#999999")
+    LabelValueColor = "#6200EE",
+    TypeNameColor = "#018786",
+    PropertyNameColor = "#B00020",
+    PropertyValueColor = "#000000",
+    NullValueColor = "#999999"
 };
 
-data.Dump(config => config.SetColorConfig(darkTheme));
+data.Dump(colors: darkTheme);
 ```
 
 ## Table Styling
@@ -128,75 +145,104 @@ data.Dump(config => config.SetColorConfig(darkTheme));
 
 ```csharp
 // Hide headers for cleaner output
-data.Dump(config => config.UseTableConfig(table => table
-    .ShowTableHeaders(false)));
+data.Dump(tableConfig: new TableConfig { ShowTableHeaders = false });
+
+// Show member types column
+data.Dump(tableConfig: new TableConfig { ShowMemberTypes = true });
 
 // Show row separators
-data.Dump(config => config.UseTableConfig(table => table
-    .ShowMemberTypes(true)));
+data.Dump(tableConfig: new TableConfig { ShowRowSeparators = true });
 ```
 
 ### Table Expansion
 
 ```csharp
 // Force tables to expand to full width
-data.Dump(config => config.UseTableConfig(table => table
-    .SetExpandTables(true)));
+data.Dump(tableConfig: new TableConfig { ExpandTables = true });
 
-// Compact tables
-data.Dump(config => config.UseTableConfig(table => table
-    .SetExpandTables(false)));
+// Compact tables (default)
+data.Dump(tableConfig: new TableConfig { ExpandTables = false });
 ```
 
-### Custom Separators
+### Combined Table Configuration
 
 ```csharp
-data.Dump(config => config.UseTableConfig(table => table
-    .SetColumnSeparator(" :: ")
-    .SetRowSeparator("-")));
+var tableConfig = new TableConfig
+{
+    ShowTableHeaders = true,
+    ShowRowSeparators = true,
+    ShowMemberTypes = true,
+    ShowArrayIndices = true,
+    ExpandTables = false,
+    MaxCollectionCount = 100
+};
+
+data.Dump(tableConfig: tableConfig);
 ```
 
 ## Member Filtering
 
-### Excluding Specific Properties
+### Including Private Members and Fields
 
 ```csharp
-data.Dump(config => config.UseMembersConfig(members => members
-    .IncludeFields(false)
-    .IncludePublicMembers(true)
-    .IncludeNonPublicMembers(false)));
+var membersConfig = new MembersConfig
+{
+    IncludeFields = true,
+    IncludePublicMembers = true,
+    IncludeNonPublicMembers = true
+};
+
+data.Dump(members: membersConfig);
 ```
 
-### Using Filters
+### Using Custom Filters
 
 ```csharp
 // Exclude properties by name
-data.Dump(config => config.UseMembersConfig(members => members
-    .SetMemberFilter(member => !member.Name.StartsWith("_"))
-    .SetMemberFilter(member => member.Name != "Password")));
+data.Dump(members: new MembersConfig
+{
+    MemberFilter = member => !member.Name.StartsWith("_")
+});
+
+// Exclude password properties
+data.Dump(members: new MembersConfig
+{
+    MemberFilter = member => member.Name != "Password"
+});
 
 // Only include specific properties
 var allowedProps = new[] { "Id", "Name", "Email" };
-data.Dump(config => config.UseMembersConfig(members => members
-    .SetMemberFilter(member => allowedProps.Contains(member.Name))));
+data.Dump(members: new MembersConfig
+{
+    MemberFilter = member => allowedProps.Contains(member.Name)
+});
 ```
 
 ### Filtering by Attribute
 
 ```csharp
+using System.Text.Json.Serialization;
+
 // Exclude properties with [JsonIgnore]
-data.Dump(config => config.UseMembersConfig(members => members
-    .SetMemberFilter(member => 
-        !member.GetCustomAttributes(typeof(JsonIgnoreAttribute), true).Any())));
+data.Dump(members: new MembersConfig
+{
+    MemberFilter = member => !member.Info.CustomAttributes
+        .Any(a => a.AttributeType == typeof(JsonIgnoreAttribute))
+});
 ```
 
 ## Custom Type Handlers
 
+Custom type handlers allow you to control how specific types are rendered.
+
 ### Basic Type Handler
 
 ```csharp
-DumpConfig.Default.TypeRenderingConfig.CustomTypeHandlers[typeof(SecureString)] = 
-    (obj, type, config) => "****";
+// Register a handler for SecureString
+DumpConfig.Default.AddCustomTypeHandler(
+    typeof(SecureString),
+    (obj, type, valueProvider, memberProvider) => "****"
+);
 
 var secure = new SecureString();
 // Adds characters...
@@ -206,8 +252,9 @@ secure.Dump(); // Outputs: ****
 ### Handler with Formatting
 
 ```csharp
-DumpConfig.Default.TypeRenderingConfig.CustomTypeHandlers[typeof(TimeSpan)] = 
-    (obj, type, config) =>
+DumpConfig.Default.AddCustomTypeHandler(
+    typeof(TimeSpan),
+    (obj, type, valueProvider, memberProvider) =>
     {
         var ts = (TimeSpan)obj;
         if (ts.TotalDays >= 1)
@@ -215,7 +262,8 @@ DumpConfig.Default.TypeRenderingConfig.CustomTypeHandlers[typeof(TimeSpan)] =
         if (ts.TotalHours >= 1)
             return $"{ts.Hours}h {ts.Minutes}m {ts.Seconds}s";
         return $"{ts.Minutes}m {ts.Seconds}s";
-    };
+    }
+);
 
 TimeSpan.FromHours(25.5).Dump(); // Outputs: 1d 1h 30m
 ```
@@ -223,26 +271,23 @@ TimeSpan.FromHours(25.5).Dump(); // Outputs: 1d 1h 30m
 ### Handler for Domain Types
 
 ```csharp
-DumpConfig.Default.TypeRenderingConfig.CustomTypeHandlers[typeof(Money)] = 
-    (obj, type, config) =>
+DumpConfig.Default.AddCustomTypeHandler(
+    typeof(Money),
+    (obj, type, valueProvider, memberProvider) =>
     {
         var money = (Money)obj;
         return $"{money.Currency} {money.Amount:N2}";
-    };
+    }
+);
 
 new Money { Currency = "USD", Amount = 1234.56m }.Dump(); // Outputs: USD 1,234.56
 ```
 
-### Generic Type Handler
+### Removing Handlers
 
 ```csharp
-// Handle all types implementing IEntity
-DumpConfig.Default.TypeRenderingConfig.CustomTypeHandlers[typeof(IEntity)] = 
-    (obj, type, config) =>
-    {
-        var entity = (IEntity)obj;
-        return $"{type.Name}#{entity.Id}";
-    };
+// Remove a previously registered handler
+DumpConfig.Default.RemoveCustomTypeHandler(typeof(TimeSpan));
 ```
 
 ## Handling Circular References
@@ -290,23 +335,26 @@ root.Dump(); // Shows structure with circular reference markers
 
 ```csharp
 // Shallow dump - only 2 levels deep
-deepNestedObject.Dump(config => config.SetMaxDepth(2));
+deepNestedObject.Dump(maxDepth: 2);
 
 // Deep inspection
-deepNestedObject.Dump(config => config.SetMaxDepth(10));
+deepNestedObject.Dump(maxDepth: 10);
 ```
 
 ### Combining with Filters
 
 ```csharp
 // Show shallow with only specific members
-complexObject.Dump(config => config
-    .SetMaxDepth(1)
-    .UseMembersConfig(m => m
-        .SetMemberFilter(member => 
-            member.Name == "Id" || 
-            member.Name == "Name" || 
-            member.Name == "Status")));
+complexObject.Dump(
+    maxDepth: 1,
+    members: new MembersConfig
+    {
+        MemberFilter = member =>
+            member.Name == "Id" ||
+            member.Name == "Name" ||
+            member.Name == "Status"
+    }
+);
 ```
 
 ## Output Redirection
@@ -343,12 +391,14 @@ if (config.VerboseLogging)
 }
 ```
 
-### Output Configuration
+### Changing Default Output
 
 ```csharp
-data.Dump(config => config.UseOutputConfig(output => output
-    // Configure output behavior
-));
+// All Dump() calls will go to Debug by default
+DumpConfig.Default.Output = Dumpify.Outputs.Debug;
+
+data.Dump(); // Goes to Debug
+data.DumpConsole(); // Explicitly goes to Console
 ```
 
 ## Combining Configurations
@@ -356,65 +406,42 @@ data.Dump(config => config.UseOutputConfig(output => output
 ### Complete Configuration Example
 
 ```csharp
-var fullConfig = new DumpConfig
-{
-    Label = "Full Config Example",
-    MaxDepth = 3,
-    
-    ColorConfig = new ColorConfig
-    {
-        LabelColor = new DumpColor(Color.Gold),
-        TypeNameColor = new DumpColor("#00CED1"),
-        PropertyNameColor = new DumpColor(Color.LightGreen),
-        PropertyValueColor = new DumpColor("#FFFFFF"),
-        NullValueColor = new DumpColor(Color.Gray),
-        MetadataInfoColor = new DumpColor("#666666")
-    },
-    
-    TableConfig = new TableConfig
-    {
-        ShowHeaders = true,
-        ExpandTables = true,
-        ShowMemberTypes = false
-    },
-    
-    MembersConfig = new MembersConfig
-    {
-        IncludeFields = false,
-        IncludePublicMembers = true,
-        IncludeNonPublicMembers = false
-    },
-    
-    TypeNamingConfig = new TypeNamingConfig
-    {
-        ShowTypeNames = true,
-        UseAliases = true,
-        UseFullTypeNames = false
-    }
-};
+// Configure globally
+DumpConfig.Default.MaxDepth = 3;
 
-data.Dump(fullConfig);
+DumpConfig.Default.ColorConfig.LabelValueColor = "#FFD700";
+DumpConfig.Default.ColorConfig.TypeNameColor = "#00CED1";
+DumpConfig.Default.ColorConfig.PropertyNameColor = "#90EE90";
+DumpConfig.Default.ColorConfig.PropertyValueColor = "#FFFFFF";
+DumpConfig.Default.ColorConfig.NullValueColor = "#808080";
+DumpConfig.Default.ColorConfig.MetadataInfoColor = "#666666";
+
+DumpConfig.Default.TableConfig.ShowTableHeaders = true;
+DumpConfig.Default.TableConfig.ExpandTables = true;
+DumpConfig.Default.TableConfig.ShowMemberTypes = false;
+
+DumpConfig.Default.MembersConfig.IncludeFields = false;
+DumpConfig.Default.MembersConfig.IncludePublicMembers = true;
+DumpConfig.Default.MembersConfig.IncludeNonPublicMembers = false;
+
+DumpConfig.Default.TypeNamingConfig.ShowTypeNames = true;
+DumpConfig.Default.TypeNamingConfig.UseAliases = true;
+DumpConfig.Default.TypeNamingConfig.UseFullName = false;
+
+// All dumps now use these settings
+data.Dump("Full Config Example");
 ```
 
-### Layered Configuration
+### Per-Call Overrides
 
 ```csharp
-// Base configuration
-var baseConfig = new DumpConfig
-{
-    MaxDepth = 5,
-    ColorConfig = new ColorConfig
-    {
-        PropertyValueColor = new DumpColor(Color.White)
-    }
-};
-
-// Use base config with inline overrides
-data.Dump(config => config
-    .SetMaxDepth(baseConfig.MaxDepth)
-    .UseColorConfig(color => color
-        .SetPropertyValueColor(baseConfig.ColorConfig.PropertyValueColor)
-        .SetLabelColor(Color.Yellow))); // Override just the label color
+// Use global config but override specific settings for this call
+data.Dump(
+    label: "Special Output",
+    maxDepth: 10,
+    colors: new ColorConfig { NullValueColor = "#FF0000" },
+    tableConfig: new TableConfig { ShowRowSeparators = true }
+);
 ```
 
 ## See Also

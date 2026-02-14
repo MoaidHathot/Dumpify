@@ -1,3 +1,10 @@
+---
+layout: default
+title: Getting Started
+nav_order: 2
+description: "Quick introduction to using Dumpify in your .NET projects"
+---
+
 # Getting Started with Dumpify
 
 This guide will help you get up and running with Dumpify in just a few minutes.

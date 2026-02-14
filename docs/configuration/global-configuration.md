@@ -1,3 +1,10 @@
+---
+layout: default
+title: Global Configuration
+parent: Configuration
+nav_order: 1
+---
+
 # Global Configuration
 
 The `DumpConfig.Default` static property provides access to global configuration settings that apply to all dumps unless overridden.

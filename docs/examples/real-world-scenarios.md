@@ -1,3 +1,10 @@
+---
+layout: default
+title: Real-World Scenarios
+parent: Examples
+nav_order: 3
+---
+
 # Real-World Scenarios
 
 This guide demonstrates how Dumpify fits into practical development workflows and solves common debugging challenges.

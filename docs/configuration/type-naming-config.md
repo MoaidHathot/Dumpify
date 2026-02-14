@@ -1,3 +1,10 @@
+---
+layout: default
+title: TypeNamingConfig
+parent: Configuration
+nav_order: 5
+---
+
 # TypeNamingConfig
 
 `TypeNamingConfig` controls how type names are displayed in the dump output.

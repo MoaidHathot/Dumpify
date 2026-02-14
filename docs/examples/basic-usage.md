@@ -1,3 +1,10 @@
+---
+layout: default
+title: Basic Usage
+parent: Examples
+nav_order: 1
+---
+
 # Basic Usage Examples
 
 This guide covers fundamental Dumpify usage patterns to get you productive quickly.

@@ -1,3 +1,10 @@
+---
+layout: default
+title: ColorConfig
+parent: Configuration
+nav_order: 2
+---
+
 # ColorConfig
 
 `ColorConfig` controls the colors used when rendering dumped objects. You can customize individual colors or use predefined color schemes.
@@ -68,7 +75,7 @@ var color = DumpColor.FromHexString("#FF5733");
 ```csharp
 using System.Drawing;
 
-var color = new DumpColor(Color.RoyalBlue1);
+var color = new DumpColor(Color.RoyalBlue);
 ```
 
 ### Implicit Conversion

@@ -1,3 +1,10 @@
+---
+layout: default
+title: Extension Methods
+parent: API Reference
+nav_order: 1
+---
+
 # Extension Methods Reference
 
 Dumpify provides extension methods that can be called on any object to display its contents in a formatted, readable way.

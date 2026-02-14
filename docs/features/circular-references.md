@@ -1,3 +1,10 @@
+---
+layout: default
+title: Circular References
+parent: Features
+nav_order: 1
+---
+
 # Circular References
 
 Dumpify safely handles objects with circular references, preventing infinite loops and stack overflows during rendering.

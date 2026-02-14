@@ -1,3 +1,10 @@
+---
+layout: default
+title: OutputConfig
+parent: Configuration
+nav_order: 7
+---
+
 # OutputConfig
 
 `OutputConfig` controls the dimensions of the output, allowing you to override the default console width and height.

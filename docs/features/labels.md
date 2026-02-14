@@ -1,3 +1,10 @@
+---
+layout: default
+title: Labels
+parent: Features
+nav_order: 4
+---
+
 # Labels
 
 Labels add descriptive headers to your dump output, making it easier to identify what data you're viewing, especially when debugging multiple values.

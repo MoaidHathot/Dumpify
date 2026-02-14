@@ -1,3 +1,12 @@
+---
+layout: default
+title: Features
+nav_order: 5
+has_children: true
+description: "Explore Dumpify's feature set"
+permalink: /features/
+---
+
 # Features
 
 Dumpify provides a rich set of features for debugging and visualizing data in .NET console applications.
@@ -25,7 +34,7 @@ Dumpify renders objects as formatted tables with color-coded values:
 new Person { Name = "John", Age = 30 }.Dump();
 ```
 
-![Single Object](https://raw.githubusercontent.com/MoaidHathworker/Dumpify/main/assets/1-singleObject.png)
+![Single Object](https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/1-singleObject.png)
 
 ### Collection Support
 
@@ -40,7 +49,7 @@ var people = new[]
 people.Dump();
 ```
 
-![Array Of Objects](https://raw.githubusercontent.com/MoaidHathworker/Dumpify/main/assets/2-arrayOfObjects.png)
+![Array Of Objects](https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/2-arrayOfObjects.png)
 
 ### Nested Objects
 
@@ -57,7 +66,7 @@ new
 }.Dump();
 ```
 
-![Nested Objects](https://raw.githubusercontent.com/MoaidHathworker/Dumpify/main/assets/3-nestedObjects.png)
+![Nested Objects](https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/3-nestedObjects.png)
 
 ### Circular Reference Protection
 

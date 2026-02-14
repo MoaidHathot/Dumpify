@@ -1,3 +1,11 @@
+---
+layout: home
+title: Home
+nav_order: 1
+description: "Dumpify - Add .Dump() extension methods to any .NET Console application"
+permalink: /
+---
+
 # Dumpify Documentation
 
 <img src="https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/Dumpify-logo-styled.png" alt="Dumpify Logo" width="200" />

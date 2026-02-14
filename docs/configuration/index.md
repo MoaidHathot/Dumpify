@@ -1,3 +1,12 @@
+---
+layout: default
+title: Configuration
+nav_order: 3
+has_children: true
+description: "Configure Dumpify's behavior and appearance"
+permalink: /configuration/
+---
+
 # Configuration Overview
 
 Dumpify is highly configurable. You can customize nearly every aspect of how objects are rendered, from colors to member filtering to output dimensions.
@@ -89,8 +98,8 @@ Dumpify provides several configuration classes, each controlling different aspec
 // Per-dump
 obj.Dump(colors: ColorConfig.NoColors);
 
-// Globally
-DumpConfig.Default.ColorConfig = ColorConfig.NoColors;
+// Note: ColorConfig cannot be reassigned globally since it's a read-only property.
+// To disable colors globally, set individual color properties to null or use per-dump configuration.
 ```
 
 ### Show Row Separators and Member Types

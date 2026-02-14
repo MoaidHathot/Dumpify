@@ -1,3 +1,10 @@
+---
+layout: default
+title: MembersConfig
+parent: Configuration
+nav_order: 4
+---
+
 # MembersConfig
 
 `MembersConfig` controls which members (properties and fields) are included when dumping objects.

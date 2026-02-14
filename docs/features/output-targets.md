@@ -1,3 +1,10 @@
+---
+layout: default
+title: Output Targets
+parent: Features
+nav_order: 6
+---
+
 # Output Targets
 
 Dumpify supports multiple output destinations, allowing you to send dump output to the console, debug window, trace listeners, or capture it as a string.

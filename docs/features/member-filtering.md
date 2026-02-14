@@ -1,3 +1,10 @@
+---
+layout: default
+title: Member Filtering
+parent: Features
+nav_order: 5
+---
+
 # Member Filtering
 
 Dumpify allows you to control which members (properties and fields) are displayed when dumping objects.

@@ -1,8 +1,17 @@
+---
+layout: default
+title: Examples
+nav_order: 6
+has_children: true
+description: "Practical examples demonstrating Dumpify usage"
+permalink: /examples/
+---
+
 # Examples
 
 This section provides practical examples demonstrating how to use Dumpify in various scenarios.
 
-![Dumpify Output](https://raw.githubusercontent.com/MoaidHathworkerNumber/Dumpify/main/assets/Dumpify-output.png)
+![Dumpify Output](https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/Dumpify-output.png)
 
 ## Example Categories
 
@@ -64,10 +73,11 @@ numbers.Dump("My Numbers");
 ```csharp
 var data = GetComplexData();
 
-data.Dump(config => config
-    .UseTableConfig(table => table.ShowTableHeaders(false))
-    .UseColorConfig(color => color.SetPropertyValueColor(Color.Aqua))
-    .SetMaxDepth(3));
+data.Dump(
+    maxDepth: 3,
+    tableConfig: new TableConfig { ShowTableHeaders = false },
+    colors: new ColorConfig { PropertyValueColor = "#00FFFF" }
+);
 ```
 
 ### Multiple Output Targets

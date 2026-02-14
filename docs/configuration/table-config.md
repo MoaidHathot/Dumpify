@@ -1,3 +1,10 @@
+---
+layout: default
+title: TableConfig
+parent: Configuration
+nav_order: 3
+---
+
 # TableConfig
 
 `TableConfig` controls how tables are displayed when rendering objects, including headers, separators, indices, and collection truncation.

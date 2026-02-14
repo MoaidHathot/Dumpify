@@ -1,3 +1,10 @@
+---
+layout: default
+title: TypeRenderingConfig
+parent: Configuration
+nav_order: 6
+---
+
 # TypeRenderingConfig
 
 `TypeRenderingConfig` controls how specific value types are rendered in the output.

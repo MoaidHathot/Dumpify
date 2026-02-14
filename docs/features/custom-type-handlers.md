@@ -1,3 +1,10 @@
+---
+layout: default
+title: Custom Type Handlers
+parent: Features
+nav_order: 3
+---
+
 # Custom Type Handlers
 
 Dumpify allows you to register custom handlers that control how specific types are rendered.
@@ -256,20 +263,6 @@ DumpConfig.Default.AddCustomTypeHandler(
     }
 );
 ```
-
----
-
-## TypeRenderingConfig Alternative
-
-For simpler cases, you can also use `TypeRenderingConfig`:
-
-```csharp
-// Using TypeRenderingConfig for custom rendering
-DumpConfig.Default.TypeRenderingConfig.CustomTypeRenderers[typeof(Guid)] = 
-    guid => ((Guid)guid).ToString("N");
-```
-
-See [Type Rendering Configuration](../configuration/type-rendering-config.md) for details.
 
 ---
 

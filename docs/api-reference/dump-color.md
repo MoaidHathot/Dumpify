@@ -1,3 +1,10 @@
+---
+layout: default
+title: DumpColor
+parent: API Reference
+nav_order: 3
+---
+
 # DumpColor Reference
 
 `DumpColor` is a utility class for representing colors in Dumpify configuration.
