@@ -182,6 +182,27 @@ using var writer = new StringWriter();
 package.Dump(output: new DumpOutput(writer)); //Custom output
 ```
 
+### Custom Type Handlers
+You can register custom handlers to control how specific types are rendered. This is useful for types that need special formatting, truncation, or transformation before display.
+
+```csharp
+// Register a custom handler for byte arrays to show only the first few bytes
+DumpConfig.Default.AddCustomTypeHandler(typeof(byte[]), (obj, type, valueProvider, memberProvider) =>
+{
+    var bytes = (byte[])obj;
+    if (bytes.Length <= 8)
+        return bytes;
+    
+    // Return a summary for large byte arrays
+    return $"byte[{bytes.Length}]: {BitConverter.ToString(bytes.Take(8).ToArray())}...";
+});
+
+new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A }.Dump();
+// Output: "byte[10]: 01-02-03-04-05-06-07-08..."
+
+// Remove a custom handler when no longer needed
+DumpConfig.Default.RemoveCustomTypeHandler(typeof(byte[]));
+```
 
 ### Every configuration can be defined per-Dump or globally for all Dumps, e.g:
 ```csharp
