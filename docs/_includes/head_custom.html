@@ -1,0 +1,23 @@
+<!-- Theme toggle script - runs early to prevent flash of wrong theme -->
+<script>
+(function() {
+  // Check for saved theme preference or use system preference
+  function getPreferredTheme() {
+    var savedTheme = localStorage.getItem('dumpify-theme');
+    if (savedTheme) {
+      return savedTheme;
+    }
+    // Check system preference
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  }
+
+  // Apply theme immediately to prevent flash
+  var theme = getPreferredTheme();
+  if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+</script>

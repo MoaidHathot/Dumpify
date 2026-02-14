@@ -1,0 +1,203 @@
+<!-- Theme toggle button -->
+<button class="theme-toggle" id="theme-toggle" title="Toggle dark/light mode" aria-label="Toggle dark/light mode">
+  <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"></circle>
+    <line x1="12" y1="1" x2="12" y2="3"></line>
+    <line x1="12" y1="21" x2="12" y2="23"></line>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+    <line x1="1" y1="12" x2="3" y2="12"></line>
+    <line x1="21" y1="12" x2="23" y2="12"></line>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+  </svg>
+  <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  </svg>
+</button>
+
+<style>
+.theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background-color: var(--body-background-color, #fff);
+  border: 1px solid var(--border-color, #eeebee);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle:focus {
+  outline: 2px solid var(--link-color, #7253ed);
+  outline-offset: 2px;
+}
+
+.theme-toggle svg {
+  color: var(--body-text-color, #5c5962);
+}
+
+/* Show sun icon in dark mode, moon icon in light mode */
+.sun-icon {
+  display: none;
+}
+
+.moon-icon {
+  display: block;
+}
+
+[data-theme="dark"] .sun-icon {
+  display: block;
+}
+
+[data-theme="dark"] .moon-icon {
+  display: none;
+}
+
+/* Dark theme overrides */
+[data-theme="dark"] {
+  --body-background-color: #1f1f1f;
+  --sidebar-color: #1a1a1a;
+  --body-text-color: #e6e6e6;
+  --body-heading-color: #f5f6fa;
+  --link-color: #96a3ff;
+  --code-background-color: #2d2d2d;
+  --border-color: #404040;
+  --table-background-color: #262626;
+  --search-background-color: #262626;
+  --search-result-preview-color: #b8b8b8;
+  --feedback-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .main-content {
+  background-color: var(--body-background-color);
+}
+
+[data-theme="dark"] .side-bar {
+  background-color: var(--sidebar-color);
+}
+
+[data-theme="dark"] pre.highlight,
+[data-theme="dark"] code {
+  background-color: var(--code-background-color);
+}
+
+[data-theme="dark"] .search-input {
+  background-color: var(--search-background-color);
+  color: var(--body-text-color);
+}
+
+[data-theme="dark"] .search-results {
+  background-color: var(--body-background-color);
+}
+
+[data-theme="dark"] .navigation-list-link {
+  color: var(--body-text-color);
+}
+
+[data-theme="dark"] .navigation-list-link:hover,
+[data-theme="dark"] .navigation-list-link.active {
+  color: var(--link-color);
+}
+
+[data-theme="dark"] .breadcrumb-nav-list-item::after {
+  color: var(--body-text-color);
+}
+
+[data-theme="dark"] h1, 
+[data-theme="dark"] h2, 
+[data-theme="dark"] h3, 
+[data-theme="dark"] h4, 
+[data-theme="dark"] h5, 
+[data-theme="dark"] h6 {
+  color: var(--body-heading-color);
+}
+
+[data-theme="dark"] table td,
+[data-theme="dark"] table th {
+  background-color: var(--table-background-color);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .site-footer {
+  background-color: var(--sidebar-color);
+  border-top-color: var(--border-color);
+}
+
+/* Smooth transitions */
+body,
+.main-content,
+.side-bar,
+.site-footer,
+pre.highlight,
+code,
+.search-input,
+.search-results,
+table td,
+table th {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+</style>
+
+<script>
+(function() {
+  // Initialize theme toggle functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    var toggle = document.getElementById('theme-toggle');
+    if (!toggle) return;
+
+    // Get current theme
+    function getCurrentTheme() {
+      return document.documentElement.getAttribute('data-theme') || 'light';
+    }
+
+    // Set theme and save preference
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('dumpify-theme', theme);
+      
+      // Also use jtd.setTheme if available (Just the Docs built-in)
+      if (typeof jtd !== 'undefined' && typeof jtd.setTheme === 'function') {
+        jtd.setTheme(theme);
+      }
+    }
+
+    // Toggle theme on click
+    toggle.addEventListener('click', function() {
+      var currentTheme = getCurrentTheme();
+      var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      setTheme(newTheme);
+    });
+
+    // Listen for system preference changes
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        // Only auto-switch if user hasn't manually set a preference
+        if (!localStorage.getItem('dumpify-theme')) {
+          setTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    }
+
+    // Apply saved theme on load (in case head_custom didn't run)
+    var savedTheme = localStorage.getItem('dumpify-theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  });
+})();
+</script>

@@ -9,13 +9,8 @@ url: "https://moaidhathot.github.io"
 # Theme - Just the Docs is excellent for documentation sites
 remote_theme: just-the-docs/just-the-docs@v0.10.0
 
-# Color scheme - let users choose, defaulting to their system preference
-color_scheme: nil
-
-# Enable light/dark toggle button
-color_scheme_toggle:
-  - light
-  - dark
+# Color scheme - default to light, toggle handled via custom JS
+color_scheme: dark
 
 # Logo
 logo: "https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/Dumpify-logo-styled.png"
