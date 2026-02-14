@@ -158,7 +158,7 @@ Only include string properties:
 ```csharp
 obj.Dump(members: new MembersConfig 
 { 
-    MemberFilter = member => member.Type == typeof(string)
+    MemberFilter = member => member.MemberType == typeof(string)
 });
 ```
 

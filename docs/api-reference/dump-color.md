@@ -77,15 +77,15 @@ The most common use of `DumpColor` is configuring colors in `ColorConfig`:
 ```csharp
 // Implicit conversion from string - cleanest syntax
 DumpConfig.Default.ColorConfig.NullValueColor = "#FF6B6B";
-DumpConfig.Default.ColorConfig.StringValueColor = "#98C379";
-DumpConfig.Default.ColorConfig.NumericValueColor = "#E5C07B";
+DumpConfig.Default.ColorConfig.PropertyValueColor = "#98C379";
+DumpConfig.Default.ColorConfig.TypeNameColor = "#E5C07B";
 
 // Using System.Drawing.Color
-DumpConfig.Default.ColorConfig.BoolTrueColor = Color.Green;
-DumpConfig.Default.ColorConfig.BoolFalseColor = Color.Red;
+DumpConfig.Default.ColorConfig.MetadataInfoColor = Color.Green;
+DumpConfig.Default.ColorConfig.MetadataErrorColor = Color.Red;
 
 // Explicit construction
-DumpConfig.Default.ColorConfig.PropertyValueColor = new DumpColor("#61AFEF");
+DumpConfig.Default.ColorConfig.ColumnNameColor = new DumpColor("#61AFEF");
 ```
 
 ---
@@ -161,10 +161,10 @@ using System.Drawing;
 var colorConfig = DumpConfig.Default.ColorConfig;
 
 colorConfig.NullValueColor = Color.Gray;
-colorConfig.StringValueColor = Color.ForestGreen;
-colorConfig.NumericValueColor = Color.DarkGoldenrod;
-colorConfig.BoolTrueColor = Color.Green;
-colorConfig.BoolFalseColor = Color.Red;
+colorConfig.PropertyValueColor = Color.ForestGreen;
+colorConfig.TypeNameColor = Color.DarkGoldenrod;
+colorConfig.MetadataInfoColor = Color.Green;
+colorConfig.MetadataErrorColor = Color.Red;
 ```
 
 ### Per-Call Color Override
