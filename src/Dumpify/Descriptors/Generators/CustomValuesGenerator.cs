@@ -1,9 +1,9 @@
-﻿using Dumpify.Descriptors.ValueProviders;
-using System.Collections.Concurrent;
-using System.Data;
-using System.Reflection;
-using System.Text;
-
+using Dumpify.Descriptors.ValueProviders;
+using System.Collections.Concurrent;
+using System.Data;
+using System.Reflection;
+using System.Text;
+
 namespace Dumpify.Descriptors.Generators;
 
 internal class CustomValuesGenerator : IDescriptorGenerator
@@ -37,8 +37,10 @@ internal class CustomValuesGenerator : IDescriptorGenerator
         _customTypeHandlers.TryAdd(typeof(DateOnly).TypeHandle, (obj, type, valueProvider, memberProvider) => obj);
         _customTypeHandlers.TryAdd(typeof(TimeOnly).TypeHandle, (obj, type, valueProvider, memberProvider) => obj);
 #endif
-    }
 
+        _customTypeHandlers.TryAdd(typeof(Lazy<>).TypeHandle, (obj, type, valueProvider, memberProvider) => obj);
+    }
+
     public IDescriptor? Generate(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)
     {
         if (type.FullName == "System.RuntimeType")
@@ -52,6 +54,11 @@ internal class CustomValuesGenerator : IDescriptorGenerator
         }
 
         if (_customTypeHandlers.ContainsKey(type.TypeHandle))
+        {
+            return new CustomDescriptor(type, valueProvider);
+        }
+
+        if (type.IsGenericType && _customTypeHandlers.ContainsKey(type.GetGenericTypeDefinition().TypeHandle))
         {
             return new CustomDescriptor(type, valueProvider);
         }

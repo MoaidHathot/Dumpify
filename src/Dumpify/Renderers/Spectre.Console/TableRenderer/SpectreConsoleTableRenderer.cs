@@ -1,4 +1,4 @@
-﻿using Dumpify.Descriptors;
+using Dumpify.Descriptors;
 using Dumpiyf;
 using Spectre.Console;
 using Spectre.Console.Rendering;
@@ -23,6 +23,7 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         AddCustomTypeDescriptor(new TimeTypesRenderer(this));
         AddCustomTypeDescriptor(new GuidTypeRenderer(this));
         AddCustomTypeDescriptor(new LabelRenderer(this));
+        AddCustomTypeDescriptor(new LazyTypeRenderer(this));
     }
 
     protected override IRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext<SpectreRendererState> context)

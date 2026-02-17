@@ -36,6 +36,19 @@ haneeni1.Spouse = moaid1;
 
 new [] { moaid1, haneeni1 }.Dump();
 
+var lazy = new Lazy<int>(()=> 10);
+lazy.Dump();
+lazy.Dump("With value");
+_ = lazy.Value;
+lazy.Dump();
+
+var lazy2 = new Lazy<string>(() => null!);
+lazy2.Dump();
+_ = lazy2.Value;
+lazy2.Dump();
+((object)null!).Dump();
+
+
 moaid1.Dump();
 // TestSpecific();
 // TestSingle();
