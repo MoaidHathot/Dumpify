@@ -34,22 +34,29 @@ Console.WriteLine("---------------------");
 moaid1.Spouse = haneeni1;
 haneeni1.Spouse = moaid1;
 
-new [] { moaid1, haneeni1 }.Dump();
+// new [] { moaid1, haneeni1 }.Dump();
+//
+// var lazy = new Lazy<int>(()=> 10);
+// lazy.Dump();
+// lazy.Dump("With value");
+// _ = lazy.Value;
+// lazy.Dump();
+//
+// var lazy2 = new Lazy<string>(() => null!);
+// lazy2.Dump();
+// _ = lazy2.Value;
+// lazy2.Dump();
+// ((object)null!).Dump();
+//
 
-var lazy = new Lazy<int>(()=> 10);
-lazy.Dump();
-lazy.Dump("With value");
-_ = lazy.Value;
-lazy.Dump();
-
-var lazy2 = new Lazy<string>(() => null!);
-lazy2.Dump();
-_ = lazy2.Value;
-lazy2.Dump();
-((object)null!).Dump();
+// var task = Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith(_ => 10);
+var task = Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith(_ => 10);
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+task.Dump();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
 
-moaid1.Dump();
+// moaid1.Dump();
 // TestSpecific();
 // TestSingle();
 // ShowEverything();

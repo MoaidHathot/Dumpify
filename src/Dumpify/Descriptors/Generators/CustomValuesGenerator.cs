@@ -1,8 +1,9 @@
-using Dumpify.Descriptors.ValueProviders;
-using System.Collections.Concurrent;
-using System.Data;
-using System.Reflection;
-using System.Text;
+using Dumpify.Descriptors.ValueProviders;
+using System.Collections.Concurrent;
+using System.Data;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Dumpify.Descriptors.Generators;
 
@@ -39,6 +40,9 @@ internal class CustomValuesGenerator : IDescriptorGenerator
 #endif
 
         _customTypeHandlers.TryAdd(typeof(Lazy<>).TypeHandle, (obj, type, valueProvider, memberProvider) => obj);
+
+        _customTypeHandlers.TryAdd(typeof(Task<>).TypeHandle, (obj, type, valueProvider, memberProvider) => obj);
+        _customTypeHandlers.TryAdd(typeof(Task).TypeHandle, (obj, type, valueProvider, memberProvider) => obj);
     }
 
     public IDescriptor? Generate(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)
@@ -59,6 +63,13 @@ internal class CustomValuesGenerator : IDescriptorGenerator
         }
 
         if (type.IsGenericType && _customTypeHandlers.ContainsKey(type.GetGenericTypeDefinition().TypeHandle))
+        {
+            return new CustomDescriptor(type, valueProvider);
+        }
+
+        // Handle Task-derived types (e.g., ContinuationResultTaskFromTask<T>, UnwrapPromise<T>, etc.)
+        // These internal runtime types inherit from Task/Task<T> but have different TypeHandles
+        if (typeof(Task).IsAssignableFrom(type))
         {
             return new CustomDescriptor(type, valueProvider);
         }

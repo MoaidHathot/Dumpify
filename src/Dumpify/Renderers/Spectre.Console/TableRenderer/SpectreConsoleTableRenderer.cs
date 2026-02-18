@@ -24,6 +24,7 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         AddCustomTypeDescriptor(new GuidTypeRenderer(this));
         AddCustomTypeDescriptor(new LabelRenderer(this));
         AddCustomTypeDescriptor(new LazyTypeRenderer(this));
+        AddCustomTypeDescriptor(new TaskTypeRenderer(this));
     }
 
     protected override IRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext<SpectreRendererState> context)
