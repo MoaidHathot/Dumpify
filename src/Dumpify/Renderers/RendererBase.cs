@@ -98,13 +98,13 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
     {
         if (_customTypeRenderers.TryGetValue(descriptor.GetType().TypeHandle, out var renderList))
         {
-            var rendererResult = renderList
+            var (customRenderer, result) = renderList
                 .Select(r => (customRenderer: r, result: r.ShouldHandle(descriptor, obj)))
                 .FirstOrDefault(r => r.result.shouldHandle);
 
-            if (rendererResult.result.shouldHandle)
+            if (result.shouldHandle)
             {
-                return rendererResult.customRenderer.Render(descriptor, obj, context, rendererResult.result.handleContext);
+                return customRenderer.Render(descriptor, obj, context, result.handleContext);
             }
         }
 
