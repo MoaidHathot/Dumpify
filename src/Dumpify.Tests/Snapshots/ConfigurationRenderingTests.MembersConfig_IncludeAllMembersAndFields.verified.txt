@@ -1,0 +1,15 @@
+﻿ClassWithPrivateMembers                
+╭────────────────────────────────────┬────────────────╮
+│ Name                               │ Value          │
+├────────────────────────────────────┼────────────────┤
+│ PublicProperty                     │ "Public"       │
+│ PrivateProperty                    │ "Private"      │
+│ ProtectedProperty                  │ "Protected"    │
+│ InternalProperty                   │ "Internal"     │
+│ <PublicProperty>k__BackingField    │ "Public"       │
+│ <PrivateProperty>k__BackingField   │ "Private"      │
+│ <ProtectedProperty>k__BackingField │ "Protected"    │
+│ <InternalProperty>k__BackingField  │ "Internal"     │
+│ PublicField                        │ "PublicField"  │
+│ PrivateField                       │ "PrivateField" │
+╰────────────────────────────────────┴────────────────╯

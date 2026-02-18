@@ -1,0 +1,9 @@
+﻿Person       
+╭───────┬─────────╮
+│ Name  │ Value   │
+├───────┼─────────┤
+│ Name  │ "Alice" │
+│ Age   │ 30      │
+│ Email │ null    │
+╰───────┴─────────╯
+    Person Data

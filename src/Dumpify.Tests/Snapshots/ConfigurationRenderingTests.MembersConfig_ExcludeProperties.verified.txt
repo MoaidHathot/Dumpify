@@ -1,0 +1,6 @@
+﻿ClassWithPrivateMembers    
+╭─────────────┬───────────────╮
+│ Name        │ Value         │
+├─────────────┼───────────────┤
+│ PublicField │ "PublicField" │
+╰─────────────┴───────────────╯

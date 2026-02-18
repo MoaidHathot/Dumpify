@@ -1,0 +1,11 @@
+﻿PriorityQueue<string, int>         
+╭────────────────┬────────────────────────╮
+│ Name           │ Value                  │
+├────────────────┼────────────────────────┤
+│ Count          │ 3                      │
+│ Comparer       │ GenericComparer…       │
+│                │ ╭──────┬───────╮       │
+│                │ │ Name │ Value │       │
+│                │ ╰──────┴───────╯       │
+│ UnorderedItems │ [Failed to read value] │
+╰────────────────┴────────────────────────╯

@@ -1,0 +1,9 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Verify snapshot files - ensure consistent line endings and mark as text
+*.verified.txt text eol=lf
+*.received.txt text eol=lf
+
+# Prevent merge conflicts on verified files by using "ours" strategy
+*.verified.txt merge=binary

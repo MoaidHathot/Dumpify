@@ -1,0 +1,8 @@
+PersonRecord     
+╭───────────┬────────╮
+│ Name      │ Value  │
+├───────────┼────────┤
+│ FirstName │ "John" │
+│ LastName  │ "Doe"  │
+│ Age       │ 30     │
+╰───────────┴────────╯

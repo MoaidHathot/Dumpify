@@ -1,0 +1,9 @@
+Employee           
+╭────────────┬───────────────╮
+│ Name       │ Value         │
+├────────────┼───────────────┤
+│ Department │ "Engineering" │
+│ EmployeeId │ "E001"        │
+│ Id         │ 1             │
+│ Name       │ "Jane Doe"    │
+╰────────────┴───────────────╯

@@ -1,0 +1,14 @@
+﻿Task<int>                   
+╭─────────────────┬──────────────────────────╮
+│ Name            │ Value                    │
+├─────────────────┼──────────────────────────┤
+│ Id              │ [TaskId]                   │
+│ Status          │ TaskStatus.Canceled      │
+│ IsCompleted     │ True                     │
+│ IsCanceled      │ True                     │
+│ IsFaulted       │ False                    │
+│ CreationOptions │ TaskCreationOptions.None │
+│ AsyncState      │ null                     │
+│ Exception       │ null                     │
+│ Result          │ [Canceled]               │
+╰─────────────────┴──────────────────────────╯

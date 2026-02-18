@@ -1,0 +1,9 @@
+﻿ClassWithPrivateMembers      
+╭───────────────────┬─────────────╮
+│ Name              │ Value       │
+├───────────────────┼─────────────┤
+│ PublicProperty    │ "Public"    │
+│ PrivateProperty   │ "Private"   │
+│ ProtectedProperty │ "Protected" │
+│ InternalProperty  │ "Internal"  │
+╰───────────────────┴─────────────╯

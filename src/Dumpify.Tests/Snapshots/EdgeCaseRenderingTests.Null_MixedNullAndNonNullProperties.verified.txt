@@ -1,0 +1,9 @@
+﻿MixedNullProperties   
+╭──────────────┬────────╮
+│ Name         │ Value  │
+├──────────────┼────────┤
+│ Name         │ "Test" │
+│ NullableName │ null   │
+│ Age          │ 30     │
+│ NullableAge  │ null   │
+╰──────────────┴────────╯

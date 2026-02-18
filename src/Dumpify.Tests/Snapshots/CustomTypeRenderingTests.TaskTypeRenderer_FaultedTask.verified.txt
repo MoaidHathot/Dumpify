@@ -1,0 +1,49 @@
+﻿Task<int>                                         
+╭─────────────────┬───────────────────────────────────────────────────────────────────────╮
+│ Name            │ Value                                                                 │
+├─────────────────┼───────────────────────────────────────────────────────────────────────┤
+│ Id              │ [TaskId]                   │
+│ Status          │ TaskStatus.Faulted                                                    │
+│ IsCompleted     │ True                                                                  │
+│ IsCanceled      │ False                                                                 │
+│ IsFaulted       │ True                                                                  │
+│ CreationOptions │ TaskCreationOptions.None                                              │
+│ AsyncState      │ null                                                                  │
+│ Exception       │                          AggregateException                           │
+│                 │ ╭─────────────────┬─────────────────────────────────────────────────╮ │
+│                 │ │ Name            │ Value                                           │ │
+│                 │ ├─────────────────┼─────────────────────────────────────────────────┤ │
+│                 │ │ InnerExceptions │ ╭──────────────────────────────────────╮        │ │
+│                 │ │                 │ │ ReadOnlyCollection<Exception>        │        │ │
+│                 │ │                 │ ├──────────────────────────────────────┤        │ │
+│                 │ │                 │ │      InvalidOperationException       │        │ │
+│                 │ │                 │ │ ╭────────────────┬─────────────────╮ │        │ │
+│                 │ │                 │ │ │ Name           │ Value           │ │        │ │
+│                 │ │                 │ │ ├────────────────┼─────────────────┤ │        │ │
+│                 │ │                 │ │ │ TargetSite     │ null            │ │        │ │
+│                 │ │                 │ │ │ Message        │ "Test error"    │ │        │ │
+│                 │ │                 │ │ │ Data           │ ListDictionary… │ │        │ │
+│                 │ │                 │ │ │                │ ╭─────┬───────╮ │ │        │ │
+│                 │ │                 │ │ │                │ │ Key │ Value │ │ │        │ │
+│                 │ │                 │ │ │                │ ╰─────┴───────╯ │ │        │ │
+│                 │ │                 │ │ │ InnerException │ null            │ │        │ │
+│                 │ │                 │ │ │ HelpLink       │ null            │ │        │ │
+│                 │ │                 │ │ │ Source         │ null            │ │        │ │
+│                 │ │                 │ │ │ HResult        │ -2146233079     │ │        │ │
+│                 │ │                 │ │ │ StackTrace     │ null            │ │        │ │
+│                 │ │                 │ │ ╰────────────────┴─────────────────╯ │        │ │
+│                 │ │                 │ ╰──────────────────────────────────────╯        │ │
+│                 │ │ Message         │ "One or more errors occurred. (Test error)"     │ │
+│                 │ │ TargetSite      │ null                                            │ │
+│                 │ │ Data            │ ListDictionary…                                 │ │
+│                 │ │                 │ ╭─────┬───────╮                                 │ │
+│                 │ │                 │ │ Key │ Value │                                 │ │
+│                 │ │                 │ ╰─────┴───────╯                                 │ │
+│                 │ │ InnerException  │ [Circular Reference #InvalidOperationException] │ │
+│                 │ │ HelpLink        │ null                                            │ │
+│                 │ │ Source          │ null                                            │ │
+│                 │ │ HResult         │ -2146233088                                     │ │
+│                 │ │ StackTrace      │ null                                            │ │
+│                 │ ╰─────────────────┴─────────────────────────────────────────────────╯ │
+│ Result          │ [Faulted]                                                             │
+╰─────────────────┴───────────────────────────────────────────────────────────────────────╯

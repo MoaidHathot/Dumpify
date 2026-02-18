@@ -1,0 +1,9 @@
+﻿Dictionary<string,  
+       string>       
+╭────────┬──────────╮
+│ Key    │ Value    │
+├────────┼──────────┤
+│ "key1" │ "value1" │
+│ "key2" │ null     │
+│ "key3" │ "value3" │
+╰────────┴──────────╯

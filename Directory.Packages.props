@@ -17,5 +17,6 @@
 	<PackageVersion Include="xunit" Version="2.9.3" />
 	<PackageVersion Include="xunit.analyzers" Version="1.19.0" />
 	<PackageVersion Include="xunit.runner.visualstudio" Version="3.0.1" />
+	<PackageVersion Include="Verify.Xunit" Version="28.8.1" />
   </ItemGroup>
 </Project>

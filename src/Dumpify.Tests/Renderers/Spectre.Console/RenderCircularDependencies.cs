@@ -1,22 +1,46 @@
-﻿namespace Dumpify.Tests.Renderers.Spectre.Console;
+using Dumpify.Tests.DTO;
+using VerifyXunit;
+using static VerifyXunit.Verifier;
 
+namespace Dumpify.Tests.Renderers.Spectre.Console;
+
+/// <summary>
+/// Snapshot tests for circular dependency handling in Spectre.Console renderer.
+/// </summary>
 public class RenderCircularDependencies
 {
     [Fact]
-    public void RenderCircularDependenciesWithoutCrashes()
+    public Task CircularDependency_TwoPersonsMutuallyReferencing()
     {
         var moaid = new PersonWithSignificantOther { FirstName = "Moaid", LastName = "Hathot" };
-        var haneeni = new PersonWithSignificantOther { FirstName = "Moaid", LastName = "Hathot" };
+        var haneeni = new PersonWithSignificantOther { FirstName = "Haneeni", LastName = "Hathot" };
 
         moaid.SignificantOther = haneeni;
         haneeni.SignificantOther = moaid;
 
-        var generator = new CompositeDescriptorGenerator(new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, IValueProvider?, IMemberProvider, object?>>());
+        return Verify(moaid.DumpText());
+    }
 
-        var descriptor = generator.Generate(moaid.GetType(), null, new MemberProvider());
+    [Fact]
+    public Task CircularDependency_SelfReferencing()
+    {
+        var person = new PersonWithSignificantOther { FirstName = "Self", LastName = "Reference" };
+        person.SignificantOther = person;
 
-        var renderer = new SpectreConsoleTableRenderer();
+        return Verify(person.DumpText());
+    }
 
-        renderer.Render(moaid, descriptor, new RendererConfig() { MemberProvider = new MemberProvider(), TypeNameProvider = new TypeNameProvider(true, false, true, true)});
+    [Fact]
+    public Task CircularDependency_ThreeWayChain()
+    {
+        var a = new PersonWithSignificantOther { FirstName = "Person", LastName = "A" };
+        var b = new PersonWithSignificantOther { FirstName = "Person", LastName = "B" };
+        var c = new PersonWithSignificantOther { FirstName = "Person", LastName = "C" };
+
+        a.SignificantOther = b;
+        b.SignificantOther = c;
+        c.SignificantOther = a; // Creates cycle A -> B -> C -> A
+
+        return Verify(a.DumpText());
     }
 }

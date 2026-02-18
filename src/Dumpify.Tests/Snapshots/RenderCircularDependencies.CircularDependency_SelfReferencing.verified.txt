@@ -1,0 +1,8 @@
+﻿PersonWithSignificantOther                       
+╭──────────────────┬──────────────────────────────────────────────────╮
+│ Name             │ Value                                            │
+├──────────────────┼──────────────────────────────────────────────────┤
+│ FirstName        │ "Self"                                           │
+│ LastName         │ "Reference"                                      │
+│ SignificantOther │ [Circular Reference #PersonWithSignificantOther] │
+╰──────────────────┴──────────────────────────────────────────────────╯

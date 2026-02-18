@@ -1,0 +1,6 @@
+ClassWithReadOnlyProperty     
+╭───────────────┬─────────────────╮
+│ Name          │ Value           │
+├───────────────┼─────────────────┤
+│ ReadOnlyValue │ "Initial Value" │
+╰───────────────┴─────────────────╯

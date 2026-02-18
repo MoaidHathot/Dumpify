@@ -1,0 +1,20 @@
+﻿Task<Anonymous Type>              
+╭─────────────────┬────────────────────────────╮
+│ Name            │ Value                      │
+├─────────────────┼────────────────────────────┤
+│ Id              │ [TaskId]                   │
+│ Status          │ TaskStatus.RanToCompletion │
+│ IsCompleted     │ True                       │
+│ IsCanceled      │ False                      │
+│ IsFaulted       │ False                      │
+│ CreationOptions │ TaskCreationOptions.None   │
+│ AsyncState      │ null                       │
+│ Exception       │ null                       │
+│ Result          │    Anonymous Type          │
+│                 │ ╭───────┬──────────╮       │
+│                 │ │ Name  │ Value    │       │
+│                 │ ├───────┼──────────┤       │
+│                 │ │ Name  │ "Result" │       │
+│                 │ │ Count │ 5        │       │
+│                 │ ╰───────┴──────────╯       │
+╰─────────────────┴────────────────────────────╯

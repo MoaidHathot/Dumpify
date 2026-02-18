@@ -1,0 +1,5 @@
+﻿Dictionary<str…
+     int>      
+╭─────┬───────╮
+│ Key │ Value │
+╰─────┴───────╯

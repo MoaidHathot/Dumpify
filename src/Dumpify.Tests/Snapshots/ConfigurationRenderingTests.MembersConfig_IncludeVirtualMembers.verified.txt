@@ -1,0 +1,7 @@
+﻿ClassWithVirtualMembers       
+╭────────────────────┬──────────────╮
+│ Name               │ Value        │
+├────────────────────┼──────────────┤
+│ VirtualProperty    │ "Virtual"    │
+│ NonVirtualProperty │ "NonVirtual" │
+╰────────────────────┴──────────────╯

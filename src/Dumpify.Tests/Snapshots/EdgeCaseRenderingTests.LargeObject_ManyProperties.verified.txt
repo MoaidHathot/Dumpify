@@ -1,0 +1,15 @@
+﻿LargeObject      
+╭────────┬───────────╮
+│ Name   │ Value     │
+├────────┼───────────┤
+│ Prop1  │ "Value1"  │
+│ Prop2  │ "Value2"  │
+│ Prop3  │ "Value3"  │
+│ Prop4  │ "Value4"  │
+│ Prop5  │ "Value5"  │
+│ Prop6  │ "Value6"  │
+│ Prop7  │ "Value7"  │
+│ Prop8  │ "Value8"  │
+│ Prop9  │ "Value9"  │
+│ Prop10 │ "Value10" │
+╰────────┴───────────╯

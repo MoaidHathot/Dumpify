@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using Spectre.Console.Rendering;
 using System.Collections;
 using System.Text.Json.Nodes;
@@ -21,8 +21,8 @@ public class DictionaryTypeRendererTests
         var result = renderer.ShouldHandle(descriptor, input);
 
         //Assert
-        expectedShouldHandle.Should().Be(result.Item1);
-        expectedItem2.Should().BeEquivalentTo((IEnumerable<(object, object)>)result.Item2!);
+        result.Item1.Should().Be(expectedShouldHandle);
+        result.Item2.Should().BeEquivalentTo(expectedItem2);
     }
 
     public static IEnumerable<object[]> GetDataFor_DictionaryTypeRenderer_ShouldHandleInput_WhenInputHasIsIEnumerableWithGenericKeyValuePair()

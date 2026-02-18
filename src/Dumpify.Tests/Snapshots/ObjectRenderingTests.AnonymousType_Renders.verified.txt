@@ -1,0 +1,8 @@
+Anonymous Type   
+╭────────┬────────╮
+│ Name   │ Value  │
+├────────┼────────┤
+│ Name   │ "Test" │
+│ Value  │ 42     │
+│ Active │ True   │
+╰────────┴────────╯

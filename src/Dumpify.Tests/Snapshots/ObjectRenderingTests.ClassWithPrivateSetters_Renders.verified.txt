@@ -1,0 +1,7 @@
+ClassWithPrivateSett…
+╭────────┬──────────╮
+│ Name   │ Value    │
+├────────┼──────────┤
+│ Id     │ 42       │
+│ Secret │ "Secret" │
+╰────────┴──────────╯

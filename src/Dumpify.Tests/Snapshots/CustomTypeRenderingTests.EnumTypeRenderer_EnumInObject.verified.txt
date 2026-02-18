@@ -1,0 +1,7 @@
+﻿Anonymous Type          
+╭────────┬───────────────────────╮
+│ Name   │ Value                 │
+├────────┼───────────────────────┤
+│ Day    │ DayOfWeek.Friday      │
+│ Status │ FileAttributes.Normal │
+╰────────┴───────────────────────╯

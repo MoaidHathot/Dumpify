@@ -1,0 +1,9 @@
+﻿ValueTuple<int,   
+  string, double>  
+╭───────┬─────────╮
+│ Item  │ Value   │
+├───────┼─────────┤
+│ Item1 │ 1       │
+│ Item2 │ "hello" │
+│ Item3 │ 3.14    │
+╰───────┴─────────╯

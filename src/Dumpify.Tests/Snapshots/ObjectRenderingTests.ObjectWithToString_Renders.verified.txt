@@ -1,0 +1,7 @@
+ClassWithToString
+╭──────┬────────╮
+│ Name │ Value  │
+├──────┼────────┤
+│ Id   │ 1      │
+│ Name │ "Test" │
+╰──────┴────────╯

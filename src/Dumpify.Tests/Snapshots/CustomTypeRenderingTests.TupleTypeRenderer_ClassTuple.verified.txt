@@ -1,0 +1,9 @@
+﻿Tuple<string, int, 
+       bool>       
+╭───────┬─────────╮
+│ Item  │ Value   │
+├───────┼─────────┤
+│ Item1 │ "First" │
+│ Item2 │ 2       │
+│ Item3 │ True    │
+╰───────┴─────────╯

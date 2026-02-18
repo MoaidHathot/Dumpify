@@ -1,225 +1,181 @@
-﻿using System.Collections;
 using System.Data;
-using Xunit.Abstractions;
+using VerifyXunit;
+using static VerifyXunit.Verifier;
 
 namespace Dumpify.Tests.Renderers.Spectre.Console;
+
+/// <summary>
+/// Snapshot tests for collection truncation behavior in Spectre.Console renderer.
+/// </summary>
 public class MultiValueTruncationTests
 {
-    private readonly ITestOutputHelper _testOutputHelper;
+    #region Helper Methods
 
-    public MultiValueTruncationTests(ITestOutputHelper testOutputHelper)
+    private static DataTable CreateDataTable(int rows)
     {
-        _testOutputHelper = testOutputHelper;
-    }
-
-    [Theory]
-    [ClassData(typeof(TruncateCollectionsData))]
-    public void TruncateCollections(string name, object collection, int maxCount, string[] shouldContainItems, string[] shouldNotContainItems)
-    {
-        //Arrange
-        _testOutputHelper.WriteLine($"Test: {name}");
-
-        //Act
-        var result = collection.DumpText(tableConfig: new TableConfig() { MaxCollectionCount = maxCount });
-
-        _testOutputHelper.WriteLine(result);
-
-        //Assert
-        foreach(var shouldContain in shouldContainItems)
+        var dataTable = new DataTable
         {
-            result.Should().Contain(shouldContain);
-        }
-
-        foreach (var shouldNotContain in shouldNotContainItems)
-        {
-            result.Should().NotContain(shouldNotContain);
-        }
-    }
-
-    public class TruncateCollectionsData : IEnumerable<object[]>
-    {
-        public IEnumerator<object[]> GetEnumerator()
-        {
-            yield return new object[]
+            Columns =
             {
-                "Don't truncate if the number of items is equal to the max count",
-                Enumerable.Range(1, 10).ToArray(),
-                10,
-                new [] { "9 │ 10" },
-                new [] { "... truncated" }
-            };
-
-            yield return new object[]
-            {
-                "Don't truncate if the number of items is smaller than the max count",
-                Enumerable.Range(1, 10).ToArray(),
-                20,
-                new [] { "9 │ 10" },
-                new [] { " ... truncated" }
-            };
-
-            yield return new object[]
-            {
-                "Truncate if the number of items is greater than the max count",
-                Enumerable.Range(1, 10).ToArray(),
-                5,
-                new [] { "4 │ 5", "  │ ... truncated 5 items" },
-                new [] { "5 │ 6" }
-            };
-
-            yield return new object[]
-            {
-                "Truncate for lists",
-                Enumerable.Range(1, 10).ToList(),
-                5,
-                new [] { "│ 5", "│ ... truncated 5 items" },
-                new [] { "│ 6" }
-            };
-
-            yield return new object[]
-            {
-                "Truncate for data tables",
-                CreateDataTable(10),
-                5,
-                new []
-                    {
-                        "│ 4      │ 8      │ 12     │ 16     │ 20     │        │",
-                        "│ Value1 │ Value2 │ Value3 │ Value4 │ Value5 │ ... +5 │",
-                        "│ ... +5 │        │        │"
-                    },
-                new [] { "│ 5      │ 10    │ 15     │ 20     │ 25     │        │" }
-            };
-
-            yield return new object[]
-            {
-                "Truncate for datasets",
-                CreateDataSet(4),
-                2,
-                new [] { "Table 2", "... truncated 2 more tables" },
-                new [] { "Table 3" }
-            };
-
-            yield return new object[]
-            {
-                "Truncate for dictionaries",
-                Enumerable.Range(1, 10).ToDictionary(x => x, x => $"value for {x}"),
-                5,
-                new []
-                    {
-                        "│ 5   │ \"value for 5\"",
-                        "│     │ ... truncated 5 items │"
-                    },
-                new [] { "│ 6   │ \"value for 6\"" }
-            };
-
-            yield return new object[]
-            {
-                "Truncate for two-dimensional arrays",
-                new int[6, 6]
-                {
-                    { 1, 2, 3, 4, 5, 6 },
-                    { 1, 2, 3, 4, 5, 6 },
-                    { 1, 2, 3, 4, 5, 6 },
-                    { 1, 2, 3, 4, 5, 6 },
-                    { 1, 2, 3, 4, 5, 6 },
-                    { 1, 2, 3, 4, 5, 6 }
-                },
-                3,
-                new []
-                    {
-                        "│ 2      │ 1 │ 2 │ 3 │        │",
-                        "│ #      │ 0 │ 1 │ 2 │ ... +3 │",
-                        "│ ... +3 │   │   │   │        │"
-                    },
-                new []
-                    {
-                        "│ 3      │ 1 │ 2 │ 3 │        │"
-                    }
-            };
-
-            yield return new object[]
-            {
-                "Truncate for three-dimensional arrays (they get flattened to a single list)",
-                new int[4, 4, 4]
-                {
-                    {
-                        { 1, 2, 3, 4 },
-                        { 5, 6, 7, 8 },
-                        { 9, 10, 11, 12 },
-                        { 13, 14, 15, 16 }
-                    },
-                    {
-                        { 17, 18, 19, 20 },
-                        { 21, 22, 23, 24 },
-                        { 25, 26, 27, 28 },
-                        { 29, 30, 31, 32 }
-                    },
-                    {
-                        { 33, 34, 35, 36 },
-                        { 37, 38, 39, 40 },
-                        { 41, 42, 43, 44 },
-                        { 45, 46, 47, 48 }
-                    },
-                    {
-                        { 49, 50, 51, 52 },
-                        { 53, 54, 55, 56 },
-                        { 57, 58, 59, 60 },
-                        { 61, 62, 63, 64 }
-                    }
-                },
-                10,
-                new []
-                    {
-                        "│ 10",
-                        "│ ... truncated 54 items"
-                    },
-                new []
-                    {
-                        "│ 11"
-                    }
-            };
-        }
-
-        private static DataSet CreateDataSet(int tables)
-        {
-            DataSet dataSet = new DataSet();
-            for (int i = 0; i < tables; i++)
-            {
-                var dataTable = CreateDataTable(10);
-                dataTable.TableName = $"Table {i + 1}";
-                dataSet.Tables.Add(dataTable);
+                new DataColumn("Value1", typeof(int)),
+                new DataColumn("Value2", typeof(int)),
+                new DataColumn("Value3", typeof(int)),
+                new DataColumn("Value4", typeof(int)),
+                new DataColumn("Value5", typeof(int)),
+                new DataColumn("Value6", typeof(int)),
+                new DataColumn("Value7", typeof(int)),
+                new DataColumn("Value8", typeof(int)),
+                new DataColumn("Value9", typeof(int)),
+                new DataColumn("Value10", typeof(int))
             }
+        };
 
-            return dataSet;
-        }
-
-        private static DataTable CreateDataTable(int rows)
+        for (int i = 0; i < rows; i++)
         {
-            var dataTable = new DataTable
-            {
-                Columns =
-                    {
-                        new DataColumn("Value1", typeof(int)),
-                        new DataColumn("Value2", typeof(int)),
-                        new DataColumn("Value3", typeof(int)),
-                        new DataColumn("Value4", typeof(int)),
-                        new DataColumn("Value5", typeof(int)),
-                        new DataColumn("Value6", typeof(int)),
-                        new DataColumn("Value7", typeof(int)),
-                        new DataColumn("Value8", typeof(int)),
-                        new DataColumn("Value9", typeof(int)),
-                        new DataColumn("Value10", typeof(int))
-                    }
-            };
-
-            for(int i = 0; i < rows; i++)
-            {
-                dataTable.Rows.Add(i * 1, i * 2, i * 3, i * 4, i * 5, i * 6, i * 7, i * 8, i * 9, i * 10);
-            }
-
-            return dataTable;
+            dataTable.Rows.Add(i * 1, i * 2, i * 3, i * 4, i * 5, i * 6, i * 7, i * 8, i * 9, i * 10);
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        return dataTable;
     }
+
+    private static DataSet CreateDataSet(int tables)
+    {
+        DataSet dataSet = new DataSet();
+        for (int i = 0; i < tables; i++)
+        {
+            var dataTable = CreateDataTable(10);
+            dataTable.TableName = $"Table {i + 1}";
+            dataSet.Tables.Add(dataTable);
+        }
+
+        return dataSet;
+    }
+
+    private static string DumpWithMaxCount(object collection, int maxCount)
+    {
+        return collection.DumpText(tableConfig: new TableConfig { MaxCollectionCount = maxCount });
+    }
+
+    #endregion
+
+    #region Array Truncation Tests
+
+    [Fact]
+    public Task Array_NoTruncation_WhenCountEqualsMax()
+    {
+        var array = Enumerable.Range(1, 10).ToArray();
+        return Verify(DumpWithMaxCount(array, 10));
+    }
+
+    [Fact]
+    public Task Array_NoTruncation_WhenCountLessThanMax()
+    {
+        var array = Enumerable.Range(1, 10).ToArray();
+        return Verify(DumpWithMaxCount(array, 20));
+    }
+
+    [Fact]
+    public Task Array_Truncates_WhenCountGreaterThanMax()
+    {
+        var array = Enumerable.Range(1, 10).ToArray();
+        return Verify(DumpWithMaxCount(array, 5));
+    }
+
+    #endregion
+
+    #region List Truncation Tests
+
+    [Fact]
+    public Task List_Truncates_WhenCountGreaterThanMax()
+    {
+        var list = Enumerable.Range(1, 10).ToList();
+        return Verify(DumpWithMaxCount(list, 5));
+    }
+
+    #endregion
+
+    #region DataTable Truncation Tests
+
+    [Fact]
+    public Task DataTable_Truncates_RowsAndColumns()
+    {
+        var dataTable = CreateDataTable(10);
+        return Verify(DumpWithMaxCount(dataTable, 5));
+    }
+
+    #endregion
+
+    #region DataSet Truncation Tests
+
+    [Fact]
+    public Task DataSet_Truncates_Tables()
+    {
+        var dataSet = CreateDataSet(4);
+        return Verify(DumpWithMaxCount(dataSet, 2));
+    }
+
+    #endregion
+
+    #region Dictionary Truncation Tests
+
+    [Fact]
+    public Task Dictionary_Truncates_WhenCountGreaterThanMax()
+    {
+        var dictionary = Enumerable.Range(1, 10).ToDictionary(x => x, x => $"value for {x}");
+        return Verify(DumpWithMaxCount(dictionary, 5));
+    }
+
+    #endregion
+
+    #region Multi-Dimensional Array Truncation Tests
+
+    [Fact]
+    public Task TwoDimensionalArray_Truncates_RowsAndColumns()
+    {
+        var array = new int[6, 6]
+        {
+            { 1, 2, 3, 4, 5, 6 },
+            { 1, 2, 3, 4, 5, 6 },
+            { 1, 2, 3, 4, 5, 6 },
+            { 1, 2, 3, 4, 5, 6 },
+            { 1, 2, 3, 4, 5, 6 },
+            { 1, 2, 3, 4, 5, 6 }
+        };
+        return Verify(DumpWithMaxCount(array, 3));
+    }
+
+    [Fact]
+    public Task ThreeDimensionalArray_Truncates_FlattenedList()
+    {
+        var array = new int[4, 4, 4]
+        {
+            {
+                { 1, 2, 3, 4 },
+                { 5, 6, 7, 8 },
+                { 9, 10, 11, 12 },
+                { 13, 14, 15, 16 }
+            },
+            {
+                { 17, 18, 19, 20 },
+                { 21, 22, 23, 24 },
+                { 25, 26, 27, 28 },
+                { 29, 30, 31, 32 }
+            },
+            {
+                { 33, 34, 35, 36 },
+                { 37, 38, 39, 40 },
+                { 41, 42, 43, 44 },
+                { 45, 46, 47, 48 }
+            },
+            {
+                { 49, 50, 51, 52 },
+                { 53, 54, 55, 56 },
+                { 57, 58, 59, 60 },
+                { 61, 62, 63, 64 }
+            }
+        };
+        return Verify(DumpWithMaxCount(array, 10));
+    }
+
+    #endregion
 }

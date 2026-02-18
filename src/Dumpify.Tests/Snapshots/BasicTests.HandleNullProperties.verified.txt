@@ -1,0 +1,8 @@
+﻿PersonWithSignificantOther   
+╭──────────────────┬──────────╮
+│ Name             │ Value    │
+├──────────────────┼──────────┤
+│ FirstName        │ "Moaid"  │
+│ LastName         │ "Hathot" │
+│ SignificantOther │ null     │
+╰──────────────────┴──────────╯

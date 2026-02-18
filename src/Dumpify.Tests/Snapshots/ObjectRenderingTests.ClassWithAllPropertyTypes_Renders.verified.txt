@@ -1,0 +1,11 @@
+ClassWithAllPropertyTypes                  
+╭──────────────────┬────────────────────────────────────────╮
+│ Name             │ Value                                  │
+├──────────────────┼────────────────────────────────────────┤
+│ IntProperty      │ 42                                     │
+│ StringProperty   │ "Hello"                                │
+│ BoolProperty     │ True                                   │
+│ DoubleProperty   │ 3.14                                   │
+│ DateTimeProperty │ [1/15/2024 10:30:00]                   │
+│ GuidProperty     │ [12345678-1234-1234-1234-123456789abc] │
+╰──────────────────┴────────────────────────────────────────╯

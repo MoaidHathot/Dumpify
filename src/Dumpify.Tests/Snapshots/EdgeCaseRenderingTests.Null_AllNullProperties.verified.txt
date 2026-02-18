@@ -1,0 +1,9 @@
+﻿AllNullProperties
+╭───────┬───────╮
+│ Name  │ Value │
+├───────┼───────┤
+│ Name  │ null  │
+│ Age   │ null  │
+│ Data  │ null  │
+│ Items │ null  │
+╰───────┴───────╯

@@ -1,0 +1,8 @@
+﻿Dumpify.Tests.Rend…
+╭───────┬─────────╮
+│ Name  │ Value   │
+├───────┼─────────┤
+│ Name  │ "Alice" │
+│ Age   │ 30      │
+│ Email │ null    │
+╰───────┴─────────╯
