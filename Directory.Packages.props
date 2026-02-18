@@ -13,6 +13,7 @@
 	<PackageVersion Include="MSTest.TestAdapter" Version="3.0.2" />
 	<PackageVersion Include="MSTest.TestFramework" Version="3.0.2" />
 	<PackageVersion Include="Spectre.Console" Version="0.49.1" />
+	<PackageVersion Include="System.Collections.Immutable" Version="8.0.0" />
 	<PackageVersion Include="Spectre.Console.Analyzer" Version="1.0.0" />
 	<PackageVersion Include="xunit" Version="2.9.3" />
 	<PackageVersion Include="xunit.analyzers" Version="1.19.0" />

@@ -1,6 +1,7 @@
-﻿using Dumpify.Descriptors;
+using Dumpify.Descriptors;
 using Dumpify.Descriptors.ValueProviders;
 using System.Collections.Concurrent;
+using System.Collections.Immutable;
 
 namespace Dumpify;
 
@@ -26,7 +27,8 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
     {
         var state = CreateState(obj, descriptor, config);
         var idGenerator = new ObjectIdReferenceTracker();
-        var context = new RenderContext<TState>(config, idGenerator, 0, obj, null, state);
+        var ancestors = ImmutableHashSet.Create<object>(ReferenceEqualityComparer.Instance);
+        var context = new RenderContext<TState>(config, idGenerator, 0, obj, null, state, ancestors);
 
         var renderable = obj switch
         {
@@ -49,12 +51,34 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
             return RenderExceededDepth(@object, descriptor, context);
         }
 
+        // Get the actual descriptor for this object instance
         descriptor = GetObjectInstanceDescriptor(@object, descriptor, context);
+
+        // Unwrap CircularDependencyDescriptor before cycle checking
+        // (This is a compile-time sentinel for recursive types, not a runtime cycle)
+        while (descriptor is CircularDependencyDescriptor circularDescriptor)
+        {
+            descriptor = circularDescriptor.Descriptor;
+        }
+
+        // Cycle detection for reference types: check if object is already in the ancestor chain
+        // Exclude strings - they are immutable and often interned, so the same instance appearing
+        // multiple times is not a cycle (and is expected behavior)
+        var objectType = @object.GetType();
+        var shouldTrackForCycles = !objectType.IsValueType && objectType != typeof(string);
+        if (shouldTrackForCycles)
+        {
+            if (context.Ancestors.Contains(@object))
+            {
+                return RenderCircularDependency(@object, descriptor, context);
+            }
+            // Add to ancestors for all descendant rendering
+            context = context with { Ancestors = context.Ancestors.Add(@object) };
+        }
 
         return descriptor switch
         {
             null => RenderNullDescriptor(@object, context),
-            CircularDependencyDescriptor circularDescriptor => RenderDescriptor(@object, circularDescriptor.Descriptor, context),
             IgnoredDescriptor ignoredDescriptor => TryRenderCustomTypeDescriptor(@object, ignoredDescriptor, context, RenderIgnoredDescriptor),
             SingleValueDescriptor singleDescriptor => TryRenderCustomTypeDescriptor(@object, singleDescriptor, context, RenderSingleValueDescriptor),
             ObjectDescriptor objDescriptor => TryRenderCustomTypeDescriptor(@object, objDescriptor, context, TryRenderObjectDescriptor),
@@ -85,11 +109,7 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
 
     private TRenderable TryRenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<TState> context)
     {
-        if (ObjectAlreadyRendered(obj, context.ObjectTracker))
-        {
-            return RenderCircularDependency(obj, descriptor, context);
-        }
-
+        // Cycle check is now handled in RenderDescriptor for all reference types
         return RenderObjectDescriptor(obj, descriptor, context);
     }
 

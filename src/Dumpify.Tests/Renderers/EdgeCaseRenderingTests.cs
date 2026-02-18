@@ -24,6 +24,19 @@ public class EdgeCaseRenderingTests
         public Node? Right { get; set; }
     }
 
+    private class Address
+    {
+        public string City { get; set; } = "";
+        public string Street { get; set; } = "";
+    }
+
+    private class PersonWithTwoAddresses
+    {
+        public string Name { get; set; } = "";
+        public Address? HomeAddress { get; set; }
+        public Address? WorkAddress { get; set; }
+    }
+
     private class DeepNesting
     {
         public string Level { get; set; } = "";
@@ -124,6 +137,35 @@ public class EdgeCaseRenderingTests
         left.Right = root; // Back reference to root
 
         var result = root.DumpText();
+        return Verify(result);
+    }
+
+    #endregion
+
+    #region Shared Reference Tests (Not Cycles)
+
+    [Fact]
+    public Task SharedReference_SameObjectInTwoProperties_ShouldNotBeCycle()
+    {
+        var sharedAddress = new Address { City = "NYC", Street = "Broadway" };
+        var person = new PersonWithTwoAddresses
+        {
+            Name = "John",
+            HomeAddress = sharedAddress,
+            WorkAddress = sharedAddress  // Same instance, NOT a cycle
+        };
+
+        var result = person.DumpText();
+        return Verify(result);
+    }
+
+    [Fact]
+    public Task SharedReference_InCollection_ShouldNotBeCycle()
+    {
+        var sharedNode = new Node { Value = "Shared" };
+        var items = new[] { sharedNode, sharedNode, sharedNode };
+
+        var result = items.DumpText();
         return Verify(result);
     }
 
