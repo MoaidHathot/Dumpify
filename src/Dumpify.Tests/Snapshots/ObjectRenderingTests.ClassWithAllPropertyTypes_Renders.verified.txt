@@ -1,4 +1,4 @@
-ClassWithAllPropertyTypes                  
+﻿ClassWithAllPropertyTypes                  
 ╭──────────────────┬────────────────────────────────────────╮
 │ Name             │ Value                                  │
 ├──────────────────┼────────────────────────────────────────┤
@@ -6,6 +6,6 @@ ClassWithAllPropertyTypes
 │ StringProperty   │ "Hello"                                │
 │ BoolProperty     │ True                                   │
 │ DoubleProperty   │ 3.14                                   │
-│ DateTimeProperty │ [1/15/2024 10:30:00]                   │
+│ DateTimeProperty │ [01/15/2024 10:30:00]                  │
 │ GuidProperty     │ [12345678-1234-1234-1234-123456789abc] │
 ╰──────────────────┴────────────────────────────────────────╯

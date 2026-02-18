@@ -9,7 +9,7 @@
 │ MaxDouble        │ 1.7976931348623157E+308  │
 │ MinDouble        │ -1.7976931348623157E+308 │
 │ Epsilon          │ 5E-324                   │
-│ PositiveInfinity │ ∞                        │
-│ NegativeInfinity │ -∞                       │
+│ PositiveInfinity │ Infinity                 │
+│ NegativeInfinity │ -Infinity                │
 │ NaN              │ NaN                      │
 ╰──────────────────┴──────────────────────────╯

@@ -350,3 +350,11 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 /src/Dumpify/Dumpify.csproj.DotSettings
+
+# Vim swap files
+*.swp
+*.swo
+*~
+
+# Verify test artifacts
+*.received.txt
