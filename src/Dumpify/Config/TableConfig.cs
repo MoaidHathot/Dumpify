@@ -1,4 +1,4 @@
-﻿namespace Dumpify;
+namespace Dumpify;
 
 public class TableConfig
 {
@@ -9,4 +9,10 @@ public class TableConfig
     public bool ShowMemberTypes { get; set; } = false;
     public bool ShowRowSeparators { get; set; } = false;
     public int MaxCollectionCount { get; set; } = int.MaxValue;
+
+    /// <summary>
+    /// The border style for tables. Default is Rounded.
+    /// Use Ascii or Square for better terminal compatibility.
+    /// </summary>
+    public TableBorderStyle BorderStyle { get; set; } = TableBorderStyle.Rounded;
 }

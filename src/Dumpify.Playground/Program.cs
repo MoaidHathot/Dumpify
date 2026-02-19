@@ -16,6 +16,7 @@ using System.Text;
 // (1, 2, 3, 4, ("1", "b"), 5, 6, 7, 8, 9, 10, 11, 12, 13, "14", "15", 16, 17, 18).Dump("ValueTuple");
 // Tuple.Create(1, 2, 3, 4, 5, 6, 7, Tuple.Create(8, 9, 10, 11)).Dump("System.Tuple");
 // new[] { 1, 2, 3,  4, 5, 6, 7, 8, 9, 10 }.Dump(tableConfig: new TableConfig { MaxCollectionCount = 3 });
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Rounded;
 Console.WriteLine("---------------------");
     var moaid1 = new Person
     {

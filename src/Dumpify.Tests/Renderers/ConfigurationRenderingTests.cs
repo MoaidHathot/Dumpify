@@ -160,6 +160,70 @@ public class ConfigurationRenderingTests
         return Verify(output);
     }
     
+    [Fact]
+    public Task TableConfig_BorderStyle_Rounded()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Rounded });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_Square()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Square });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_Ascii()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Ascii });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_None()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.None });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_Heavy()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Heavy });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_Double()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Double });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_Minimal()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Minimal });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_Markdown()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Markdown });
+        return Verify(output);
+    }
+    
     #endregion
     
     #region MembersConfig Tests

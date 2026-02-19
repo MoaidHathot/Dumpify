@@ -1,4 +1,5 @@
 using Dumpify.Descriptors;
+using Dumpify.Extensions;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
@@ -197,7 +198,7 @@ internal class ObjectTableBuilder
             table.AddRow(fullRow);
         }
 
-        table.RoundedBorder();
+        table.Border(_context.Config.TableConfig.BorderStyle.ToSpectreBorder());
 
         if (_context.Config.TableConfig.ShowRowSeparators)
         {
