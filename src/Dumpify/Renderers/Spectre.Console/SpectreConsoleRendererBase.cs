@@ -1,8 +1,9 @@
-﻿using Dumpify.Descriptors;
+using Dumpify.Descriptors;
 using Dumpify.Descriptors.ValueProviders;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections.Concurrent;
+using System.Text;
 
 namespace Dumpify;
 
@@ -55,8 +56,52 @@ internal abstract class SpectreConsoleRendererBase : RendererBase<IRenderable, S
     public override IRenderable RenderExceededDepth(object obj, IDescriptor? descriptor, RenderContext<SpectreRendererState> context)
         => RenderSingleValue($"[Exceeded max depth {context.Config.MaxDepth}]", context, context.State.Colors.MetadataInfoColor);
 
-    protected override IRenderable RenderCircularDependency(object @object, IDescriptor? descriptor, RenderContext<SpectreRendererState> context)
-            => RenderSingleValue($"[Circular Reference #{context.Config.TypeNameProvider.GetTypeName(@object.GetType())}]", context, context.State.Colors.MetadataInfoColor);
+    /// <summary>
+    /// Formats a ReferenceLabel into a display string.
+    /// </summary>
+    /// <param name="label">The structured reference label</param>
+    /// <param name="prefix">The prefix to use (e.g., "Cycle" or "Identical")</param>
+    /// <returns>Formatted string like "[Cycle #Person:1 → Manager]"</returns>
+    private static string FormatReferenceLabel(ReferenceLabel label, string prefix)
+    {
+        var sb = new StringBuilder();
+        sb.Append('[');
+        sb.Append(prefix);
+
+        if (label.TypeName != null)
+        {
+            sb.Append(" #");
+            sb.Append(label.TypeName);
+        }
+
+        if (label.Id != null)
+        {
+            sb.Append(':');
+            sb.Append(label.Id);
+        }
+
+        // Show path if requested - use "(root)" for empty path (root object)
+        if (label.Path != null)
+        {
+            sb.Append(" → ");
+            sb.Append(string.IsNullOrEmpty(label.Path) ? "(root)" : label.Path);
+        }
+
+        sb.Append(']');
+        return sb.ToString();
+    }
+
+    protected override IRenderable RenderCircularDependency(object @object, IDescriptor? descriptor, ReferenceLabel label, RenderContext<SpectreRendererState> context)
+    {
+        var text = FormatReferenceLabel(label, "Cycle");
+        return RenderSingleValue(text, context, context.State.Colors.MetadataInfoColor);
+    }
+
+    protected override IRenderable RenderSharedReference(object @object, IDescriptor? descriptor, ReferenceLabel label, RenderContext<SpectreRendererState> context)
+    {
+        var text = FormatReferenceLabel(label, "Identical");
+        return RenderSingleValue(text, context, context.State.Colors.MetadataInfoColor);
+    }
 
     protected override IRenderable RenderNullDescriptor(object obj, RenderContext<SpectreRendererState> context)
             => RenderSingleValue($"[null descriptor] {obj}", context, context.State.Colors.MetadataErrorColor);

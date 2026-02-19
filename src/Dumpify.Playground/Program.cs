@@ -31,6 +31,8 @@ Console.WriteLine("---------------------");
         Profession = Profession.Health
     };
 
+DumpConfig.Default.ReferenceRenderingConfig.CircularReferenceDisplay = CircularReferenceDisplay.Path;
+
 moaid1.Spouse = haneeni1;
 haneeni1.Spouse = moaid1;
 

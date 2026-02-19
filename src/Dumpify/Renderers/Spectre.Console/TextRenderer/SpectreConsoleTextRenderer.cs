@@ -1,4 +1,4 @@
-﻿using Dumpify.Descriptors;
+using Dumpify.Descriptors;
 using Dumpify.Extensions;
 using Spectre.Console;
 using Spectre.Console.Rendering;
@@ -26,7 +26,9 @@ internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
         foreach (var property in descriptor.Properties)
         {
             builder.AppendLine();
-            var renderedValue = GetValueAndRender(obj, property.ValueProvider!, property, context with { CurrentDepth = context.CurrentDepth + 1 });
+            // Update path with property name for reference tracking
+            var propertyContext = context.WithProperty(property.Name) with { CurrentDepth = context.CurrentDepth + 1 };
+            var renderedValue = GetValueAndRender(obj, property.ValueProvider!, property, propertyContext);
             builder.Append($"{indent}{property.Name}: {renderedValue}");
         }
 
@@ -46,22 +48,26 @@ internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
         var memberProvider = context.Config.MemberProvider;
         var renderedItems = new List<IRenderable>();
 
+        int index = 0;
         foreach (var item in items)
         {
             var renderedItem = obj switch
             {
                 null => RenderNullValue(null, context),
-                not null => GetRenderedValue(item, descriptor.ElementsType),
+                not null => GetRenderedValue(item, descriptor.ElementsType, index),
             };
 
             renderedItems.Add(renderedItem);
+            index++;
 
-            IRenderable GetRenderedValue(object item, Type? elementType)
+            IRenderable GetRenderedValue(object item, Type? elementType, int idx)
             {
                 var itemType = descriptor.ElementsType ?? item.GetType();
                 var itemDescriptor = DumpConfig.Default.Generator.Generate(itemType, null, memberProvider);
 
-                return RenderDescriptor(item, itemDescriptor, context with { CurrentDepth = context.CurrentDepth + 1 });
+                // Update path with index for reference tracking
+                var itemContext = context.WithIndex(idx) with { CurrentDepth = context.CurrentDepth + 1 };
+                return RenderDescriptor(item, itemDescriptor, itemContext);
             }
         }
 

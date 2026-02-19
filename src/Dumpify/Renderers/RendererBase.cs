@@ -28,7 +28,23 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
         var state = CreateState(obj, descriptor, config);
         var idGenerator = new ObjectIdReferenceTracker();
         var ancestors = ImmutableHashSet.Create<object>(ReferenceEqualityComparer.Instance);
-        var context = new RenderContext<TState>(config, idGenerator, 0, obj, null, state, ancestors);
+        
+        // Get the strategy to determine what needs to be tracked
+        var strategy = config.ReferenceRenderingStrategy;
+        
+        // Initialize tracking collections based on what strategy needs
+        var objectIds = strategy.TracksIds
+            ? ImmutableDictionary.Create<object, int>(ReferenceEqualityComparer.Instance)
+            : ImmutableDictionary<object, int>.Empty;
+        var objectPaths = strategy.TracksPaths
+            ? ImmutableDictionary.Create<object, string>(ReferenceEqualityComparer.Instance)
+            : ImmutableDictionary<object, string>.Empty;
+
+        var context = new RenderContext<TState>(
+            config, idGenerator, 0, obj, null, state, ancestors,
+            CurrentPath: "",
+            ObjectIds: objectIds,
+            ObjectPaths: objectPaths);
 
         var renderable = obj switch
         {
@@ -61,19 +77,54 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
             descriptor = circularDescriptor.Descriptor;
         }
 
-        // Cycle detection for reference types: check if object is already in the ancestor chain
+        // Cycle and shared reference detection for reference types
         // Exclude strings - they are immutable and often interned, so the same instance appearing
         // multiple times is not a cycle (and is expected behavior)
         var objectType = @object.GetType();
-        var shouldTrackForCycles = !objectType.IsValueType && objectType != typeof(string);
-        if (shouldTrackForCycles)
+        var shouldTrack = !objectType.IsValueType && objectType != typeof(string);
+        
+        if (shouldTrack)
         {
+            var strategy = context.Config.ReferenceRenderingStrategy;
+            
+            // Check for cycle (already in ancestor chain)
             if (context.Ancestors.Contains(@object))
             {
-                return RenderCircularDependency(@object, descriptor, context);
+                var id = strategy.TracksIds && context.ObjectIds.TryGetValue(@object, out var objId) ? objId : (int?)null;
+                var path = strategy.TracksPaths && context.ObjectPaths.TryGetValue(@object, out var objPath) ? objPath : null;
+                
+                var label = strategy.FormatCircularReference(objectType, id, path);
+                return RenderCircularDependency(@object, descriptor, label, context);
             }
-            // Add to ancestors for all descendant rendering
-            context = context with { Ancestors = context.Ancestors.Add(@object) };
+            
+            // Check for shared reference (seen before but not in ancestor chain)
+            if (strategy.TracksSharedReferences && context.ObjectIds.ContainsKey(@object))
+            {
+                var id = context.ObjectIds[@object];
+                var path = strategy.TracksPaths ? context.ObjectPaths[@object] : null;
+                
+                var label = strategy.FormatSharedReference(objectType, id, path);
+                if (label != null)
+                {
+                    return RenderSharedReference(@object, descriptor, label, context);
+                }
+                // else: label is null, meaning render fully
+            }
+            
+            // First time seeing this object - update tracking
+            var newContext = context with { Ancestors = context.Ancestors.Add(@object) };
+            
+            if (strategy.TracksIds && !context.ObjectIds.ContainsKey(@object))
+            {
+                var newId = context.ObjectIds.Count + 1;
+                newContext = newContext with { ObjectIds = context.ObjectIds.Add(@object, newId) };
+            }
+            if (strategy.TracksPaths && !context.ObjectPaths.ContainsKey(@object))
+            {
+                newContext = newContext with { ObjectPaths = context.ObjectPaths.Add(@object, context.CurrentPath) };
+            }
+            
+            context = newContext;
         }
 
         return descriptor switch
@@ -183,7 +234,9 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
     protected abstract TRenderable RenderUnfamiliarCustomDescriptor(object obj, CustomDescriptor descriptor, RenderContext<TState> context);
 
     public abstract TRenderable RenderExceededDepth(object obj, IDescriptor? descriptor, RenderContext<TState> context);
-    protected abstract TRenderable RenderCircularDependency(object obj, IDescriptor? descriptor, RenderContext<TState> context);
+    
+    protected abstract TRenderable RenderCircularDependency(object obj, IDescriptor? descriptor, ReferenceLabel label, RenderContext<TState> context);
+    protected abstract TRenderable RenderSharedReference(object obj, IDescriptor? descriptor, ReferenceLabel label, RenderContext<TState> context);
 
     protected abstract TRenderable RenderNullDescriptor(object obj, RenderContext<TState> context);
     protected abstract TRenderable RenderIgnoredDescriptor(object obj, IgnoredDescriptor descriptor, RenderContext<TState> context);

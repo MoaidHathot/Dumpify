@@ -58,7 +58,9 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
 
             IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider) : null;
 
-            var renderedItem = RenderDescriptor(item, itemsDescriptor, context);
+            // Update path with index for reference tracking
+            var itemContext = context.WithIndex(i);
+            var renderedItem = RenderDescriptor(item, itemsDescriptor, itemContext);
             builder.AddRow(itemsDescriptor, item, renderedItem);
         }
 
@@ -98,7 +100,9 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
 
         foreach (var property in descriptor.Properties)
         {
-            var (success, value, renderedValue) = GetValueAndRender(obj, property.ValueProvider!, property, context with { CurrentDepth = context.CurrentDepth + 1 });
+            // Update path with property name for reference tracking
+            var propertyContext = context.WithProperty(property.Name) with { CurrentDepth = context.CurrentDepth + 1 };
+            var (success, value, renderedValue) = GetValueAndRender(obj, property.ValueProvider!, property, propertyContext);
             builder.AddRowWithObjectName(property, value, renderedValue);
         }
 

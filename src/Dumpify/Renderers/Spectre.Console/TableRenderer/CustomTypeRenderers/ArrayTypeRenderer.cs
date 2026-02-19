@@ -1,4 +1,4 @@
-﻿using Dumpify.Descriptors;
+using Dumpify.Descriptors;
 using Dumpify.Descriptors.ValueProviders;
 using Spectre.Console;
 using Spectre.Console.Rendering;
@@ -59,7 +59,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
         int maxCollectionCount = context.Config.TableConfig.MaxCollectionCount;
         int length = obj.Length > maxCollectionCount ? maxCollectionCount : obj.Length;
 
-        for (var index = 0; index < length; ++index)
+    for (var index = 0; index < length; ++index)
         {
             var item = obj.GetValue(index);
 
@@ -67,7 +67,9 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
             var type =  item?.GetType() ?? mvd.ElementsType;
             IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider) : null;
 
-            var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
+            // Update path with index for reference tracking
+            var itemContext = context.WithIndex(index);
+            var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, itemContext);
 
             builder.AddRow(itemsDescriptor, item, renderedItem);
         }
@@ -128,7 +130,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
             builder.AddColumnName($"... +{columnsAll - maxCollectionCount}", columnStyle);
         }
 
-        for (var row = 0; row < rows; ++row)
+    for (var row = 0; row < rows; ++row)
         {
             var cells = new List<IRenderable>(2);
 
@@ -139,7 +141,9 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
                 var type = descriptor.ElementsType ?? item?.GetType();
                 IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider) : null;
 
-                var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
+                // Update path with 2D index for reference tracking (e.g., [0,1])
+                var itemContext = context.WithIndex2D(row, col);
+                var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, itemContext);
                 cells.Add(renderedItem);
             }
 

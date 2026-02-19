@@ -1,4 +1,4 @@
-﻿using Dumpify.Descriptors;
+using Dumpify.Descriptors;
 using Dumpify.Descriptors.ValueProviders;
 using Dumpify.Extensions;
 using System.Diagnostics.CodeAnalysis;
@@ -21,6 +21,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        ReferenceRenderingConfig? referenceRendering = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
     {
@@ -37,6 +38,7 @@ public static class DumpExtensions
             tableConfig: tableConfig,
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
+            referenceRendering: referenceRendering,
             autoLabel: autoLabel
         );
     }
@@ -54,6 +56,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        ReferenceRenderingConfig? referenceRendering = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
     {
@@ -70,6 +73,7 @@ public static class DumpExtensions
             tableConfig: tableConfig,
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
+            referenceRendering: referenceRendering,
             autoLabel: autoLabel
         );
     }
@@ -87,6 +91,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        ReferenceRenderingConfig? referenceRendering = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     ) =>
         obj.Dump(
@@ -101,6 +106,7 @@ public static class DumpExtensions
             tableConfig: tableConfig,
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
+            referenceRendering: referenceRendering,
             autoLabel: autoLabel
         );
 
@@ -116,6 +122,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        ReferenceRenderingConfig? referenceRendering = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
     {
@@ -136,6 +143,7 @@ public static class DumpExtensions
             tableConfig: tableConfig,
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
+            referenceRendering: referenceRendering,
             autoLabel: autoLabel
         );
 
@@ -156,6 +164,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        ReferenceRenderingConfig? referenceRendering = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
     {
@@ -166,6 +175,7 @@ public static class DumpExtensions
 
         var membersConfig = members ?? defaultConfig.MembersConfig;
         var typeNamingConfig = typeNames ?? defaultConfig.TypeNamingConfig;
+        var referenceRenderingConfig = referenceRendering ?? defaultConfig.ReferenceRenderingConfig;
 
         var rendererConfig = new RendererConfig
         {
@@ -175,6 +185,7 @@ public static class DumpExtensions
             TableConfig = tableConfig ?? defaultConfig.TableConfig,
             TypeNamingConfig = typeNamingConfig,
             TypeRenderingConfig = typeRenderingConfig ?? defaultConfig.TypeRenderingConfig,
+            ReferenceRenderingConfig = referenceRenderingConfig,
             MemberProvider = new MemberProvider(
                 membersConfig.IncludeProperties,
                 membersConfig.IncludeFields,
