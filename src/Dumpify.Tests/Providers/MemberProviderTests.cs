@@ -21,7 +21,7 @@ public class MemberProviderTests
 
     [Theory]
     [ClassData(typeof(MemberFilterData))]
-    public void ApplyMemberFilter(Func<IValueProvider, bool>? filter, bool mustIncludeFoo)
+    public void ApplyMemberFilter(Func<MemberFilterContext, bool>? filter, bool mustIncludeFoo)
     {
         var membersConfig = new MembersConfig { MemberFilter = filter };
         var testClass = new ClassWithFilterableProperty();
@@ -50,13 +50,13 @@ public class MemberProviderTests
         public IEnumerator<object?[]> GetEnumerator()
         {
             // Properties that don't have the Foo name will be included
-            yield return new object?[] { new Func<IValueProvider, bool>(member => member.Info.Name != nameof(ClassWithFilterableProperty.Foo)), false };
+            yield return new object?[] { new Func<MemberFilterContext, bool>(ctx => ctx.Member.Name != nameof(ClassWithFilterableProperty.Foo)), false };
             
             // Only properties that have the Foo name will be included
-            yield return new object?[] { new Func<IValueProvider, bool>(member => member.Info.Name == nameof(ClassWithFilterableProperty.Foo)), true };
+            yield return new object?[] { new Func<MemberFilterContext, bool>(ctx => ctx.Member.Name == nameof(ClassWithFilterableProperty.Foo)), true };
             
             // If the JsonIgnore attribute is applied, don't include the property
-            yield return new object?[] { new Func<IValueProvider, bool>(member => !member.Info.CustomAttributes.Any(a => a.AttributeType == typeof(JsonIgnoreAttribute))), false };
+            yield return new object?[] { new Func<MemberFilterContext, bool>(ctx => !ctx.Member.Info.CustomAttributes.Any(a => a.AttributeType == typeof(JsonIgnoreAttribute))), false };
             
             // If there is no filter provided, filtering will not be applied
             yield return new object?[] { null, true };

@@ -1,4 +1,4 @@
-﻿using Dumpify.Descriptors;
+using Dumpify.Descriptors;
 using Dumpify.Descriptors.ValueProviders;
 using Dumpify.Extensions;
 using System.Diagnostics.CodeAnalysis;
@@ -180,8 +180,7 @@ public static class DumpExtensions
                 membersConfig.IncludeFields,
                 membersConfig.IncludePublicMembers,
                 membersConfig.IncludeNonPublicMembers,
-                membersConfig.IncludeVirtualMembers,
-                membersConfig.MemberFilter
+                membersConfig.IncludeVirtualMembers
             ),
             TypeNameProvider = new TypeNameProvider(
                 typeNamingConfig.UseAliases,
@@ -189,6 +188,7 @@ public static class DumpExtensions
                 typeNamingConfig.SimplifyAnonymousObjectNames,
                 typeNamingConfig.SeparateTypesWithSpace
             ),
+            MemberFilter = membersConfig.MemberFilter,
         };
 
         outputConfig ??= defaultConfig.OutputConfig;

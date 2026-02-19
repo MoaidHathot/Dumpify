@@ -72,6 +72,7 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
             {
                 return RenderCircularDependency(@object, descriptor, context);
             }
+
             // Add to ancestors for all descendant rendering
             context = context with { Ancestors = context.Ancestors.Add(@object) };
         }
@@ -109,8 +110,26 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
 
     private TRenderable TryRenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<TState> context)
     {
-        // Cycle check is now handled in RenderDescriptor for all reference types
-        return RenderObjectDescriptor(obj, descriptor, context);
+        var filteredDescriptor = ApplyMemberFilter(obj, descriptor, context);
+        return RenderObjectDescriptor(obj, filteredDescriptor, context);
+    }
+
+    private ObjectDescriptor ApplyMemberFilter(object obj, ObjectDescriptor descriptor, RenderContext<TState> context)
+    {
+        var filter = context.Config.MemberFilter;
+
+        if (filter is null)
+        {
+            return descriptor;
+        }
+
+        var filteredProperties = descriptor.Properties.Where(property =>
+        {
+            var filterContext = new MemberFilterContext(property.ValueProvider!, obj, context.CurrentDepth);
+            return filter(filterContext);
+        });
+
+        return descriptor with { Properties = filteredProperties };
     }
 
     private TRenderable TryRenderCustomTypeDescriptor<TDescriptor>(object obj, TDescriptor descriptor, in RenderContext<TState> context, Func<object, TDescriptor, RenderContext<TState>, TRenderable> defaultRenderer)

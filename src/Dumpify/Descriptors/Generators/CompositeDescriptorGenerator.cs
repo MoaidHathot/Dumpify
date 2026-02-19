@@ -11,13 +11,13 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
 
     public CompositeDescriptorGenerator(ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, IValueProvider?, IMemberProvider, object?>> customDescriptorHandlers)
     {
-        _generatorsChain = new IDescriptorGenerator[]
-        {
+        _generatorsChain =
+        [
             new IgnoredValuesGenerator(),
             new CustomValuesGenerator(customDescriptorHandlers),
             new KnownSingleValueGenerator(),
             new MultiValueGenerator(),
-        };
+        ];
     }
 
     public IDescriptor? Generate(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)

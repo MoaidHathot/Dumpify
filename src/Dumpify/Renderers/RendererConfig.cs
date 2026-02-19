@@ -1,4 +1,4 @@
-﻿using Dumpify.Descriptors.ValueProviders;
+using Dumpify.Descriptors.ValueProviders;
 
 namespace Dumpify;
 
@@ -13,4 +13,10 @@ public record RendererConfig
     public TypeRenderingConfig TypeRenderingConfig { get; init; } = new TypeRenderingConfig();
     public required IMemberProvider MemberProvider { get; init; }
     public required ITypeNameProvider TypeNameProvider { get; init; }
+    
+    /// <summary>
+    /// Optional filter to include/exclude members during rendering.
+    /// Applied at render time, enabling value-based filtering.
+    /// </summary>
+    public Func<MemberFilterContext, bool>? MemberFilter { get; init; } = null;
 }

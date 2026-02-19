@@ -233,7 +233,7 @@ public class ConfigurationRenderingTests
         var data = new Person("Alice", 30, "alice@example.com");
         var output = data.DumpText(members: new MembersConfig 
         { 
-            MemberFilter = member => member.Name != "Email"
+            MemberFilter = ctx => ctx.Member.Name != "Email"
         });
         return Verify(output);
     }
@@ -244,7 +244,7 @@ public class ConfigurationRenderingTests
         var data = new Person("Alice", 30, "alice@example.com");
         var output = data.DumpText(members: new MembersConfig 
         { 
-            MemberFilter = member => member.MemberType == typeof(string)
+            MemberFilter = ctx => ctx.Member.MemberType == typeof(string)
         });
         return Verify(output);
     }

@@ -1,5 +1,3 @@
-﻿using Dumpify.Descriptors.ValueProviders;
-
 namespace Dumpify;
 
 public class MembersConfig
@@ -9,5 +7,5 @@ public class MembersConfig
     public bool IncludeVirtualMembers { get; set; } = true;
     public bool IncludeProperties { get; set; } = true;
     public bool IncludeFields { get; set; } = false;
-    public Func<IValueProvider, bool>? MemberFilter { get; set; }
+    public Func<MemberFilterContext, bool>? MemberFilter { get; set; }
 }

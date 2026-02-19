@@ -1,4 +1,4 @@
-﻿using Dumpify;
+using Dumpify;
 using System.Collections;
 using System.Data;
 using System.Text;
@@ -34,9 +34,12 @@ Console.WriteLine("---------------------");
 moaid1.Spouse = haneeni1;
 haneeni1.Spouse = moaid1;
 
-moaid1.Dump("Moaid");
+// moaid1.Dump("Moaid");
 
-new [] { moaid1, haneeni1 }.Dump();
+// new [] { moaid1, haneeni1 }.Dump();
+    moaid1.Dump("Filter property Name", members: new MembersConfig { MemberFilter = ctx => ctx.Member.Name != nameof(Person.FirstName) });
+    moaid1.Dump("Filter property Value", members: new MembersConfig { MemberFilter = ctx => !object.ReferenceEquals(ctx.Value, "Moaid") });
+
 //
 // var lazy = new Lazy<int>(()=> 10);
 // lazy.Dump();
@@ -120,8 +123,8 @@ void TestSpecific()
     new TestVirtual().Dump("explcit include", members: new MembersConfig { IncludeVirtualMembers = true });
     new TestVirtual().Dump("explcit exclude", members: new MembersConfig { IncludeVirtualMembers = false });
 
-    moaid2.Dump(members: new MembersConfig { MemberFilter = member => member.Name != nameof(Person.FirstName) });
-    moaid2.Dump(members: new MembersConfig { MemberFilter = member => member.Name != nameof(Person.LastName) });
+    moaid2.Dump("Filter property Name", members: new MembersConfig { MemberFilter = ctx => ctx.Member.Name != nameof(Person.FirstName) });
+    moaid2.Dump("Filter property Value", members: new MembersConfig { MemberFilter = ctx => !object.ReferenceEquals(ctx.Value, "Moaid") });
     //value.Dump();
     // ((nuint)5).Dump();
     // ((nint)5).Dump();
