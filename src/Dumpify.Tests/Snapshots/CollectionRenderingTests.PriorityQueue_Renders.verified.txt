@@ -1,8 +1,9 @@
-﻿PriorityQueue<string, int>         
+PriorityQueue<string, int>         
 ╭────────────────┬────────────────────────╮
 │ Name           │ Value                  │
 ├────────────────┼────────────────────────┤
 │ Count          │ 3                      │
+│ Capacity       │ 4                      │
 │ Comparer       │ GenericComparer…       │
 │                │ ╭──────┬───────╮       │
 │                │ │ Name │ Value │       │
