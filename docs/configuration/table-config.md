@@ -29,10 +29,49 @@ nav_order: 3
 | `ShowMemberTypes` | `bool` | `false` | Show a column with member types |
 | `ShowRowSeparators` | `bool` | `false` | Show separator lines between rows |
 | `MaxCollectionCount` | `int` | `int.MaxValue` | Maximum number of collection items to display |
+| `BorderStyle` | `TableBorderStyle` | `Rounded` | Border style for tables (see below) |
+
+### Border Styles
+
+The `BorderStyle` property controls the characters used for table borders. This is useful for terminals that don't properly render Unicode box-drawing characters.
+
+| Style | Description | Example Characters |
+|-------|-------------|-------------------|
+| `Rounded` | Rounded corners (default) | `╭─╮│╰─╯` |
+| `Square` | Square corners | `┌─┐│└─┘` |
+| `Ascii` | ASCII only (maximum compatibility) | `+-+\|+-+` |
+| `None` | No borders | |
+| `Heavy` | Heavy/bold lines | `┏━┓┃┗━┛` |
+| `Double` | Double lines | `╔═╗║╚═╝` |
+| `Minimal` | Minimal with horizontal lines | `─` |
+| `Markdown` | Markdown-compatible format | `\|---\|` |
 
 ---
 
 ## Examples
+
+### Change Border Style
+
+Fix terminal rendering issues by changing the border style:
+
+```csharp
+// For terminals with Unicode issues (VS Code, some Windows Terminal fonts)
+// Use ASCII for maximum compatibility
+obj.Dump(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Ascii });
+
+// Use Square instead of Rounded if only corners are broken
+obj.Dump(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Square });
+```
+
+Set globally to fix all dumps:
+
+```csharp
+// Fix for entire application
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Ascii;
+
+// All dumps now use ASCII borders
+myObject.Dump();
+```
 
 ### Show Row Separators
 
@@ -126,7 +165,8 @@ var tableConfig = new TableConfig
     ShowMemberTypes = true,
     MaxCollectionCount = 50,
     ExpandTables = false,
-    NoColumnWrapping = false
+    NoColumnWrapping = false,
+    BorderStyle = TableBorderStyle.Rounded
 };
 
 obj.Dump(tableConfig: tableConfig);
@@ -171,6 +211,41 @@ obj.Dump(tableConfig: new TableConfig
     ShowArrayIndices = false,
     ShowMemberTypes = false
 });
+```
+
+---
+
+## Troubleshooting Terminal Display Issues
+
+If table borders appear as garbled characters or question marks, your terminal or font may not support the Unicode box-drawing characters used by the default `Rounded` border style.
+
+### VS Code Terminal
+
+VS Code's integrated terminal may not render rounded corners correctly with some fonts:
+
+```csharp
+// Option 1: Use ASCII borders (maximum compatibility)
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Ascii;
+
+// Option 2: Use Square borders (works with most fonts)
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Square;
+```
+
+### Windows Terminal
+
+If corners display incorrectly but other borders are fine:
+
+```csharp
+// Square borders use simpler Unicode characters
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Square;
+```
+
+### CI/CD Logs
+
+For build logs and CI environments where rendering may vary:
+
+```csharp
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Ascii;
 ```
 
 ---

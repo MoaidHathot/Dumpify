@@ -158,6 +158,18 @@ new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump(tableC
 ```
 ![image](https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/screenshots/row-separator.png)
 
+### Customize table border style
+If tables look garbled in your terminal (VS Code, Windows Terminal, etc.), you can change the border style:
+```csharp
+// Use ASCII borders for maximum compatibility
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Ascii;
+
+// Or use Square borders (simpler Unicode characters)
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Square;
+
+// Available styles: Rounded (default), Square, Ascii, None, Heavy, Double, Minimal, Markdown
+```
+
 ### You can set custom labels or auto-labels
 ```csharp
 new { Description = "You can manually specify labels to objects" }.Dump("Manual label");
