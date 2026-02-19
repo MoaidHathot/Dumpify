@@ -1,0 +1,7 @@
+﻿PersonWithStrings  
+╭───────┬───────────╮
+│ Name  │ Value     │
+├───────┼───────────┤
+│ Name  │ "Charlie" │
+│ Title │ "Mr."     │
+╰───────┴───────────╯

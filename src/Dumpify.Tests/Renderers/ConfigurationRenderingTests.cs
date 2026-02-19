@@ -10,6 +10,29 @@ public class ConfigurationRenderingTests
     private record Person(string Name, int Age, string? Email = null);
     private record Address(string Street, string City, int ZipCode);
     private record PersonWithAddress(string Name, Address HomeAddress);
+    private record PersonWithNullables(string Name, int Age, string? Email);
+    
+    private class PersonWithDefaults
+    {
+        public string Name { get; set; } = "";
+        public int Age { get; set; }
+        public double Score { get; set; }
+    }
+    
+    private class PersonWithStrings
+    {
+        public string Name { get; set; } = "";
+        public string Nickname { get; set; } = "";
+        public string Title { get; set; } = "";
+    }
+    
+    private class PersonWithSensitive
+    {
+        public string Name { get; set; } = "";
+        public int Age { get; set; }
+        public string Password { get; set; } = "";
+        public string Token { get; set; } = "";
+    }
     
     private class ClassWithPrivateMembers
     {
@@ -245,6 +268,74 @@ public class ConfigurationRenderingTests
         var output = data.DumpText(members: new MembersConfig 
         { 
             MemberFilter = ctx => ctx.Member.MemberType == typeof(string)
+        });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task MembersConfig_MemberFilter_ByValue_ExcludeNulls()
+    {
+        var data = new PersonWithNullables("Alice", 30, null);
+        var output = data.DumpText(members: new MembersConfig 
+        { 
+            MemberFilter = ctx => ctx.Value is not null
+        });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task MembersConfig_MemberFilter_ByValue_ExcludeDefaults()
+    {
+        var data = new PersonWithDefaults { Name = "Bob", Age = 0, Score = 0.0 };
+        var output = data.DumpText(members: new MembersConfig 
+        { 
+            MemberFilter = ctx =>
+            {
+                var value = ctx.Value;
+                if (value is int i && i == 0) return false;
+                if (value is double d && d == 0.0) return false;
+                return true;
+            }
+        });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task MembersConfig_MemberFilter_ByValue_OnlyNonEmptyStrings()
+    {
+        var data = new PersonWithStrings { Name = "Charlie", Nickname = "", Title = "Mr." };
+        var output = data.DumpText(members: new MembersConfig 
+        { 
+            MemberFilter = ctx => ctx.Value is not string str || !string.IsNullOrEmpty(str)
+        });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task MembersConfig_MemberFilter_ByDepth_OnlyTopLevel()
+    {
+        var data = new PersonWithAddress("Dave", new Address("123 Main St", "Springfield", 12345));
+        var output = data.DumpText(members: new MembersConfig 
+        { 
+            MemberFilter = ctx => ctx.Depth == 0
+        });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task MembersConfig_MemberFilter_Combined_NameAndValue()
+    {
+        var data = new PersonWithSensitive { Name = "Eve", Age = 25, Password = "secret123", Token = "" };
+        var output = data.DumpText(members: new MembersConfig 
+        { 
+            MemberFilter = ctx =>
+            {
+                // Exclude sensitive fields by name
+                if (ctx.Member.Name is "Password" or "Token") return false;
+                // Exclude empty strings
+                if (ctx.Value is string str && string.IsNullOrEmpty(str)) return false;
+                return true;
+            }
         });
         return Verify(output);
     }

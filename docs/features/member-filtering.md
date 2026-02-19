@@ -17,6 +17,8 @@ Dumpify allows you to control which members (properties and fields) are displaye
 - [Non-Public Members](#non-public-members)
 - [Virtual Members](#virtual-members)
 - [Custom Member Filters](#custom-member-filters)
+- [Value-Based Filtering](#value-based-filtering)
+- [Depth-Based Filtering](#depth-based-filtering)
 - [Per-Call Configuration](#per-call-configuration)
 
 ---
@@ -30,7 +32,20 @@ Dumpify allows you to control which members (properties and fields) are displaye
 | `IncludePublicMembers` | `bool` | `true` | Include public members |
 | `IncludeNonPublicMembers` | `bool` | `false` | Include private/protected members |
 | `IncludeVirtualMembers` | `bool` | `true` | Include virtual properties |
-| `MemberFilter` | `Func<IValueProvider, bool>?` | `null` | Custom filter function |
+| `MemberFilter` | `Func<MemberFilterContext, bool>?` | `null` | Custom filter function |
+
+---
+
+## MemberFilterContext
+
+The `MemberFilterContext` struct provides rich context for filtering decisions:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `Member` | `IValueProvider` | The member metadata (Name, Info, MemberType) |
+| `Value` | `object?` | The actual value of the member (lazy-evaluated) |
+| `Source` | `object` | The parent object containing this member |
+| `Depth` | `int` | Current rendering depth (0 = root level) |
 
 ---
 
@@ -122,11 +137,11 @@ EF navigation properties are typically virtual. To exclude them:
 DumpConfig.Default.MembersConfig.IncludeVirtualMembers = false;
 
 // Or use a custom filter for more control
-DumpConfig.Default.MembersConfig.MemberFilter = member =>
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
     // Exclude if it's a navigation property (another entity type)
-    return !typeof(IEnumerable).IsAssignableFrom(member.MemberType) 
-        || member.MemberType == typeof(string);
+    return !typeof(IEnumerable).IsAssignableFrom(ctx.Member.MemberType) 
+        || ctx.Member.MemberType == typeof(string);
 };
 ```
 
@@ -134,14 +149,14 @@ DumpConfig.Default.MembersConfig.MemberFilter = member =>
 
 ## Custom Member Filters
 
-Use `MemberFilter` for fine-grained control. The filter receives an `IValueProvider` which has `Name`, `Info` (the `MemberInfo`), and `MemberType` properties:
+Use `MemberFilter` for fine-grained control. The filter receives a `MemberFilterContext` which provides access to `Member` (with `Name`, `Info`, and `MemberType` properties), `Value`, `Source`, and `Depth`:
 
 ```csharp
-DumpConfig.Default.MembersConfig.MemberFilter = member =>
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
     // Exclude by name
-    if (member.Name == "Password") return false;
-    if (member.Name == "Secret") return false;
+    if (ctx.Member.Name == "Password") return false;
+    if (ctx.Member.Name == "Secret") return false;
     
     return true;
 };
@@ -163,21 +178,21 @@ public class User
 }
 
 // Filter out properties with [NoDump] attribute
-DumpConfig.Default.MembersConfig.MemberFilter = member =>
-    !member.Info.GetCustomAttributes(typeof(NoDumpAttribute), true).Any();
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
+    !ctx.Member.Info.GetCustomAttributes(typeof(NoDumpAttribute), true).Any();
 ```
 
 ### Filter by Type
 
 ```csharp
-DumpConfig.Default.MembersConfig.MemberFilter = member =>
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
     // Exclude Stream properties
-    if (typeof(Stream).IsAssignableFrom(member.MemberType))
+    if (typeof(Stream).IsAssignableFrom(ctx.Member.MemberType))
         return false;
     
     // Exclude Task properties
-    if (typeof(Task).IsAssignableFrom(member.MemberType))
+    if (typeof(Task).IsAssignableFrom(ctx.Member.MemberType))
         return false;
     
     return true;
@@ -187,15 +202,141 @@ DumpConfig.Default.MembersConfig.MemberFilter = member =>
 ### Filter by Name Pattern
 
 ```csharp
-DumpConfig.Default.MembersConfig.MemberFilter = member =>
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
     // Exclude properties ending with "Internal"
-    if (member.Name.EndsWith("Internal")) return false;
+    if (ctx.Member.Name.EndsWith("Internal")) return false;
     
     // Exclude properties starting with underscore
-    if (member.Name.StartsWith("_")) return false;
+    if (ctx.Member.Name.StartsWith("_")) return false;
     
     return true;
+};
+```
+
+---
+
+## Value-Based Filtering
+
+One of the most powerful features of `MemberFilterContext` is the ability to filter based on actual member values at render time:
+
+### Hide Null Values
+
+```csharp
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
+{
+    // Exclude members with null values
+    return ctx.Value is not null;
+};
+```
+
+### Hide Default Values
+
+```csharp
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
+{
+    var value = ctx.Value;
+    
+    // Exclude null
+    if (value is null) return false;
+    
+    // Exclude default numeric values
+    if (value is 0 or 0L or 0.0 or 0.0f or 0m) return false;
+    
+    // Exclude empty strings
+    if (value is string s && string.IsNullOrEmpty(s)) return false;
+    
+    // Exclude empty collections
+    if (value is ICollection { Count: 0 }) return false;
+    
+    return true;
+};
+```
+
+### Hide Sensitive Values
+
+```csharp
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
+{
+    // Hide any property containing "password" in its value
+    if (ctx.Value is string s && s.Contains("password", StringComparison.OrdinalIgnoreCase))
+        return false;
+    
+    return true;
+};
+```
+
+### Conditional Display Based on Value
+
+```csharp
+public class Order
+{
+    public int Id { get; set; }
+    public decimal Total { get; set; }
+    public string Status { get; set; }
+    public string InternalNotes { get; set; }
+}
+
+// Only show InternalNotes if Status is "Review"
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
+{
+    if (ctx.Member.Name == "InternalNotes")
+    {
+        // Access the parent object to check Status
+        if (ctx.Source is Order order)
+            return order.Status == "Review";
+    }
+    return true;
+};
+```
+
+---
+
+## Depth-Based Filtering
+
+Control member visibility based on nesting depth:
+
+### Limit Nested Object Details
+
+```csharp
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
+{
+    // At depth 0 (root), show everything
+    if (ctx.Depth == 0) return true;
+    
+    // At deeper levels, only show key properties
+    return ctx.Member.Name is "Id" or "Name" or "Title";
+};
+```
+
+### Hide Internal Properties at Nested Levels
+
+```csharp
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
+{
+    // Hide "Internal" suffixed properties when nested
+    if (ctx.Depth > 0 && ctx.Member.Name.EndsWith("Internal"))
+        return false;
+    
+    return true;
+};
+```
+
+### Progressive Detail Reduction
+
+```csharp
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
+{
+    // Depth 0: Show all
+    // Depth 1: Hide metadata properties
+    // Depth 2+: Only show essential properties
+    
+    return ctx.Depth switch
+    {
+        0 => true,
+        1 => !ctx.Member.Name.StartsWith("Meta"),
+        _ => ctx.Member.Name is "Id" or "Name"
+    };
 };
 ```
 
@@ -223,10 +364,10 @@ problematicObject.Dump(members: debugConfig);
 // Only show certain properties for this call
 var limitedConfig = new MembersConfig
 {
-    MemberFilter = member => 
-        member.Name == "Id" || 
-        member.Name == "Name" ||
-        member.Name == "Status"
+    MemberFilter = ctx => 
+        ctx.Member.Name == "Id" || 
+        ctx.Member.Name == "Name" ||
+        ctx.Member.Name == "Status"
 };
 
 detailedObject.Dump(members: limitedConfig);
@@ -243,11 +384,11 @@ var config = new MembersConfig
 {
     IncludeFields = true,           // Include fields...
     IncludeNonPublicMembers = true, // Include private members...
-    MemberFilter = member =>        // ...but only if they pass this filter
+    MemberFilter = ctx =>           // ...but only if they pass this filter
     {
         // Still exclude sensitive data
-        return !member.Name.Contains("Password") &&
-               !member.Name.Contains("Secret");
+        return !ctx.Member.Name.Contains("Password") &&
+               !ctx.Member.Name.Contains("Secret");
     }
 };
 ```
@@ -259,20 +400,35 @@ var config = new MembersConfig
 ### Hide Sensitive Data
 
 ```csharp
-DumpConfig.Default.MembersConfig.MemberFilter = member =>
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
     var sensitiveNames = new[] { "Password", "Token", "ApiKey", "Secret", "Credential" };
-    return !sensitiveNames.Any(s => member.Name.Contains(s, StringComparison.OrdinalIgnoreCase));
+    return !sensitiveNames.Any(s => ctx.Member.Name.Contains(s, StringComparison.OrdinalIgnoreCase));
 };
 ```
 
 ### Show Only Primitive Properties
 
 ```csharp
-DumpConfig.Default.MembersConfig.MemberFilter = member =>
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
-    var type = member.MemberType;
+    var type = ctx.Member.MemberType;
     return type.IsPrimitive || type == typeof(string) || type == typeof(decimal);
+};
+```
+
+### Hide Null and Empty Values
+
+```csharp
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
+{
+    var value = ctx.Value;
+    
+    if (value is null) return false;
+    if (value is string s && string.IsNullOrWhiteSpace(s)) return false;
+    if (value is ICollection { Count: 0 }) return false;
+    
+    return true;
 };
 ```
 
@@ -280,16 +436,33 @@ DumpConfig.Default.MembersConfig.MemberFilter = member =>
 
 ```csharp
 // Show everything except navigation properties
-DumpConfig.Default.MembersConfig.MemberFilter = member =>
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
     // Keep primitives, strings, DateTimes, etc.
-    var type = member.MemberType;
+    var type = ctx.Member.MemberType;
     if (type.IsPrimitive || type == typeof(string) || 
         type == typeof(DateTime) || type == typeof(Guid))
         return true;
     
     // Exclude complex types and collections (likely navigation properties)
     return false;
+};
+```
+
+### Depth-Aware Sensitive Data Hiding
+
+```csharp
+DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
+{
+    // At root level, hide passwords
+    // At nested levels, also hide tokens and keys
+    var sensitiveAtRoot = new[] { "Password" };
+    var sensitiveNested = new[] { "Password", "Token", "ApiKey", "Secret" };
+    
+    var sensitiveNames = ctx.Depth == 0 ? sensitiveAtRoot : sensitiveNested;
+    
+    return !sensitiveNames.Any(s => 
+        ctx.Member.Name.Contains(s, StringComparison.OrdinalIgnoreCase));
 };
 ```
 

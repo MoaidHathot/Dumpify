@@ -120,11 +120,29 @@ public class Person
     public string SensitiveData { get; set; }
 }
 
+// Filter by attribute - exclude members with [JsonIgnore]
 new Person()
 {
     Name = "Moaid",
     SensitiveData = "We don't want this to show up"
-}.Dump(members: new MembersConfig { MemberFilter = member => !member.Info.CustomAttributes.Any(a => a.AttributeType == typeof(JsonIgnoreAttribute)) });
+}.Dump(members: new MembersConfig { MemberFilter = ctx => !ctx.Member.Info.CustomAttributes.Any(a => a.AttributeType == typeof(JsonIgnoreAttribute)) });
+
+// Filter by value - exclude null or empty values (NEW!)
+new Person()
+{
+    Name = "Moaid",
+    SensitiveData = null
+}.Dump(members: new MembersConfig { MemberFilter = ctx => ctx.Value is not null });
+
+// Filter by depth - only show top-level properties (NEW!)
+myNestedObject.Dump(members: new MembersConfig { MemberFilter = ctx => ctx.Depth == 0 });
+```
+
+The `MemberFilter` receives a `MemberFilterContext` which provides:
+- `ctx.Member` - Access to member metadata (Name, Type, Attributes)
+- `ctx.Value` - The actual value of the member (lazily evaluated)
+- `ctx.Source` - The parent object containing the member
+- `ctx.Depth` - The current nesting depth during rendering
 ```
 
 ### You can turn on or off row separators and a type column
