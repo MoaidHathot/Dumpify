@@ -39,7 +39,8 @@ public static T? Dump<T>(
     TypeNamingConfig? typeNames = null,
     TableConfig? tableConfig = null,
     OutputConfig? outputConfig = null,
-    TypeRenderingConfig? typeRenderingConfig = null
+    TypeRenderingConfig? typeRenderingConfig = null,
+    TruncationConfig? truncationConfig = null
 )
 ```
 
@@ -80,7 +81,8 @@ public static T? DumpConsole<T>(
     TypeNamingConfig? typeNames = null,
     TableConfig? tableConfig = null,
     OutputConfig? outputConfig = null,
-    TypeRenderingConfig? typeRenderingConfig = null
+    TypeRenderingConfig? typeRenderingConfig = null,
+    TruncationConfig? truncationConfig = null
 )
 ```
 
@@ -113,7 +115,8 @@ public static T? DumpDebug<T>(
     TypeNamingConfig? typeNames = null,
     TableConfig? tableConfig = null,
     OutputConfig? outputConfig = null,
-    TypeRenderingConfig? typeRenderingConfig = null
+    TypeRenderingConfig? typeRenderingConfig = null,
+    TruncationConfig? truncationConfig = null
 )
 ```
 
@@ -146,7 +149,8 @@ public static T? DumpTrace<T>(
     TypeNamingConfig? typeNames = null,
     TableConfig? tableConfig = null,
     OutputConfig? outputConfig = null,
-    TypeRenderingConfig? typeRenderingConfig = null
+    TypeRenderingConfig? typeRenderingConfig = null,
+    TruncationConfig? truncationConfig = null
 )
 ```
 
@@ -179,7 +183,8 @@ public static string DumpText<T>(
     TypeNamingConfig? typeNames = null,
     TableConfig? tableConfig = null,
     OutputConfig? outputConfig = null,
-    TypeRenderingConfig? typeRenderingConfig = null
+    TypeRenderingConfig? typeRenderingConfig = null,
+    TruncationConfig? truncationConfig = null
 )
 ```
 
@@ -224,6 +229,7 @@ All extension methods share these parameters:
 | `tableConfig` | `TableConfig?` | Default table | Table rendering configuration |
 | `outputConfig` | `OutputConfig?` | Default output | Output dimensions configuration |
 | `typeRenderingConfig` | `TypeRenderingConfig?` | Default type rendering | Custom type handlers |
+| `truncationConfig` | `TruncationConfig?` | Default truncation | Collection truncation configuration |
 
 ---
 

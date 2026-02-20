@@ -56,47 +56,29 @@ internal class ArrayTypeRenderer(IRendererHandler<IRenderable, SpectreRendererSt
             context.Config.TruncationConfig.MaxCollectionCount,
             context.Config.TruncationConfig.Mode);
 
-        // Render start marker if present (for Tail or HeadAndTail modes)
-        if (truncated.StartMarker is { } startMarker)
-        {
-            rowIndicesBehavior?.AddHideIndexForRow(0, "");
-            var renderedMarker = RenderTruncationMarker(startMarker, context);
-            builder.AddRow(null, null, renderedMarker);
-        }
-
         // Track current row for index behavior
-        int currentRow = truncated.StartMarker != null ? 1 : 0;
+        int currentRow = 0;
 
-        // Render items with middle marker support
-        for (int i = 0; i < truncated.Items.Count; i++)
-        {
-            // Insert middle marker at the appropriate position (for HeadAndTail mode)
-            if (truncated.MiddleMarkerIndex == i && truncated.MiddleMarker is { } middleMarker)
+        truncated.ForEachWithMarkers(
+            onMarker: marker =>
             {
                 rowIndicesBehavior?.AddHideIndexForRow(currentRow, "");
-                var renderedMiddleMarker = RenderTruncationMarker(middleMarker, context);
-                builder.AddRow(null, null, renderedMiddleMarker);
+                var color = context.State.Colors.MetadataInfoColor;
+                var renderedMarker = new Markup(Markup.Escape(marker.GetDefaultMessage()), new Style(foreground: color));
+                builder.AddRow(null, null, renderedMarker);
                 currentRow++;
-            }
+            },
+            onItem: (item, _) =>
+            {
+                var type = item?.GetType() ?? mvd.ElementsType;
+                IDescriptor? itemsDescriptor = type is not null
+                    ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider)
+                    : null;
 
-            var item = truncated.Items[i];
-            var type = item?.GetType() ?? mvd.ElementsType;
-            IDescriptor? itemsDescriptor = type is not null
-                ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider)
-                : null;
-
-            var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
-            builder.AddRow(itemsDescriptor, item, renderedItem);
-            currentRow++;
-        }
-
-        // Render end marker if present (for Head mode)
-        if (truncated.EndMarker is { } endMarker)
-        {
-            rowIndicesBehavior?.AddHideIndexForRow(currentRow, "");
-            var renderedMarker = RenderTruncationMarker(endMarker, context);
-            builder.AddRow(null, null, renderedMarker);
-        }
+                var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
+                builder.AddRow(itemsDescriptor, item, renderedItem);
+                currentRow++;
+            });
 
         return builder.Build();
     }
@@ -249,12 +231,6 @@ internal class ArrayTypeRenderer(IRendererHandler<IRenderable, SpectreRendererSt
 
             return Enumerable.Range(0, count).Select(_ => (IRenderable)new Markup("")).ToList();
         }
-    }
-
-    private IRenderable RenderTruncationMarker(TruncationMarker marker, RenderContext<SpectreRendererState> context)
-    {
-        var color = context.State.Colors.MetadataInfoColor;
-        return new Markup(Markup.Escape(marker.GetDefaultMessage()), new Style(foreground: color));
     }
 
     private IRenderable RenderHighRankArrays(Array arr, MultiValueDescriptor descriptor, RenderContext context)

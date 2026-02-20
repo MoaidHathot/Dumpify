@@ -7,7 +7,7 @@ nav_order: 3
 
 # TableConfig
 
-`TableConfig` controls how tables are displayed when rendering objects, including headers, separators, indices, and collection truncation.
+`TableConfig` controls how tables are displayed when rendering objects, including headers, separators, indices, and border styles.
 
 ---
 
@@ -28,8 +28,9 @@ nav_order: 3
 | `ExpandTables` | `bool` | `false` | Expand tables to full width |
 | `ShowMemberTypes` | `bool` | `false` | Show a column with member types |
 | `ShowRowSeparators` | `bool` | `false` | Show separator lines between rows |
-| `MaxCollectionCount` | `int` | `int.MaxValue` | Maximum number of collection items to display |
 | `BorderStyle` | `TableBorderStyle` | `Rounded` | Border style for tables (see below) |
+
+> **Note:** Collection truncation is now configured via [TruncationConfig](truncation-config.md).
 
 ### Border Styles
 
@@ -114,18 +115,6 @@ var arr = new[] { "a", "b", "c" };
 arr.Dump(tableConfig: new TableConfig { ShowArrayIndices = false });
 ```
 
-### Truncate Large Collections
-
-Limit the number of items displayed from large collections:
-
-```csharp
-var largeArray = Enumerable.Range(1, 1000).ToArray();
-
-// Only show first 10 items
-largeArray.Dump(tableConfig: new TableConfig { MaxCollectionCount = 10 });
-// Output includes: "... truncated 990 items"
-```
-
 ### Expand Tables
 
 Make tables expand to fill available width:
@@ -148,7 +137,6 @@ obj.Dump(tableConfig: new TableConfig { NoColumnWrapping = true });
 // Set globally
 DumpConfig.Default.TableConfig.ShowRowSeparators = true;
 DumpConfig.Default.TableConfig.ShowMemberTypes = true;
-DumpConfig.Default.TableConfig.MaxCollectionCount = 100;
 
 // All dumps now use these settings
 myObject.Dump();
@@ -163,7 +151,6 @@ var tableConfig = new TableConfig
     ShowTableHeaders = true,
     ShowRowSeparators = true,
     ShowMemberTypes = true,
-    MaxCollectionCount = 50,
     ExpandTables = false,
     NoColumnWrapping = false,
     BorderStyle = TableBorderStyle.Rounded
@@ -175,16 +162,6 @@ obj.Dump(tableConfig: tableConfig);
 ---
 
 ## Use Cases
-
-### Debugging Large Collections
-
-When debugging large collections, use `MaxCollectionCount` to avoid overwhelming output:
-
-```csharp
-// Only show first 20 items from a large dataset
-database.GetAllUsers()
-    .Dump(tableConfig: new TableConfig { MaxCollectionCount = 20 });
-```
 
 ### Detailed Object Inspection
 
@@ -254,4 +231,5 @@ DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Ascii;
 
 - [Configuration Overview](index.md)
 - [Global Configuration](global-configuration.md)
+- [TruncationConfig](truncation-config.md) - Configure collection truncation
 - [Collections Feature](../features/collections.md)

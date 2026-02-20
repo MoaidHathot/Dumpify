@@ -1,4 +1,4 @@
-Dictionary<int, string>
+﻿Dictionary<int, string>
 ╭─────┬───────────────╮
 │ Key │ Value         │
 ├─────┼───────────────┤
@@ -7,5 +7,5 @@ Dictionary<int, string>
 │ 3   │ "value for 3" │
 │ 4   │ "value for 4" │
 │ 5   │ "value for 5" │
-│     │ ... 5 more    │
+│     │ [... 5 more]  │
 ╰─────┴───────────────╯

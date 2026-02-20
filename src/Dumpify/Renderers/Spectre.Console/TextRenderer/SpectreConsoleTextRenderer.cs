@@ -49,36 +49,21 @@ internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
         var renderedItems = new List<string>();
         var itemIndent = new string(' ', (context.CurrentDepth + 1) * 2);
 
-        // Render start marker if present (for Tail or HeadAndTail modes)
-        if (truncated.StartMarker is { } startMarker)
-        {
-            renderedItems.Add(startMarker.GetDefaultMessage());
-        }
-
-        // Render items with middle marker support
-        for (int i = 0; i < truncated.Items.Count; i++)
-        {
-            // Insert middle marker at the appropriate position (for HeadAndTail mode)
-            if (truncated.MiddleMarkerIndex == i && truncated.MiddleMarker is { } middleMarker)
+        truncated.ForEachWithMarkers(
+            onMarker: marker =>
             {
-                renderedItems.Add(middleMarker.GetDefaultMessage());
-            }
-
-            var item = truncated.Items[i];
-            var renderedItem = item switch
+                renderedItems.Add(marker.GetDefaultMessage());
+            },
+            onItem: (item, _) =>
             {
-                null => RenderNullValue(null, context).ToString() ?? "null",
-                not null => GetRenderedValue(item, descriptor.ElementsType).ToString() ?? ""
-            };
+                var renderedItem = item switch
+                {
+                    null => RenderNullValue(null, context).ToString() ?? "null",
+                    not null => GetRenderedValue(item, descriptor.ElementsType).ToString() ?? ""
+                };
 
-            renderedItems.Add(renderedItem);
-        }
-
-        // Render end marker if present (for Head mode)
-        if (truncated.EndMarker is { } endMarker)
-        {
-            renderedItems.Add(endMarker.GetDefaultMessage());
-        }
+                renderedItems.Add(renderedItem);
+            });
 
         if (renderedItems.Count == 0)
         {

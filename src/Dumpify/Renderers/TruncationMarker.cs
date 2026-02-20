@@ -1,49 +1,22 @@
 namespace Dumpify;
 
 /// <summary>
-/// Indicates where truncation occurred in a collection.
-/// </summary>
-public enum TruncationPosition
-{
-    /// <summary>
-    /// Truncation at the end (Head mode - showing first N items).
-    /// </summary>
-    End,
-
-    /// <summary>
-    /// Truncation at the start (Tail mode - showing last N items).
-    /// </summary>
-    Start,
-
-    /// <summary>
-    /// Truncation in the middle (HeadAndTail mode - showing first and last items).
-    /// </summary>
-    Middle
-}
-
-/// <summary>
 /// Represents a truncation point in rendered output with metadata about what was truncated.
 /// </summary>
-public sealed class TruncationMarker
+/// <remarks>
+/// Creates a new truncation marker.
+/// </remarks>
+public sealed class TruncationMarker(int truncatedCount, TruncationPosition position)
 {
     /// <summary>
     /// The number of items that were truncated.
     /// </summary>
-    public int TruncatedCount { get; }
+    public int TruncatedCount { get; } = truncatedCount;
 
     /// <summary>
     /// Where the truncation occurred.
     /// </summary>
-    public TruncationPosition Position { get; }
-
-    /// <summary>
-    /// Creates a new truncation marker.
-    /// </summary>
-    public TruncationMarker(int truncatedCount, TruncationPosition position)
-    {
-        TruncatedCount = truncatedCount;
-        Position = position;
-    }
+    public TruncationPosition Position { get; } = position;
 
     /// <summary>
     /// Gets a default message describing the truncation.
@@ -64,6 +37,6 @@ public sealed class TruncationMarker
     /// </summary>
     public string GetCompactMessage()
     {
-        return $"... +{TruncatedCount}";
+        return $"[... +{TruncatedCount}]";
     }
 }

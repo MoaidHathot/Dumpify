@@ -36,62 +36,37 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
             pairs,
             context.Config.TruncationConfig);
 
-        // Render start marker if present (for Tail or HeadAndTail modes)
-        if (truncated.StartMarker is { } startMarker)
-        {
-            var markerRenderable = RenderTruncationMarker(startMarker, context);
-            var emptyRenderable = new Markup("");
-            tableBuilder.AddRow(null, null, emptyRenderable, markerRenderable);
-        }
-
-        // Render items with middle marker support
-        for (int i = 0; i < truncated.Items.Count; i++)
-        {
-            // Insert middle marker at the appropriate position (for HeadAndTail mode)
-            if (truncated.MiddleMarkerIndex == i && truncated.MiddleMarker is { } middleMarker)
+        truncated.ForEachWithMarkers(
+            onMarker: marker =>
             {
-                var markerRenderable = RenderTruncationMarker(middleMarker, context);
+                var color = context.State.Colors.MetadataInfoColor;
+                var markerRenderable = new Markup(Markup.Escape(marker.GetDefaultMessage()), new Style(foreground: color));
                 var emptyRenderable = new Markup("");
                 tableBuilder.AddRow(null, null, emptyRenderable, markerRenderable);
-            }
-
-            var pair = truncated.Items[i];
-
-            var keyType = pair.key?.GetType();
-            var keyDescriptor = keyType is null ? null : DumpConfig.Default.Generator.Generate(keyType, null, context.Config.MemberProvider);
-            var keyRenderable = _handler.RenderDescriptor(pair.key, keyDescriptor, context);
-
-            var value = pair.value;
-
-            if (value is not null && valueType is null)
+            },
+            onItem: (pair, _) =>
             {
-                valueType = value.GetType();
-            }
+                var keyType = pair.key?.GetType();
+                var keyDescriptor = keyType is null ? null : DumpConfig.Default.Generator.Generate(keyType, null, context.Config.MemberProvider);
+                var keyRenderable = _handler.RenderDescriptor(pair.key, keyDescriptor, context);
 
-            (IDescriptor? valueDescriptor, IRenderable renderedValue) = value switch
-            {
-                null => (null, _handler.RenderNullValue(null, context)),
-                not null => GetDescriptorAndRender(value, context),
-            };
+                var value = pair.value;
 
-            tableBuilder.AddRow(valueDescriptor, value, keyRenderable, renderedValue);
-        }
+                if (value is not null && valueType is null)
+                {
+                    valueType = value.GetType();
+                }
 
-        // Render end marker if present (for Head mode)
-        if (truncated.EndMarker is { } endMarker)
-        {
-            var markerRenderable = RenderTruncationMarker(endMarker, context);
-            var emptyRenderable = new Markup("");
-            tableBuilder.AddRow(null, null, emptyRenderable, markerRenderable);
-        }
+                (IDescriptor? valueDescriptor, IRenderable renderedValue) = value switch
+                {
+                    null => (null, _handler.RenderNullValue(null, context)),
+                    not null => GetDescriptorAndRender(value, context),
+                };
+
+                tableBuilder.AddRow(valueDescriptor, value, keyRenderable, renderedValue);
+            });
 
         return tableBuilder.Build();
-    }
-
-    private IRenderable RenderTruncationMarker(TruncationMarker marker, RenderContext<SpectreRendererState> context)
-    {
-        var color = context.State.Colors.MetadataInfoColor;
-        return new Markup(Markup.Escape(marker.GetDefaultMessage()), new Style(foreground: color));
     }
 
     private (IDescriptor? descriptor, IRenderable renderedValue) GetDescriptorAndRender(object value, RenderContext<SpectreRendererState> context)

@@ -40,40 +40,23 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
             obj.Cast<object?>(),
             context.Config.TruncationConfig);
 
-        // Render start marker if present (for Tail or HeadAndTail modes)
-        if (truncated.StartMarker is { } startMarker)
-        {
-            var renderedMarker = RenderTruncationMarker(startMarker, context);
-            builder.AddRow(null, null, renderedMarker);
-        }
-
-        // Render items with middle marker support
-        for (int i = 0; i < truncated.Items.Count; i++)
-        {
-            // Insert middle marker at the appropriate position (for HeadAndTail mode)
-            if (truncated.MiddleMarkerIndex == i && truncated.MiddleMarker is { } middleMarker)
+        truncated.ForEachWithMarkers(
+            onMarker: marker =>
             {
-                var renderedMiddleMarker = RenderTruncationMarker(middleMarker, context);
-                builder.AddRow(null, null, renderedMiddleMarker);
-            }
+                var renderedMarker = RenderTruncationMarker(marker, context);
+                builder.AddRow(null, null, renderedMarker);
+            },
+            onItem: (item, _) =>
+            {
+                var type = descriptor.ElementsType ?? item?.GetType();
 
-            var item = truncated.Items[i];
-            var type = descriptor.ElementsType ?? item?.GetType();
+                IDescriptor? itemsDescriptor = type is not null
+                    ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider)
+                    : null;
 
-            IDescriptor? itemsDescriptor = type is not null
-                ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider)
-                : null;
-
-            var renderedItem = RenderDescriptor(item, itemsDescriptor, context);
-            builder.AddRow(itemsDescriptor, item, renderedItem);
-        }
-
-        // Render end marker if present (for Head mode)
-        if (truncated.EndMarker is { } endMarker)
-        {
-            var renderedMarker = RenderTruncationMarker(endMarker, context);
-            builder.AddRow(null, null, renderedMarker);
-        }
+                var renderedItem = RenderDescriptor(item, itemsDescriptor, context);
+                builder.AddRow(itemsDescriptor, item, renderedItem);
+            });
 
         return builder.Build();
 

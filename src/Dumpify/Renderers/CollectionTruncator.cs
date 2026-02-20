@@ -1,80 +1,4 @@
-using System.Collections;
-
 namespace Dumpify;
-
-/// <summary>
-/// Represents the result of truncating a collection, containing the visible items
-/// and metadata about what was truncated.
-/// </summary>
-public sealed class TruncatedEnumerable<T>
-{
-    /// <summary>
-    /// The items to display (after truncation).
-    /// </summary>
-    public IReadOnlyList<T> Items { get; }
-
-    /// <summary>
-    /// The total count of items in the original collection.
-    /// </summary>
-    public int TotalCount { get; }
-
-    /// <summary>
-    /// The truncation mode that was applied.
-    /// </summary>
-    public TruncationMode Mode { get; }
-
-    /// <summary>
-    /// Marker for truncation at the start (for Tail or HeadAndTail modes).
-    /// Null if no truncation at start.
-    /// </summary>
-    public TruncationMarker? StartMarker { get; }
-
-    /// <summary>
-    /// Marker for truncation at the end (for Head or HeadAndTail modes).
-    /// Null if no truncation at end.
-    /// </summary>
-    public TruncationMarker? EndMarker { get; }
-
-    /// <summary>
-    /// For HeadAndTail mode: the index in Items where the middle marker should be inserted.
-    /// Null for other modes.
-    /// </summary>
-    public int? MiddleMarkerIndex { get; }
-
-    /// <summary>
-    /// Marker for truncation in the middle (for HeadAndTail mode).
-    /// Null for other modes.
-    /// </summary>
-    public TruncationMarker? MiddleMarker { get; }
-
-    /// <summary>
-    /// The number of items that were truncated.
-    /// </summary>
-    public int TruncatedCount => TotalCount - Items.Count;
-
-    /// <summary>
-    /// Whether any truncation occurred.
-    /// </summary>
-    public bool WasTruncated => TruncatedCount > 0;
-
-    internal TruncatedEnumerable(
-        IReadOnlyList<T> items,
-        int totalCount,
-        TruncationMode mode,
-        TruncationMarker? startMarker = null,
-        TruncationMarker? endMarker = null,
-        TruncationMarker? middleMarker = null,
-        int? middleMarkerIndex = null)
-    {
-        Items = items;
-        TotalCount = totalCount;
-        Mode = mode;
-        StartMarker = startMarker;
-        EndMarker = endMarker;
-        MiddleMarker = middleMarker;
-        MiddleMarkerIndex = middleMarkerIndex;
-    }
-}
 
 /// <summary>
 /// Utility class for efficiently truncating collections.
@@ -210,13 +134,13 @@ public static class CollectionTruncator
     private static TruncatedEnumerable<T> TruncateHeadAndTail<T>(IEnumerable<T> source, int maxCount)
     {
         // We need to know the total count first, so materialize
-        var all = source as IList<T> ?? source.ToList();
+        var all = source as IList<T> ?? [.. source];
         var totalCount = all.Count;
 
         if (totalCount <= maxCount)
         {
             return new TruncatedEnumerable<T>(
-                all as IReadOnlyList<T> ?? all.ToList(),
+                all as IReadOnlyList<T> ?? [.. all],
                 totalCount,
                 TruncationMode.HeadAndTail);
         }

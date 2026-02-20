@@ -411,7 +411,7 @@ public class ConfigMergeTests
         // Verify truncation is happening (MaxCollectionCount = 2 is being respected)
         Assert.Contains("1", output);
         Assert.Contains("2", output);
-        Assert.Contains("... 3 more", output);
+        Assert.Contains("[... 3 more]", output);
         
         // Also verify that the default border style (Rounded) is preserved
         // Rounded border uses these characters: ╭ ╮ ╰ ╯

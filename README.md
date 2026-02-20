@@ -80,13 +80,22 @@ new Dictionary<string, string>
 ```
 ![image](https://user-images.githubusercontent.com/8770486/232251913-add4a0d8-3355-44f6-ba94-5dfbf8d8e2ac.png)
 
-You can ensure that arrays, dictionaries and collections don't output too much by allowing results to be truncated. Do this by setting the `MaxCollectionCount` property in the tableConfig.
+You can ensure that arrays, dictionaries and collections don't output too much by allowing results to be truncated. Do this by setting the `MaxCollectionCount` property in the `TruncationConfig`.
 
 ```csharp
-int[] arr = [1, 2, 3, 4];
+int[] arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-// Outputs only the first two elements and a message that says: ... truncated 2 items
-arr.Dump(tableConfig: new () { MaxCollectionCount = 2 });
+// Outputs only the first 5 elements with a truncation marker
+arr.Dump(truncationConfig: new TruncationConfig { MaxCollectionCount = 5 });
+// Shows: 1, 2, 3, 4, 5, [... 5 more]
+
+// You can also truncate from the tail (last N elements)
+arr.Dump(truncationConfig: new TruncationConfig { MaxCollectionCount = 5, Mode = TruncationMode.Tail });
+// Shows: [... 5 more], 6, 7, 8, 9, 10
+
+// Or show both head and tail with truncation in the middle
+arr.Dump(truncationConfig: new TruncationConfig { MaxCollectionCount = 6, Mode = TruncationMode.HeadAndTail });
+// Shows: 1, 2, 3, [... 4 more], 9, 10
 ```
 
 ### You can turn on or off fields and private members

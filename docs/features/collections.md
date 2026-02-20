@@ -254,16 +254,21 @@ deepStructure.Dump(maxDepth: 2);
 
 ### Large Collections
 
-For very large collections, consider limiting output:
+For very large collections, use truncation to limit output:
 
 ```csharp
-// Only dump first 100 items
-largeList.Take(100).Dump("First 100 items");
+// Truncate to first 100 items (memory-efficient)
+largeList.Dump(truncationConfig: new TruncationConfig { MaxCollectionCount = 100 });
 
-// Or check count first
-largeList.Count.Dump("Total count");
-largeList.Take(10).Dump("Sample");
+// Show head and tail
+largeList.Dump(truncationConfig: new TruncationConfig 
+{ 
+    MaxCollectionCount = 20, 
+    Mode = TruncationMode.HeadAndTail 
+});
 ```
+
+Truncation is memory-efficient - only the displayed elements are enumerated and stored.
 
 ### Lazy Evaluation
 
@@ -284,8 +289,41 @@ GetNumbers().Dump();
 
 ---
 
+## Collection Truncation
+
+When working with large collections, use `TruncationConfig` to limit output:
+
+```csharp
+var largeArray = Enumerable.Range(1, 1000).ToArray();
+
+// Show first 10 items
+largeArray.Dump(truncationConfig: new TruncationConfig { MaxCollectionCount = 10 });
+// Output: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, [... 990 more]
+
+// Show last 10 items
+largeArray.Dump(truncationConfig: new TruncationConfig 
+{ 
+    MaxCollectionCount = 10, 
+    Mode = TruncationMode.Tail 
+});
+// Output: [... 990 more], 991, 992, 993, 994, 995, 996, 997, 998, 999, 1000
+
+// Show head and tail
+largeArray.Dump(truncationConfig: new TruncationConfig 
+{ 
+    MaxCollectionCount = 10, 
+    Mode = TruncationMode.HeadAndTail 
+});
+// Output: 1, 2, 3, 4, 5, [... 990 more], 996, 997, 998, 999, 1000
+```
+
+See [TruncationConfig](../configuration/truncation-config.md) for full documentation.
+
+---
+
 ## See Also
 
 - [Basic Usage Examples](../examples/basic-usage.md)
 - [Member Filtering](./member-filtering.md)
+- [TruncationConfig](../configuration/truncation-config.md)
 - [Features Overview](./index.md)
