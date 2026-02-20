@@ -1,10 +1,8 @@
 using Dumpify.Descriptors;
-using Dumpiyf;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Drawing;
 
 namespace Dumpify;
 
@@ -22,7 +20,6 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
         AddCustomTypeDescriptor(new SystemReflectionTypeRenderer(this));
         AddCustomTypeDescriptor(new TimeTypesRenderer(this));
         AddCustomTypeDescriptor(new GuidTypeRenderer(this));
-        AddCustomTypeDescriptor(new LabelRenderer(this));
         AddCustomTypeDescriptor(new LazyTypeRenderer(this));
         AddCustomTypeDescriptor(new TaskTypeRenderer(this));
     }
@@ -30,45 +27,52 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
     protected override IRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext<SpectreRendererState> context)
         => RenderIEnumerable((IEnumerable)obj, descriptor, context);
 
-    protected override IRenderable RenderLabelDescriptor(object obj, LabelDescriptor descriptor, RenderContext<SpectreRendererState> context)
-        => new Markup(Markup.Escape(obj.ToString() ?? ""));
-
     private IRenderable RenderIEnumerable(IEnumerable obj, MultiValueDescriptor descriptor, RenderContext<SpectreRendererState> context)
     {
         var builder = new ObjectTableBuilder(context, descriptor, obj)
             .HideTitle();
 
         var typeName = GetTypeName(descriptor.Type);
+        builder.AddColumnName(typeName, new Style(foreground: context.State.Colors.TypeNameColor));
 
-        builder.AddColumnName(typeName + "", new Style(foreground: context.State.Colors.TypeNameColor));
+        // Use the centralized truncation utility
+        var truncated = CollectionTruncator.Truncate(
+            obj.Cast<object?>(),
+            context.Config.TruncationConfig);
 
-        var items = new ArrayList();
-        foreach (var item in obj)
+        // Render start marker if present (for Tail or HeadAndTail modes)
+        if (truncated.StartMarker is { } startMarker)
         {
-            items.Add(item);
+            var renderedMarker = RenderTruncationMarker(startMarker, context);
+            builder.AddRow(null, null, renderedMarker);
         }
 
-        int maxCollectionCount = context.Config.TableConfig.MaxCollectionCount;
-        int length = items.Count > maxCollectionCount ? maxCollectionCount : items.Count;
-
-        for(int i = 0; i < length; i++)
+        // Render items with middle marker support
+        for (int i = 0; i < truncated.Items.Count; i++)
         {
-            var item = items[i];
+            // Insert middle marker at the appropriate position (for HeadAndTail mode)
+            if (truncated.MiddleMarkerIndex == i && truncated.MiddleMarker is { } middleMarker)
+            {
+                var renderedMiddleMarker = RenderTruncationMarker(middleMarker, context);
+                builder.AddRow(null, null, renderedMiddleMarker);
+            }
+
+            var item = truncated.Items[i];
             var type = descriptor.ElementsType ?? item?.GetType();
 
-            IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider) : null;
+            IDescriptor? itemsDescriptor = type is not null
+                ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider)
+                : null;
 
             var renderedItem = RenderDescriptor(item, itemsDescriptor, context);
             builder.AddRow(itemsDescriptor, item, renderedItem);
         }
 
-        if (items.Count > maxCollectionCount)
+        // Render end marker if present (for Head mode)
+        if (truncated.EndMarker is { } endMarker)
         {
-            string truncatedNotificationText = $"... truncated {items.Count - maxCollectionCount} items";
-
-            var labelDescriptor = new LabelDescriptor(typeof(string), null);
-            var renderedItem = RenderDescriptor(truncatedNotificationText, labelDescriptor, context);
-            builder.AddRow(labelDescriptor, truncatedNotificationText, renderedItem);
+            var renderedMarker = RenderTruncationMarker(endMarker, context);
+            builder.AddRow(null, null, renderedMarker);
         }
 
         return builder.Build();
@@ -81,7 +85,6 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
             }
 
             var (name, rank) = context.Config.TypeNameProvider.GetJaggedArrayNameWithRank(type);
-
             return $"{name}[{new string(',', rank + 1)}]";
         }
     }

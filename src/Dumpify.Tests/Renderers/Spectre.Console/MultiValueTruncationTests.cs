@@ -53,7 +53,7 @@ public class MultiValueTruncationTests
 
     private static string DumpWithMaxCount(object collection, int maxCount)
     {
-        return collection.DumpText(tableConfig: new TableConfig { MaxCollectionCount = maxCount });
+        return collection.DumpText(truncationConfig: new TruncationConfig { MaxCollectionCount = maxCount });
     }
 
     #endregion

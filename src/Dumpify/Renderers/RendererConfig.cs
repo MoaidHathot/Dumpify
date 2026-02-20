@@ -11,6 +11,7 @@ public record RendererConfig
     public TableConfig TableConfig { get; init; } = new TableConfig();
     public TypeNamingConfig TypeNamingConfig { get; init; } = new TypeNamingConfig();
     public TypeRenderingConfig TypeRenderingConfig { get; init; } = new TypeRenderingConfig();
+    public TruncationConfig TruncationConfig { get; init; } = new TruncationConfig();
     public required IMemberProvider MemberProvider { get; init; }
     public required ITypeNameProvider TypeNameProvider { get; init; }
     

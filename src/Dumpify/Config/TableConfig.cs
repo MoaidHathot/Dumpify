@@ -8,7 +8,6 @@ public class TableConfig : ConfigBase<TableConfig>
     public TrackableProperty<bool> ExpandTables { get; set; } = new(false);
     public TrackableProperty<bool> ShowMemberTypes { get; set; } = new(false);
     public TrackableProperty<bool> ShowRowSeparators { get; set; } = new(false);
-    public TrackableProperty<int> MaxCollectionCount { get; set; } = new(int.MaxValue);
 
     /// <summary>
     /// The border style for tables. Default is Rounded.
@@ -27,7 +26,6 @@ public class TableConfig : ConfigBase<TableConfig>
             ExpandTables = Merge(ExpandTables, overrideConfig.ExpandTables),
             ShowMemberTypes = Merge(ShowMemberTypes, overrideConfig.ShowMemberTypes),
             ShowRowSeparators = Merge(ShowRowSeparators, overrideConfig.ShowRowSeparators),
-            MaxCollectionCount = Merge(MaxCollectionCount, overrideConfig.MaxCollectionCount),
             BorderStyle = Merge(BorderStyle, overrideConfig.BorderStyle),
         };
     }

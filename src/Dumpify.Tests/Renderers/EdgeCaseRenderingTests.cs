@@ -303,7 +303,7 @@ public class EdgeCaseRenderingTests
     public Task Truncation_ArrayTruncatedAt5()
     {
         var arr = Enumerable.Range(1, 20).ToArray();
-        var result = arr.DumpText(tableConfig: new TableConfig { MaxCollectionCount = 5 });
+        var result = arr.DumpText(truncationConfig: new TruncationConfig { MaxCollectionCount = 5 });
         return Verify(result);
     }
 
@@ -311,7 +311,7 @@ public class EdgeCaseRenderingTests
     public Task Truncation_ListTruncatedAt3()
     {
         var list = Enumerable.Range(1, 10).ToList();
-        var result = list.DumpText(tableConfig: new TableConfig { MaxCollectionCount = 3 });
+        var result = list.DumpText(truncationConfig: new TruncationConfig { MaxCollectionCount = 3 });
         return Verify(result);
     }
 
@@ -319,7 +319,7 @@ public class EdgeCaseRenderingTests
     public Task Truncation_DictionaryTruncatedAt2()
     {
         var dict = Enumerable.Range(1, 8).ToDictionary(x => $"Key{x}", x => x * 10);
-        var result = dict.DumpText(tableConfig: new TableConfig { MaxCollectionCount = 2 });
+        var result = dict.DumpText(truncationConfig: new TruncationConfig { MaxCollectionCount = 2 });
         return Verify(result);
     }
 
@@ -327,7 +327,7 @@ public class EdgeCaseRenderingTests
     public Task Truncation_NoTruncationWhenUnderLimit()
     {
         var arr = new[] { 1, 2, 3 };
-        var result = arr.DumpText(tableConfig: new TableConfig { MaxCollectionCount = 10 });
+        var result = arr.DumpText(truncationConfig: new TruncationConfig { MaxCollectionCount = 10 });
         return Verify(result);
     }
 
@@ -335,7 +335,7 @@ public class EdgeCaseRenderingTests
     public Task Truncation_ExactlyAtLimit()
     {
         var arr = new[] { 1, 2, 3, 4, 5 };
-        var result = arr.DumpText(tableConfig: new TableConfig { MaxCollectionCount = 5 });
+        var result = arr.DumpText(truncationConfig: new TruncationConfig { MaxCollectionCount = 5 });
         return Verify(result);
     }
 

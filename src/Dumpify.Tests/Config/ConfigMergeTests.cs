@@ -25,7 +25,6 @@ public class ConfigMergeTests
             ShowTableHeaders = false,
             ShowMemberTypes = true,
             ShowRowSeparators = true,
-            MaxCollectionCount = 50,
             BorderStyle = TableBorderStyle.Heavy
         };
 
@@ -38,7 +37,6 @@ public class ConfigMergeTests
         Assert.False(result.ShowTableHeaders);
         Assert.True(result.ShowMemberTypes);
         Assert.True(result.ShowRowSeparators);
-        Assert.Equal(50, (int)result.MaxCollectionCount);
         Assert.Equal(TableBorderStyle.Heavy, (TableBorderStyle)result.BorderStyle);
     }
 
@@ -52,8 +50,8 @@ public class ConfigMergeTests
             BorderStyle = TableBorderStyle.Heavy
         };
 
-        // Only override MaxCollectionCount
-        var overrideConfig = new TableConfig { MaxCollectionCount = 5 };
+        // Only override ShowArrayIndices
+        var overrideConfig = new TableConfig { ShowArrayIndices = false };
 
         var result = baseConfig.MergeWith(overrideConfig);
 
@@ -63,14 +61,14 @@ public class ConfigMergeTests
         Assert.Equal(TableBorderStyle.Heavy, (TableBorderStyle)result.BorderStyle);
 
         // Override value should be applied
-        Assert.Equal(5, (int)result.MaxCollectionCount);
+        Assert.False(result.ShowArrayIndices);
     }
 
     [Fact]
     public void TableConfig_MergeWith_CreatesNewInstance()
     {
         var baseConfig = new TableConfig { ShowMemberTypes = true };
-        var overrideConfig = new TableConfig { MaxCollectionCount = 10 };
+        var overrideConfig = new TableConfig { ShowArrayIndices = false };
 
         var result = baseConfig.MergeWith(overrideConfig);
 
@@ -110,7 +108,7 @@ public class ConfigMergeTests
 
         Assert.False(config.ShowArrayIndices.IsSet);
         Assert.False(config.ShowTableHeaders.IsSet);
-        Assert.False(config.MaxCollectionCount.IsSet);
+        Assert.False(config.ShowMemberTypes.IsSet);
         Assert.False(config.BorderStyle.IsSet);
     }
 
@@ -404,16 +402,16 @@ public class ConfigMergeTests
         // we verify that per-dump configs merge properly by checking that 
         // setting one property in per-dump config doesn't reset other properties to defaults
         
-        // When we provide a TableConfig with only MaxCollectionCount set,
+        // When we provide a TruncationConfig with MaxCollectionCount set,
         // the default values for other properties should come from global config
         // (which uses default values). So we verify the truncation works.
         var data = new[] { 1, 2, 3, 4, 5 };
-        var output = data.DumpText(tableConfig: new TableConfig { MaxCollectionCount = 2 });
+        var output = data.DumpText(truncationConfig: new TruncationConfig { MaxCollectionCount = 2 });
 
         // Verify truncation is happening (MaxCollectionCount = 2 is being respected)
         Assert.Contains("1", output);
         Assert.Contains("2", output);
-        Assert.Contains("truncated", output.ToLower());
+        Assert.Contains("... 3 more", output);
         
         // Also verify that the default border style (Rounded) is preserved
         // Rounded border uses these characters: ╭ ╮ ╰ ╯

@@ -124,7 +124,7 @@ public class ConfigurationRenderingTests
     public Task TableConfig_MaxCollectionCount_LimitedTo2()
     {
         var data = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        var output = data.DumpText(tableConfig: new TableConfig { MaxCollectionCount = 2 });
+        var output = data.DumpText(truncationConfig: new TruncationConfig { MaxCollectionCount = 2 });
         return Verify(output);
     }
     
@@ -132,7 +132,7 @@ public class ConfigurationRenderingTests
     public Task TableConfig_MaxCollectionCount_LimitedTo5()
     {
         var data = Enumerable.Range(1, 20).ToArray();
-        var output = data.DumpText(tableConfig: new TableConfig { MaxCollectionCount = 5 });
+        var output = data.DumpText(truncationConfig: new TruncationConfig { MaxCollectionCount = 5 });
         return Verify(output);
     }
     
@@ -140,7 +140,7 @@ public class ConfigurationRenderingTests
     public Task TableConfig_MaxCollectionCount_Unlimited()
     {
         var data = new[] { 1, 2, 3, 4, 5 };
-        var output = data.DumpText(tableConfig: new TableConfig { MaxCollectionCount = int.MaxValue });
+        var output = data.DumpText(truncationConfig: new TruncationConfig { MaxCollectionCount = int.MaxValue });
         return Verify(output);
     }
     
@@ -153,10 +153,9 @@ public class ConfigurationRenderingTests
             ShowArrayIndices = true,
             ShowTableHeaders = true,
             ShowMemberTypes = true,
-            ShowRowSeparators = true,
-            MaxCollectionCount = 2
+            ShowRowSeparators = true
         };
-        var output = data.DumpText(tableConfig: config);
+        var output = data.DumpText(tableConfig: config, truncationConfig: new TruncationConfig { MaxCollectionCount = 2 });
         return Verify(output);
     }
     
@@ -679,9 +678,9 @@ public class ConfigurationRenderingTests
             { 
                 ShowArrayIndices = true,
                 ShowMemberTypes = true,
-                ShowRowSeparators = true,
-                MaxCollectionCount = 10
+                ShowRowSeparators = true
             },
+            truncationConfig: new TruncationConfig { MaxCollectionCount = 10 },
             typeNames: new TypeNamingConfig 
             { 
                 UseAliases = true,

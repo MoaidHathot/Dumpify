@@ -1,11 +1,11 @@
-﻿Dictionary<int, string>    
-╭─────┬───────────────────────╮
-│ Key │ Value                 │
-├─────┼───────────────────────┤
-│ 1   │ "value for 1"         │
-│ 2   │ "value for 2"         │
-│ 3   │ "value for 3"         │
-│ 4   │ "value for 4"         │
-│ 5   │ "value for 5"         │
-│     │ ... truncated 5 items │
-╰─────┴───────────────────────╯
+Dictionary<int, string>
+╭─────┬───────────────╮
+│ Key │ Value         │
+├─────┼───────────────┤
+│ 1   │ "value for 1" │
+│ 2   │ "value for 2" │
+│ 3   │ "value for 3" │
+│ 4   │ "value for 4" │
+│ 5   │ "value for 5" │
+│     │ ... 5 more    │
+╰─────┴───────────────╯

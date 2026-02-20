@@ -2,7 +2,6 @@ using Dumpify.Descriptors;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Data;
-using System.Data.Common;
 
 namespace Dumpify;
 
@@ -33,83 +32,150 @@ internal class DataTableTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         builder.SetTitle(title);
 
-        int maxCollectionCount = context.Config.TableConfig.MaxCollectionCount;
-        int rows = dataTable.Rows.Count > maxCollectionCount ? maxCollectionCount : dataTable.Rows.Count;
-        int columns = dataTable.Columns.Count > maxCollectionCount ? maxCollectionCount : dataTable.Columns.Count;
+        // Use centralized truncation for rows and columns
+        var maxCount = context.Config.TruncationConfig.MaxCollectionCount.Value;
+        var mode = context.Config.TruncationConfig.Mode.Value;
 
-        var dataTableContents = new object[rows, columns];
+        var rowTruncated = CollectionTruncator.Truncate(
+            Enumerable.Range(0, dataTable.Rows.Count),
+            maxCount,
+            mode);
 
-        for(int column = 0; column < columns; column++)
+        var colTruncated = CollectionTruncator.Truncate(
+            Enumerable.Range(0, dataTable.Columns.Count),
+            maxCount,
+            mode);
+
+        // Add column headers
+        // Start column marker
+        if (colTruncated.StartMarker != null)
         {
-            for(int row = 0; row < rows; row++)
+            builder.AddColumnName(colTruncated.StartMarker.GetCompactMessage());
+        }
+
+        for (int i = 0; i < colTruncated.Items.Count; i++)
+        {
+            // Middle marker for columns
+            if (colTruncated.MiddleMarkerIndex == i && colTruncated.MiddleMarker != null)
             {
-                dataTableContents[row, column] = dataTable.Rows[row][column];
-            }
-        }
-
-        for (int column = 0; column < columns; column++)
-        {
-            builder.AddColumnName(dataTable.Columns[column].ColumnName);
-        }
-
-        if (dataTable.Columns.Count > maxCollectionCount)
-        {
-            builder.AddColumnName($"... +{dataTable.Columns.Count - maxCollectionCount}");
-        }
-
-        for (int row = 0; row < rows; row++)
-        {
-            List<object?> rowContents = new();
-            List<IRenderable> renderables = new();
-            for (int column = 0; column < columns; column++)
-            {
-                rowContents.Add(dataTableContents[row, column]);
-                renderables.Add(RenderTableCell(dataTableContents[row, column], context));
+                builder.AddColumnName(colTruncated.MiddleMarker.GetCompactMessage());
             }
 
-            if (dataTable.Columns.Count > maxCollectionCount)
-            {
-                rowContents.Add(string.Empty);
-                renderables.Add(RenderTableCell(string.Empty, context, true));
-            }
-
-            builder.AddRow(null, rowContents, renderables);
+            builder.AddColumnName(dataTable.Columns[colTruncated.Items[i]].ColumnName);
         }
 
-        if (dataTable.Rows.Count > maxCollectionCount)
+        // End column marker
+        if (colTruncated.EndMarker != null)
         {
+            builder.AddColumnName(colTruncated.EndMarker.GetCompactMessage());
+        }
+
+        // Render start row marker
+        if (rowTruncated.StartMarker != null)
+        {
+            var rowCells = CreateMarkerRow(rowTruncated.StartMarker, colTruncated, context);
+            builder.AddRow(null, null, rowCells);
+        }
+
+        // Render rows
+        for (int ri = 0; ri < rowTruncated.Items.Count; ri++)
+        {
+            // Middle marker for rows
+            if (rowTruncated.MiddleMarkerIndex == ri && rowTruncated.MiddleMarker != null)
+            {
+                var markerCells = CreateMarkerRow(rowTruncated.MiddleMarker, colTruncated, context);
+                builder.AddRow(null, null, markerCells);
+            }
+
+            var row = rowTruncated.Items[ri];
             var rowCells = new List<IRenderable>();
-            for (int i = 0; i <= columns; i++)
+            var rowContents = new List<object?>();
+
+            // Start column marker cell
+            if (colTruncated.StartMarker != null)
             {
-                var truncatedNotificationText = $"... +{dataTable.Rows.Count - maxCollectionCount}";
-                if (i > 0)
+                rowCells.Add(new Markup(""));
+                rowContents.Add(null);
+            }
+
+            for (int ci = 0; ci < colTruncated.Items.Count; ci++)
+            {
+                // Middle marker for columns
+                if (colTruncated.MiddleMarkerIndex == ci && colTruncated.MiddleMarker != null)
                 {
-                    truncatedNotificationText = string.Empty;
+                    rowCells.Add(new Markup(""));
+                    rowContents.Add(null);
                 }
 
-                var renderedCell = RenderTableCell(truncatedNotificationText, context, true);
-                rowCells.Add(renderedCell);
+                var col = colTruncated.Items[ci];
+                var cellValue = dataTable.Rows[row][col];
+                rowContents.Add(cellValue);
+                rowCells.Add(RenderTableCell(cellValue, context));
             }
 
+            // End column marker cell
+            if (colTruncated.EndMarker != null)
+            {
+                rowCells.Add(new Markup(""));
+                rowContents.Add(null);
+            }
+
+            builder.AddRow(null, rowContents, rowCells);
+        }
+
+        // Render end row marker
+        if (rowTruncated.EndMarker != null)
+        {
+            var rowCells = CreateMarkerRow(rowTruncated.EndMarker, colTruncated, context);
             builder.AddRow(null, null, rowCells);
         }
 
         return builder.Build();
     }
 
-    private IRenderable RenderTableCell(object? obj, RenderContext<SpectreRendererState> context, bool asLabel = false)
+    private List<IRenderable> CreateMarkerRow(TruncationMarker marker, TruncatedEnumerable<int> colTruncated, RenderContext<SpectreRendererState> context)
+    {
+        var cells = new List<IRenderable>();
+        var color = context.State.Colors.MetadataInfoColor;
+        var markerText = new Markup(Markup.Escape(marker.GetCompactMessage()), new Style(foreground: color));
+
+        // First cell gets the marker, rest are empty
+        bool firstCell = true;
+
+        if (colTruncated.StartMarker != null)
+        {
+            cells.Add(firstCell ? markerText : new Markup(""));
+            firstCell = false;
+        }
+
+        for (int i = 0; i < colTruncated.Items.Count; i++)
+        {
+            if (colTruncated.MiddleMarkerIndex == i && colTruncated.MiddleMarker != null)
+            {
+                cells.Add(new Markup(""));
+            }
+
+            cells.Add(firstCell ? markerText : new Markup(""));
+            firstCell = false;
+        }
+
+        if (colTruncated.EndMarker != null)
+        {
+            cells.Add(new Markup(""));
+        }
+
+        return cells;
+    }
+
+    private IRenderable RenderTableCell(object? obj, RenderContext<SpectreRendererState> context)
     {
         if (obj is null)
         {
             return _handler.RenderNullValue(null, context);
         }
 
-        var descriptor = asLabel
-            ? new LabelDescriptor(obj.GetType(), null)
-            : DumpConfig.Default.Generator.Generate(obj.GetType(), null, context.Config.MemberProvider);
-        var rendered = _handler.RenderDescriptor(obj, descriptor, context);
-
-        return rendered;
+        var descriptor = DumpConfig.Default.Generator.Generate(obj.GetType(), null, context.Config.MemberProvider);
+        return _handler.RenderDescriptor(obj, descriptor, context);
     }
 
     public (bool, object?) ShouldHandle(IDescriptor descriptor, object obj)

@@ -16,7 +16,7 @@ using System.Text;
 // (1, 2, 3, 4, ("1", "b"), 5, 6, 7, 8, 9, 10, 11, 12, 13, "14", "15", 16, 17, 18).Dump("ValueTuple");
 // Tuple.Create(1, 2, 3, 4, 5, 6, 7, Tuple.Create(8, 9, 10, 11)).Dump("System.Tuple");
 // new[] { 1, 2, 3,  4, 5, 6, 7, 8, 9, 10 }.Dump(tableConfig: new TableConfig { MaxCollectionCount = 3 });
-DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Ascii;
+// DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Ascii;
 Console.WriteLine("---------------------");
     var moaid1 = new Person
     {
@@ -36,11 +36,14 @@ moaid1.Spouse = haneeni1;
 haneeni1.Spouse = moaid1;
 
 // moaid1.Dump("Moaid");
+// new [] { moaid1, haneieni1 }.Dump();
+    // moaid1.Dump("Use global");
+    // moaid1.Dump("Override per dump", tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Minimal, ShowRowSeparators = true });
+    // moaid1.Dump("Use globali 2", maxDepth: 1);
 
-// new [] { moaid1, haneeni1 }.Dump();
-    moaid1.Dump("Use global");
-    moaid1.Dump("Override per dump", tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Minimal, ShowRowSeparators = true });
-    moaid1.Dump("Use globali 2");
+    Enumerable.Range(0, 10).ToDictionary(i => i).Dump("Enumerable Range", truncationConfig: new TruncationConfig { MaxCollectionCount = 3, Mode = TruncationMode.Tail });
+    Enumerable.Range(0, 10).ToDictionary(i => i).Dump("Enumerable Range", truncationConfig: new TruncationConfig { MaxCollectionCount = 3, Mode = TruncationMode.HeadAndTail });
+    Enumerable.Range(0, 10).ToDictionary(i => i).Dump("Enumerable Range", truncationConfig: new TruncationConfig { MaxCollectionCount = 3, Mode = TruncationMode.HeadAndTail, PerDimension = true });
 
 //
 // var lazy = new Lazy<int>(()=> 10);

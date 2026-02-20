@@ -1,10 +1,9 @@
-using Dumpify;
 using Dumpify.Descriptors;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Reflection;
 
-namespace Dumpiyf;
+namespace Dumpify;
 
 internal class SystemReflectionTypeRenderer : ICustomTypeRenderer<IRenderable>
 {

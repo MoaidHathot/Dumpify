@@ -1,18 +1,12 @@
-﻿using Dumpify.Descriptors;
-using Dumpify.Descriptors.ValueProviders;
+using Dumpify.Descriptors;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
 namespace Dumpify;
 
-internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
+internal class ArrayTypeRenderer(IRendererHandler<IRenderable, SpectreRendererState> handler) : ICustomTypeRenderer<IRenderable>
 {
-    private readonly IRendererHandler<IRenderable, SpectreRendererState> _handler;
-
-    public ArrayTypeRenderer(IRendererHandler<IRenderable, SpectreRendererState> handler)
-    {
-        _handler = handler;
-    }
+    private readonly IRendererHandler<IRenderable, SpectreRendererState> _handler = handler;
 
     public Type DescriptorType { get; } = typeof(MultiValueDescriptor);
 
@@ -56,33 +50,52 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
             builder.HideHeaders();
         }
 
-        int maxCollectionCount = context.Config.TableConfig.MaxCollectionCount;
-        int length = obj.Length > maxCollectionCount ? maxCollectionCount : obj.Length;
+        // Use centralized truncation
+        var truncated = CollectionTruncator.TruncateArray(
+            obj,
+            context.Config.TruncationConfig.MaxCollectionCount,
+            context.Config.TruncationConfig.Mode);
 
-        for (var index = 0; index < length; ++index)
+        // Render start marker if present (for Tail or HeadAndTail modes)
+        if (truncated.StartMarker is { } startMarker)
         {
-            var item = obj.GetValue(index);
-
-            //var type = mvd.ElementsType ?? item?.GetType();
-            var type =  item?.GetType() ?? mvd.ElementsType;
-            IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider) : null;
-
-            var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
-
-            builder.AddRow(itemsDescriptor, item, renderedItem);
+            rowIndicesBehavior?.AddHideIndexForRow(0, "");
+            var renderedMarker = RenderTruncationMarker(startMarker, context);
+            builder.AddRow(null, null, renderedMarker);
         }
 
-        if(obj.Length > maxCollectionCount)
+        // Track current row for index behavior
+        int currentRow = truncated.StartMarker != null ? 1 : 0;
+
+        // Render items with middle marker support
+        for (int i = 0; i < truncated.Items.Count; i++)
         {
-            if (rowIndicesBehavior != null)
+            // Insert middle marker at the appropriate position (for HeadAndTail mode)
+            if (truncated.MiddleMarkerIndex == i && truncated.MiddleMarker is { } middleMarker)
             {
-                rowIndicesBehavior.AddHideIndexForRow(maxCollectionCount);
+                rowIndicesBehavior?.AddHideIndexForRow(currentRow, "");
+                var renderedMiddleMarker = RenderTruncationMarker(middleMarker, context);
+                builder.AddRow(null, null, renderedMiddleMarker);
+                currentRow++;
             }
 
-            string truncatedNotificationText = $"... truncated {obj.Length - maxCollectionCount} items";
-            var labelDescriptor = new LabelDescriptor(typeof(string), null);
-            var renderedItem = _handler.RenderDescriptor(truncatedNotificationText, labelDescriptor, context);
-            builder.AddRow(labelDescriptor, truncatedNotificationText, renderedItem);
+            var item = truncated.Items[i];
+            var type = item?.GetType() ?? mvd.ElementsType;
+            IDescriptor? itemsDescriptor = type is not null
+                ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider)
+                : null;
+
+            var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
+            builder.AddRow(itemsDescriptor, item, renderedItem);
+            currentRow++;
+        }
+
+        // Render end marker if present (for Head mode)
+        if (truncated.EndMarker is { } endMarker)
+        {
+            rowIndicesBehavior?.AddHideIndexForRow(currentRow, "");
+            var renderedMarker = RenderTruncationMarker(endMarker, context);
+            builder.AddRow(null, null, renderedMarker);
         }
 
         return builder.Build();
@@ -97,7 +110,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
             return RenderHighRankArrays(obj, descriptor, context);
         }
 
-        RowIndicesTableBuilderBehavior rowIndicesBehavior = new ();
+        RowIndicesTableBuilderBehavior rowIndicesBehavior = new();
         var builder = new ObjectTableBuilder(context, descriptor, obj)
             .HideTitle()
             .AddBehavior(rowIndicesBehavior);
@@ -105,9 +118,20 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
         var rowsAll = obj.GetLength(0);
         var columnsAll = obj.GetLength(1);
 
-        int maxCollectionCount = context.Config.TableConfig.MaxCollectionCount;
-        int rows = rowsAll > maxCollectionCount ? maxCollectionCount : rowsAll;
-        int columns = columnsAll > maxCollectionCount ? maxCollectionCount : columnsAll;
+        // Use centralized truncation for rows and columns
+        var maxCount = context.Config.TruncationConfig.MaxCollectionCount.Value;
+        var mode = context.Config.TruncationConfig.Mode.Value;
+
+        // For 2D arrays, we apply truncation per dimension
+        var rowTruncated = CollectionTruncator.Truncate(
+            Enumerable.Range(0, rowsAll),
+            maxCount,
+            mode);
+
+        var colTruncated = CollectionTruncator.Truncate(
+            Enumerable.Range(0, columnsAll),
+            maxCount,
+            mode);
 
         var colorConfig = context.Config.ColorConfig;
 
@@ -117,60 +141,120 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
             builder.SetTitle($"{typeName}[{rowsAll},{columnsAll}]");
         }
 
+        // Add column headers
         var columnStyle = new Style(foreground: colorConfig.ColumnNameColor.ToSpectreColor());
-        for (var col = 0; col < columns; ++col)
+
+        // Start column marker
+        if (colTruncated.StartMarker != null)
         {
-            builder.AddColumnName(col.ToString(), columnStyle);
+            builder.AddColumnName(colTruncated.StartMarker.GetCompactMessage(), columnStyle);
         }
 
-        if (columnsAll > maxCollectionCount)
+        for (int i = 0; i < colTruncated.Items.Count; i++)
         {
-            builder.AddColumnName($"... +{columnsAll - maxCollectionCount}", columnStyle);
-        }
-
-        for (var row = 0; row < rows; ++row)
-        {
-            var cells = new List<IRenderable>(2);
-
-            for (var col = 0; col < columns; ++col)
+            // Middle marker for columns
+            if (colTruncated.MiddleMarkerIndex == i && colTruncated.MiddleMarker != null)
             {
+                builder.AddColumnName(colTruncated.MiddleMarker.GetCompactMessage(), columnStyle);
+            }
+
+            builder.AddColumnName(colTruncated.Items[i].ToString(), columnStyle);
+        }
+
+        // End column marker
+        if (colTruncated.EndMarker != null)
+        {
+            builder.AddColumnName(colTruncated.EndMarker.GetCompactMessage(), columnStyle);
+        }
+
+        // Track current row for index behavior
+        int currentRow = 0;
+
+        // Start row marker
+        if (rowTruncated.StartMarker != null)
+        {
+            rowIndicesBehavior.AddHideIndexForRow(currentRow, rowTruncated.StartMarker.GetCompactMessage());
+            var cells = CreateEmptyCells(colTruncated);
+            builder.AddRow(null, null, cells);
+            currentRow++;
+        }
+
+        // Render rows
+        for (int ri = 0; ri < rowTruncated.Items.Count; ri++)
+        {
+            // Middle marker for rows
+            if (rowTruncated.MiddleMarkerIndex == ri && rowTruncated.MiddleMarker != null)
+            {
+                rowIndicesBehavior.AddHideIndexForRow(currentRow, rowTruncated.MiddleMarker.GetCompactMessage());
+                var cells = CreateEmptyCells(colTruncated);
+                builder.AddRow(null, null, cells);
+                currentRow++;
+            }
+
+            var row = rowTruncated.Items[ri];
+            var rowCells = new List<IRenderable>();
+
+            // Start column marker cell
+            if (colTruncated.StartMarker != null)
+            {
+                rowCells.Add(new Markup(""));
+            }
+
+            for (int ci = 0; ci < colTruncated.Items.Count; ci++)
+            {
+                // Middle marker for columns
+                if (colTruncated.MiddleMarkerIndex == ci && colTruncated.MiddleMarker != null)
+                {
+                    rowCells.Add(new Markup(""));
+                }
+
+                var col = colTruncated.Items[ci];
                 var item = obj.GetValue(row, col);
 
                 var type = descriptor.ElementsType ?? item?.GetType();
-                IDescriptor? itemsDescriptor = type is not null ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider) : null;
+                IDescriptor? itemsDescriptor = type is not null
+                    ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider)
+                    : null;
 
                 var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
-                cells.Add(renderedItem);
+                rowCells.Add(renderedItem);
             }
 
-            if (columnsAll > maxCollectionCount)
+            // End column marker cell
+            if (colTruncated.EndMarker != null)
             {
-                var labelDescriptor = new LabelDescriptor(typeof(string), null);
-                var renderedItem = _handler.RenderDescriptor(string.Empty, labelDescriptor, context);
-                cells.Add(renderedItem);
+                rowCells.Add(new Markup(""));
             }
 
-            builder.AddRow(null, null, cells);
+            builder.AddRow(null, null, rowCells);
+            currentRow++;
         }
 
-        if (rowsAll > maxCollectionCount)
+        // End row marker
+        if (rowTruncated.EndMarker != null)
         {
-            var cells = new List<IRenderable>(2);
-            var labelDescriptor = new LabelDescriptor(typeof(string), null);
-
-            for (int i = 0; i <= columns; i++)
-            {
-                var renderedCell = _handler.RenderDescriptor(string.Empty, labelDescriptor, context);
-                cells.Add(renderedCell);
-            }
-
-            var truncatedNotificationText = $"... +{rowsAll - maxCollectionCount}";
-            rowIndicesBehavior.AddHideIndexForRow(maxCollectionCount, truncatedNotificationText);
-
+            rowIndicesBehavior.AddHideIndexForRow(currentRow, rowTruncated.EndMarker.GetCompactMessage());
+            var cells = CreateEmptyCells(colTruncated);
             builder.AddRow(null, null, cells);
         }
 
         return builder.Build();
+
+        List<IRenderable> CreateEmptyCells(TruncatedEnumerable<int> colTruncation)
+        {
+            var count = colTruncation.Items.Count;
+            if (colTruncation.StartMarker != null) count++;
+            if (colTruncation.MiddleMarker != null) count++;
+            if (colTruncation.EndMarker != null) count++;
+
+            return Enumerable.Range(0, count).Select(_ => (IRenderable)new Markup("")).ToList();
+        }
+    }
+
+    private IRenderable RenderTruncationMarker(TruncationMarker marker, RenderContext<SpectreRendererState> context)
+    {
+        var color = context.State.Colors.MetadataInfoColor;
+        return new Markup(Markup.Escape(marker.GetDefaultMessage()), new Style(foreground: color));
     }
 
     private IRenderable RenderHighRankArrays(Array arr, MultiValueDescriptor descriptor, RenderContext context)

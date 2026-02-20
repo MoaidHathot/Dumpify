@@ -20,7 +20,7 @@ internal class DataSetTypeRenderer : ICustomTypeRenderer<IRenderable>
     {
         var context = (RenderContext<SpectreRendererState>)baseContext;
 
-        var dataSet = ((DataSet)obj);
+        var dataSet = (DataSet)obj;
 
         var tableBuilder = new ObjectTableBuilder(context, descriptor, obj);
 
@@ -33,24 +33,54 @@ internal class DataSetTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         tableBuilder.AddColumnName(title, new Style(foreground: context.State.Colors.TypeNameColor));
 
-        int maxCollectionCount = context.Config.TableConfig.MaxCollectionCount;
-        int length = dataSet.Tables.Count > maxCollectionCount ? maxCollectionCount : dataSet.Tables.Count;
+        // Use centralized truncation for tables
+        var maxCount = context.Config.TruncationConfig.MaxCollectionCount.Value;
+        var mode = context.Config.TruncationConfig.Mode.Value;
 
-        for(int i = 0; i < length; i++)
+        var truncated = CollectionTruncator.Truncate(
+            Enumerable.Range(0, dataSet.Tables.Count),
+            maxCount,
+            mode);
+
+        // Render start marker if present
+        if (truncated.StartMarker != null)
         {
-            var dataTable = dataSet.Tables[i];
+            var markerRenderable = RenderMarker(truncated.StartMarker, context);
+            tableBuilder.AddRow(null, null, markerRenderable);
+        }
+
+        // Render tables
+        for (int i = 0; i < truncated.Items.Count; i++)
+        {
+            // Render middle marker if present
+            if (truncated.MiddleMarkerIndex == i && truncated.MiddleMarker != null)
+            {
+                var markerRenderable = RenderMarker(truncated.MiddleMarker, context);
+                tableBuilder.AddRow(null, null, markerRenderable);
+            }
+
+            var tableIndex = truncated.Items[i];
+            var dataTable = dataSet.Tables[tableIndex];
             var tableDescriptor = DumpConfig.Default.Generator.Generate(typeof(DataTable), null, context.Config.MemberProvider);
             var renderedItem = _handler.RenderDescriptor(dataTable, tableDescriptor, context);
 
             tableBuilder.AddRow(tableDescriptor, dataTable, renderedItem);
         }
 
-        if(dataSet.Tables.Count > maxCollectionCount)
+        // Render end marker if present
+        if (truncated.EndMarker != null)
         {
-            tableBuilder.AddRow(null, null, new Markup($"... truncated {dataSet.Tables.Count - maxCollectionCount} more tables"));
+            var markerRenderable = RenderMarker(truncated.EndMarker, context);
+            tableBuilder.AddRow(null, null, markerRenderable);
         }
 
         return tableBuilder.Build();
+    }
+
+    private IRenderable RenderMarker(TruncationMarker marker, RenderContext<SpectreRendererState> context)
+    {
+        var color = context.State.Colors.MetadataInfoColor;
+        return new Markup(Markup.Escape(marker.GetDefaultMessage()), new Style(foreground: color));
     }
 
     public (bool, object?) ShouldHandle(IDescriptor descriptor, object obj)

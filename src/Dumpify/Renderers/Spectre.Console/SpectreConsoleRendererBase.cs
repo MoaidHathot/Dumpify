@@ -70,6 +70,9 @@ internal abstract class SpectreConsoleRendererBase : RendererBase<IRenderable, S
     protected override IRenderable RenderUnfamiliarCustomDescriptor(object obj, CustomDescriptor descriptor, RenderContext<SpectreRendererState> context)
         => RenderSingleValue($"[Unfamiliar descriptor {descriptor.GetType().Name} for {descriptor.Name}]", context, context.State.Colors.MetadataErrorColor);
 
+    protected override IRenderable RenderTruncationMarker(TruncationMarker marker, RenderContext<SpectreRendererState> context)
+        => RenderSingleValue(marker.GetDefaultMessage(), context, context.State.Colors.MetadataInfoColor);
+
     protected override SpectreRendererState CreateState(object? obj, IDescriptor? descriptor, RendererConfig config)
         => new SpectreRendererState(config);
 }

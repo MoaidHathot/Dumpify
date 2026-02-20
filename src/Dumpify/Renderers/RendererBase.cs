@@ -84,7 +84,6 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
             SingleValueDescriptor singleDescriptor => TryRenderCustomTypeDescriptor(@object, singleDescriptor, context, RenderSingleValueDescriptor),
             ObjectDescriptor objDescriptor => TryRenderCustomTypeDescriptor(@object, objDescriptor, context, TryRenderObjectDescriptor),
             MultiValueDescriptor multiDescriptor => TryRenderCustomTypeDescriptor(@object, multiDescriptor, context, RenderMultiValueDescriptor),
-            LabelDescriptor labelDescriptor => TryRenderCustomTypeDescriptor(@object, labelDescriptor, context, RenderLabelDescriptor),
             CustomDescriptor customDescriptor => TryRenderCustomTypeDescriptor(@object, customDescriptor, context, RenderCustomDescriptor),
             _ => RenderUnsupportedDescriptor(@object, descriptor, context),
         };
@@ -210,6 +209,6 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
     protected abstract TRenderable RenderUnsupportedDescriptor(object obj, IDescriptor descriptor, RenderContext<TState> context);
     protected abstract TRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<TState> context);
     protected abstract TRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext<TState> context);
-    protected abstract TRenderable RenderLabelDescriptor(object obj, LabelDescriptor descriptor, RenderContext<TState> context);
+    protected abstract TRenderable RenderTruncationMarker(TruncationMarker marker, RenderContext<TState> context);
     protected abstract TState CreateState(object? obj, IDescriptor? descriptor, RendererConfig config);
 }

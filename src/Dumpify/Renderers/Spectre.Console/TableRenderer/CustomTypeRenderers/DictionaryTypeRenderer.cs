@@ -1,5 +1,6 @@
 using Dumpify.Descriptors;
 using Dumpify.Extensions;
+using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections;
 using System.Reflection;
@@ -30,11 +31,32 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         var pairs = ((IEnumerable<(object? key, object? value)>)handleContext!).ToList();
 
-        int maxCollectionCount = context.Config.TableConfig.MaxCollectionCount;
-        int length = pairs.Count > maxCollectionCount ? maxCollectionCount : pairs.Count;
+        // Use centralized truncation
+        var truncated = CollectionTruncator.Truncate(
+            pairs,
+            context.Config.TruncationConfig);
 
-        foreach (var pair in pairs.Take(length))
+        // Render start marker if present (for Tail or HeadAndTail modes)
+        if (truncated.StartMarker is { } startMarker)
         {
+            var markerRenderable = RenderTruncationMarker(startMarker, context);
+            var emptyRenderable = new Markup("");
+            tableBuilder.AddRow(null, null, emptyRenderable, markerRenderable);
+        }
+
+        // Render items with middle marker support
+        for (int i = 0; i < truncated.Items.Count; i++)
+        {
+            // Insert middle marker at the appropriate position (for HeadAndTail mode)
+            if (truncated.MiddleMarkerIndex == i && truncated.MiddleMarker is { } middleMarker)
+            {
+                var markerRenderable = RenderTruncationMarker(middleMarker, context);
+                var emptyRenderable = new Markup("");
+                tableBuilder.AddRow(null, null, emptyRenderable, markerRenderable);
+            }
+
+            var pair = truncated.Items[i];
+
             var keyType = pair.key?.GetType();
             var keyDescriptor = keyType is null ? null : DumpConfig.Default.Generator.Generate(keyType, null, context.Config.MemberProvider);
             var keyRenderable = _handler.RenderDescriptor(pair.key, keyDescriptor, context);
@@ -55,17 +77,21 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
             tableBuilder.AddRow(valueDescriptor, value, keyRenderable, renderedValue);
         }
 
-        if (pairs.Count > maxCollectionCount)
+        // Render end marker if present (for Head mode)
+        if (truncated.EndMarker is { } endMarker)
         {
-            string truncatedNotificationText = $"... truncated {pairs.Count - maxCollectionCount} items";
-
-            var labelDescriptor = new LabelDescriptor(typeof(string), null);
-            var renderedValue = _handler.RenderDescriptor(truncatedNotificationText, labelDescriptor, context);
-            var keyRenderable = _handler.RenderDescriptor(string.Empty, labelDescriptor, context);
-            tableBuilder.AddRow(labelDescriptor, truncatedNotificationText, keyRenderable, renderedValue);
+            var markerRenderable = RenderTruncationMarker(endMarker, context);
+            var emptyRenderable = new Markup("");
+            tableBuilder.AddRow(null, null, emptyRenderable, markerRenderable);
         }
 
         return tableBuilder.Build();
+    }
+
+    private IRenderable RenderTruncationMarker(TruncationMarker marker, RenderContext<SpectreRendererState> context)
+    {
+        var color = context.State.Colors.MetadataInfoColor;
+        return new Markup(Markup.Escape(marker.GetDefaultMessage()), new Style(foreground: color));
     }
 
     private (IDescriptor? descriptor, IRenderable renderedValue) GetDescriptorAndRender(object value, RenderContext<SpectreRendererState> context)

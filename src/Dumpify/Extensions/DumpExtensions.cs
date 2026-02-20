@@ -21,6 +21,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
     {
@@ -37,6 +38,7 @@ public static class DumpExtensions
             tableConfig: tableConfig,
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
+            truncationConfig: truncationConfig,
             autoLabel: autoLabel
         );
     }
@@ -54,6 +56,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
     {
@@ -70,6 +73,7 @@ public static class DumpExtensions
             tableConfig: tableConfig,
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
+            truncationConfig: truncationConfig,
             autoLabel: autoLabel
         );
     }
@@ -87,6 +91,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     ) =>
         obj.Dump(
@@ -101,6 +106,7 @@ public static class DumpExtensions
             tableConfig: tableConfig,
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
+            truncationConfig: truncationConfig,
             autoLabel: autoLabel
         );
 
@@ -116,6 +122,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
     {
@@ -136,6 +143,7 @@ public static class DumpExtensions
             tableConfig: tableConfig,
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
+            truncationConfig: truncationConfig,
             autoLabel: autoLabel
         );
 
@@ -156,6 +164,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
     {
@@ -169,6 +178,7 @@ public static class DumpExtensions
         var colorConfig = defaultConfig.ColorConfig.MergeWith(colors);
         var mergedTableConfig = defaultConfig.TableConfig.MergeWith(tableConfig);
         var mergedTypeRenderingConfig = defaultConfig.TypeRenderingConfig.MergeWith(typeRenderingConfig);
+        var mergedTruncationConfig = defaultConfig.TruncationConfig.MergeWith(truncationConfig);
 
         var rendererConfig = new RendererConfig
         {
@@ -178,6 +188,7 @@ public static class DumpExtensions
             TableConfig = mergedTableConfig,
             TypeNamingConfig = typeNamingConfig,
             TypeRenderingConfig = mergedTypeRenderingConfig,
+            TruncationConfig = mergedTruncationConfig,
             MemberProvider = new MemberProvider(
                 membersConfig.IncludeProperties,
                 membersConfig.IncludeFields,
