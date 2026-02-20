@@ -6,6 +6,9 @@ namespace Dumpify.Descriptors.Generators;
 internal class CompositeDescriptorGenerator : IDescriptorGenerator
 {
     private readonly ConcurrentDictionary<(RuntimeTypeHandle, RuntimeTypeHandle?, string?, IMemberProvider), IDescriptor> _descriptorsCache = new();
+    //Used to resolve race conditions when generating descriptors for self-referencing types.
+    //The key is the same as the cache key, and the value is a placeholder descriptor that will be linked to the real descriptor once generation completes.
+    private readonly ThreadLocal<Dictionary<(RuntimeTypeHandle, RuntimeTypeHandle?, string?, IMemberProvider), CircularDependencyDescriptor>> _threadLocalGenerating = new(() => new());
 
     private readonly IDescriptorGenerator[] _generatorsChain;
 
@@ -29,26 +32,47 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
             return cachedDescriptor;
         }
 
-        _descriptorsCache.TryAdd(cacheKey, new CircularDependencyDescriptor(type, valueProvider, null));
+        return GenerateWithCircularReferenceTracking(cacheKey, type, valueProvider, memberProvider);
+    }
 
-        var generatedDescriptor = GenerateDescriptor(type, valueProvider, memberProvider);
+    private IDescriptor GenerateWithCircularReferenceTracking(
+        (RuntimeTypeHandle, RuntimeTypeHandle?, string?, IMemberProvider) cacheKey,
+        Type type,
+        IValueProvider? valueProvider,
+        IMemberProvider memberProvider)
+    {
+        var generating = _threadLocalGenerating.Value;
 
-        if (generatedDescriptor is null)
+        if (generating.TryGetValue(cacheKey, out var placeholder))
         {
-            throw new NotSupportedException($"Could not generate a Descriptor for type '{type.FullName}'");
+            return placeholder;
         }
 
-        _descriptorsCache.AddOrUpdate(cacheKey, generatedDescriptor, (key, descriptor) =>
+        // Use a placeholder to handle self-referencing types (e.g., class Node { Node? Parent; }).
+        // When generating nested descriptors, if we encounter the same type we're currently generating,
+        // we return this placeholder instead of recursing infinitely. After generation completes,
+        // we link the placeholder to the real descriptor so rendering can unwrap it.
+        placeholder = new CircularDependencyDescriptor(type, valueProvider, null);
+        generating[cacheKey] = placeholder;
+
+        try
         {
-            if (descriptor is CircularDependencyDescriptor cdd)
+            var generatedDescriptor = GenerateDescriptor(type, valueProvider, memberProvider);
+
+            if (generatedDescriptor is null)
             {
-                cdd.Descriptor = generatedDescriptor;
+                throw new NotSupportedException($"Could not generate a Descriptor for type '{type.FullName}'");
             }
 
-            return generatedDescriptor;
-        });
+            placeholder.Descriptor = generatedDescriptor;
+            _descriptorsCache.TryAdd(cacheKey, generatedDescriptor);
 
-        return generatedDescriptor;
+            return generatedDescriptor;
+        }
+        finally
+        {
+            generating.Remove(cacheKey);
+        }
     }
 
     (RuntimeTypeHandle, RuntimeTypeHandle?, string?, IMemberProvider) CreateCacheKey(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)
