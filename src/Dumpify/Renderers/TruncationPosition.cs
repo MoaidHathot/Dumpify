@@ -3,7 +3,7 @@ namespace Dumpify;
 /// <summary>
 /// Indicates where truncation occurred in a collection.
 /// </summary>
-public enum TruncationPosition
+internal enum TruncationPosition
 {
     /// <summary>
     /// Truncation at the end (Head mode - showing first N items).

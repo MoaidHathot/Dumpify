@@ -6,7 +6,7 @@ namespace Dumpify;
 /// <remarks>
 /// Creates a new truncation marker.
 /// </remarks>
-public sealed class TruncationMarker(int truncatedCount, TruncationPosition position)
+internal sealed class TruncationMarker(int truncatedCount, TruncationPosition position)
 {
     /// <summary>
     /// The number of items that were truncated.

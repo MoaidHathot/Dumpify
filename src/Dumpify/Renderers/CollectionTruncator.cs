@@ -3,7 +3,7 @@ namespace Dumpify;
 /// <summary>
 /// Utility class for efficiently truncating collections.
 /// </summary>
-public static class CollectionTruncator
+internal static class CollectionTruncator
 {
     /// <summary>
     /// Truncates an enumerable according to the specified configuration.

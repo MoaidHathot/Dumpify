@@ -4,7 +4,7 @@ namespace Dumpify;
 /// Represents the result of truncating a collection, containing the visible items
 /// and metadata about what was truncated.
 /// </summary>
-public sealed class TruncatedEnumerable<T>
+internal sealed class TruncatedEnumerable<T>
 {
     /// <summary>
     /// The items to display (after truncation).
