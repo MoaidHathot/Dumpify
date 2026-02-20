@@ -221,7 +221,9 @@ DumpConfig.Default.AddCustomTypeHandler(typeof(byte[]), (obj, type, valueProvide
 {
     var bytes = (byte[])obj;
     if (bytes.Length <= 8)
+    {
         return bytes;
+    }
     
     // Return a summary for large byte arrays
     return $"byte[{bytes.Length}]: {BitConverter.ToString(bytes.Take(8).ToArray())}...";

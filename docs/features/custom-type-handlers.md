@@ -96,9 +96,22 @@ DumpConfig.Default.AddCustomTypeHandler(
     (obj, type, vp, mp) =>
     {
         var ts = (TimeSpan)obj;
-        if (ts.TotalDays >= 1) return $"{ts.TotalDays:F1} days";
-        if (ts.TotalHours >= 1) return $"{ts.TotalHours:F1} hours";
-        if (ts.TotalMinutes >= 1) return $"{ts.TotalMinutes:F1} minutes";
+        
+        if (ts.TotalDays >= 1)
+        {
+            return $"{ts.TotalDays:F1} days";
+        }
+        
+        if (ts.TotalHours >= 1)
+        {
+            return $"{ts.TotalHours:F1} hours";
+        }
+        
+        if (ts.TotalMinutes >= 1)
+        {
+            return $"{ts.TotalMinutes:F1} minutes";
+        }
+        
         return $"{ts.TotalSeconds:F1} seconds";
     }
 );
@@ -154,8 +167,12 @@ DumpConfig.Default.AddCustomTypeHandler(
     (obj, type, vp, mp) =>
     {
         var bytes = (byte[])obj;
+        
         if (bytes.Length <= 16)
+        {
             return BitConverter.ToString(bytes).Replace("-", " ");
+        }
+        
         return $"[{bytes.Length} bytes]";
     }
 );
@@ -279,7 +296,11 @@ DumpConfig.Default.AddCustomTypeHandler(
     typeof(DateTime?),
     (obj, type, vp, mp) =>
     {
-        if (obj == null) return null;
+        if (obj == null)
+        {
+            return null;
+        }
+        
         return ((DateTime)obj).ToString("yyyy-MM-dd");
     }
 );

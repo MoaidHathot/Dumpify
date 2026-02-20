@@ -155,8 +155,15 @@ Use `MemberFilter` for fine-grained control. The filter receives a `MemberFilter
 DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
     // Exclude by name
-    if (ctx.Member.Name == "Password") return false;
-    if (ctx.Member.Name == "Secret") return false;
+    if (ctx.Member.Name == "Password")
+    {
+        return false;
+    }
+    
+    if (ctx.Member.Name == "Secret")
+    {
+        return false;
+    }
     
     return true;
 };
@@ -189,11 +196,15 @@ DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
     // Exclude Stream properties
     if (typeof(Stream).IsAssignableFrom(ctx.Member.MemberType))
+    {
         return false;
+    }
     
     // Exclude Task properties
     if (typeof(Task).IsAssignableFrom(ctx.Member.MemberType))
+    {
         return false;
+    }
     
     return true;
 };
@@ -205,10 +216,16 @@ DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
     // Exclude properties ending with "Internal"
-    if (ctx.Member.Name.EndsWith("Internal")) return false;
+    if (ctx.Member.Name.EndsWith("Internal"))
+    {
+        return false;
+    }
     
     // Exclude properties starting with underscore
-    if (ctx.Member.Name.StartsWith("_")) return false;
+    if (ctx.Member.Name.StartsWith("_"))
+    {
+        return false;
+    }
     
     return true;
 };
@@ -238,16 +255,28 @@ DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
     var value = ctx.Value;
     
     // Exclude null
-    if (value is null) return false;
+    if (value is null)
+    {
+        return false;
+    }
     
     // Exclude default numeric values
-    if (value is 0 or 0L or 0.0 or 0.0f or 0m) return false;
+    if (value is 0 or 0L or 0.0 or 0.0f or 0m)
+    {
+        return false;
+    }
     
     // Exclude empty strings
-    if (value is string s && string.IsNullOrEmpty(s)) return false;
+    if (value is string s && string.IsNullOrEmpty(s))
+    {
+        return false;
+    }
     
     // Exclude empty collections
-    if (value is ICollection { Count: 0 }) return false;
+    if (value is ICollection { Count: 0 })
+    {
+        return false;
+    }
     
     return true;
 };
@@ -260,7 +289,9 @@ DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
     // Hide any property containing "password" in its value
     if (ctx.Value is string s && s.Contains("password", StringComparison.OrdinalIgnoreCase))
+    {
         return false;
+    }
     
     return true;
 };
@@ -302,7 +333,10 @@ Control member visibility based on nesting depth:
 DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
     // At depth 0 (root), show everything
-    if (ctx.Depth == 0) return true;
+    if (ctx.Depth == 0)
+    {
+        return true;
+    }
     
     // At deeper levels, only show key properties
     return ctx.Member.Name is "Id" or "Name" or "Title";
@@ -316,7 +350,9 @@ DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
     // Hide "Internal" suffixed properties when nested
     if (ctx.Depth > 0 && ctx.Member.Name.EndsWith("Internal"))
+    {
         return false;
+    }
     
     return true;
 };
@@ -424,9 +460,20 @@ DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
     var value = ctx.Value;
     
-    if (value is null) return false;
-    if (value is string s && string.IsNullOrWhiteSpace(s)) return false;
-    if (value is ICollection { Count: 0 }) return false;
+    if (value is null)
+    {
+        return false;
+    }
+    
+    if (value is string s && string.IsNullOrWhiteSpace(s))
+    {
+        return false;
+    }
+    
+    if (value is ICollection { Count: 0 })
+    {
+        return false;
+    }
     
     return true;
 };
@@ -440,9 +487,12 @@ DumpConfig.Default.MembersConfig.MemberFilter = ctx =>
 {
     // Keep primitives, strings, DateTimes, etc.
     var type = ctx.Member.MemberType;
+    
     if (type.IsPrimitive || type == typeof(string) || 
         type == typeof(DateTime) || type == typeof(Guid))
+    {
         return true;
+    }
     
     // Exclude complex types and collections (likely navigation properties)
     return false;
