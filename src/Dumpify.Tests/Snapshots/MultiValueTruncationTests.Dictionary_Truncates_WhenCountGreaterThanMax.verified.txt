@@ -1,4 +1,5 @@
-﻿Dictionary<int, string>
+﻿SortedDictionary<int,  
+        string>        
 ╭─────┬───────────────╮
 │ Key │ Value         │
 ├─────┼───────────────┤

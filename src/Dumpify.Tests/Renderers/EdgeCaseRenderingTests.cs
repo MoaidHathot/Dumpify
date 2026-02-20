@@ -318,7 +318,9 @@ public class EdgeCaseRenderingTests
     [Fact]
     public Task Truncation_DictionaryTruncatedAt2()
     {
-        var dict = Enumerable.Range(1, 8).ToDictionary(x => $"Key{x}", x => x * 10);
+        // Use SortedDictionary to ensure deterministic ordering across platforms
+        var dict = new SortedDictionary<string, int>(
+            Enumerable.Range(1, 8).ToDictionary(x => $"Key{x}", x => x * 10));
         var result = dict.DumpText(truncationConfig: new TruncationConfig { MaxCollectionCount = 2 });
         return Verify(result);
     }

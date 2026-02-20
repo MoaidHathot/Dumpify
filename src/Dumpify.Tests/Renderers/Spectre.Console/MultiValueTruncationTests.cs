@@ -121,7 +121,9 @@ public class MultiValueTruncationTests
     [Fact]
     public Task Dictionary_Truncates_WhenCountGreaterThanMax()
     {
-        var dictionary = Enumerable.Range(1, 10).ToDictionary(x => x, x => $"value for {x}");
+        // Use SortedDictionary to ensure deterministic ordering across platforms
+        var dictionary = new SortedDictionary<int, string>(
+            Enumerable.Range(1, 10).ToDictionary(x => x, x => $"value for {x}"));
         return Verify(DumpWithMaxCount(dictionary, 5));
     }
 

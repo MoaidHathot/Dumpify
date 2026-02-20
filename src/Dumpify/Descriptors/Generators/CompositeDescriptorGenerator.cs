@@ -5,7 +5,12 @@ namespace Dumpify.Descriptors.Generators;
 
 internal class CompositeDescriptorGenerator : IDescriptorGenerator
 {
+    // Cache stores either the final descriptor OR a CircularDependencyDescriptor placeholder
     private readonly ConcurrentDictionary<(RuntimeTypeHandle, RuntimeTypeHandle?, string?, IMemberProvider), IDescriptor> _descriptorsCache = new();
+
+    // Track which keys are currently being generated, with their placeholder descriptors
+    // Key: cache key, Value: (generatingThreadId, CircularDependencyDescriptor placeholder)
+    private readonly ConcurrentDictionary<(RuntimeTypeHandle, RuntimeTypeHandle?, string?, IMemberProvider), (int threadId, CircularDependencyDescriptor placeholder)> _generating = new();
 
     private readonly IDescriptorGenerator[] _generatorsChain;
 
@@ -24,31 +29,73 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
     {
         var cacheKey = CreateCacheKey(type, valueProvider, memberProvider);
 
-        if (_descriptorsCache.TryGetValue(cacheKey, out IDescriptor? cachedDescriptor))
+        // Fast path: check if already fully generated and cached
+        if (_descriptorsCache.TryGetValue(cacheKey, out var cachedDescriptor))
         {
             return cachedDescriptor;
         }
 
-        _descriptorsCache.TryAdd(cacheKey, new CircularDependencyDescriptor(type, valueProvider, null));
-
-        var generatedDescriptor = GenerateDescriptor(type, valueProvider, memberProvider);
-
-        if (generatedDescriptor is null)
+        // Check if another thread is currently generating this descriptor
+        // or if this is a re-entrant call on the same thread (circular reference)
+        if (_generating.TryGetValue(cacheKey, out var generatingInfo))
         {
-            throw new NotSupportedException($"Could not generate a Descriptor for type '{type.FullName}'");
+            if (generatingInfo.threadId == Environment.CurrentManagedThreadId)
+            {
+                // Re-entrant call on same thread - return the placeholder for circular reference handling
+                return generatingInfo.placeholder;
+            }
+            else
+            {
+                // Another thread is generating - spin-wait for it to complete
+                // This is a simple approach; could use more sophisticated synchronization if needed
+                SpinWait spinner = default;
+                while (_generating.ContainsKey(cacheKey) && !_descriptorsCache.ContainsKey(cacheKey))
+                {
+                    spinner.SpinOnce();
+                }
+
+                // Now check cache again - should have the generated descriptor
+                if (_descriptorsCache.TryGetValue(cacheKey, out cachedDescriptor))
+                {
+                    return cachedDescriptor;
+                }
+                // Fall through to generate if still not present (edge case)
+            }
         }
 
-        _descriptorsCache.AddOrUpdate(cacheKey, generatedDescriptor, (key, descriptor) =>
+        // Start generating - create placeholder for circular reference handling
+        var placeholder = new CircularDependencyDescriptor(type, valueProvider, null);
+        var thisThread = Environment.CurrentManagedThreadId;
+
+        // Try to claim generation of this key
+        if (!_generating.TryAdd(cacheKey, (thisThread, placeholder)))
         {
-            if (descriptor is CircularDependencyDescriptor cdd)
+            // Another thread just started generating - retry from the top
+            return Generate(type, valueProvider, memberProvider);
+        }
+
+        try
+        {
+            var generatedDescriptor = GenerateDescriptor(type, valueProvider, memberProvider);
+
+            if (generatedDescriptor is null)
             {
-                cdd.Descriptor = generatedDescriptor;
+                throw new NotSupportedException($"Could not generate a Descriptor for type '{type.FullName}'");
             }
 
-            return generatedDescriptor;
-        });
+            // Link the placeholder to the real descriptor (for any code that received the placeholder)
+            placeholder.Descriptor = generatedDescriptor;
 
-        return generatedDescriptor;
+            // Store in cache
+            _descriptorsCache[cacheKey] = generatedDescriptor;
+
+            return generatedDescriptor;
+        }
+        finally
+        {
+            // Remove from generating set
+            _generating.TryRemove(cacheKey, out _);
+        }
     }
 
     (RuntimeTypeHandle, RuntimeTypeHandle?, string?, IMemberProvider) CreateCacheKey(Type type, IValueProvider? valueProvider, IMemberProvider memberProvider)
