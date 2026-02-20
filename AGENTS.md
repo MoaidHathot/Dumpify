@@ -2,7 +2,8 @@
 It improve productivity and debuggability by adding .Dump() extension methods to Console Applications. Dump any object in a structured and colorful way into the Console, Trace, Debug events or your own custom output.
 
 # Performing code changes
-After performing any type of code changes, make sure the current tests are passing and add new tests if necessary.
+- After performing any type of code changes, make sure the current tests are passing and add new tests if necessary.
+- Always make sure you update the documentation if you change any public API or behavior of the library.
 
 # Code and Styling
 - You should use C# and .NET conventions, styling, and best practices.
