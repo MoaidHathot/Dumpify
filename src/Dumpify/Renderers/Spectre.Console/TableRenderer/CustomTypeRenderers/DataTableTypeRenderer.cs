@@ -24,7 +24,7 @@ internal class DataTableTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         var builder = new ObjectTableBuilder(context, descriptor, obj);
 
-        var title = (context.Config.TypeNamingConfig.ShowTypeNames, dataTable.TableName) switch
+        var title = (showTypeNames: (bool)context.Config.TypeNamingConfig.ShowTypeNames, dataTable.TableName) switch
         {
             (_, { Length: > 0 }) => dataTable.TableName,
             (true, _) => context.Config.TypeNameProvider.GetTypeName(descriptor.Type),

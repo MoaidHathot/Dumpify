@@ -1,41 +1,34 @@
 namespace Dumpify;
 
-public class TableConfig : IConfigMergeable<TableConfig>
+public class TableConfig : ConfigBase<TableConfig>
 {
-    private static readonly TableConfig Defaults = new();
-
-    public bool ShowArrayIndices { get; set; } = true;
-    public bool ShowTableHeaders { get; set; } = true;
-    public bool NoColumnWrapping { get; set; } = false;
-    public bool ExpandTables { get; set; } = false;
-    public bool ShowMemberTypes { get; set; } = false;
-    public bool ShowRowSeparators { get; set; } = false;
-    public int MaxCollectionCount { get; set; } = int.MaxValue;
+    public TrackableProperty<bool> ShowArrayIndices { get; set; } = new(true);
+    public TrackableProperty<bool> ShowTableHeaders { get; set; } = new(true);
+    public TrackableProperty<bool> NoColumnWrapping { get; set; } = new(false);
+    public TrackableProperty<bool> ExpandTables { get; set; } = new(false);
+    public TrackableProperty<bool> ShowMemberTypes { get; set; } = new(false);
+    public TrackableProperty<bool> ShowRowSeparators { get; set; } = new(false);
+    public TrackableProperty<int> MaxCollectionCount { get; set; } = new(int.MaxValue);
 
     /// <summary>
     /// The border style for tables. Default is Rounded.
     /// Use Ascii or Square for better terminal compatibility.
     /// </summary>
-    public TableBorderStyle BorderStyle { get; set; } = TableBorderStyle.Rounded;
+    public TrackableProperty<TableBorderStyle> BorderStyle { get; set; } = new(TableBorderStyle.Rounded);
 
     /// <inheritdoc />
-    public TableConfig MergeWith(TableConfig? overrideConfig)
+    protected override TableConfig MergeOverride(TableConfig overrideConfig)
     {
-        if (overrideConfig is null)
-        {
-            return this;
-        }
-
         return new TableConfig
         {
-            ShowArrayIndices = ConfigMergeHelper.Merge(ShowArrayIndices, overrideConfig.ShowArrayIndices, Defaults.ShowArrayIndices),
-            ShowTableHeaders = ConfigMergeHelper.Merge(ShowTableHeaders, overrideConfig.ShowTableHeaders, Defaults.ShowTableHeaders),
-            NoColumnWrapping = ConfigMergeHelper.Merge(NoColumnWrapping, overrideConfig.NoColumnWrapping, Defaults.NoColumnWrapping),
-            ExpandTables = ConfigMergeHelper.Merge(ExpandTables, overrideConfig.ExpandTables, Defaults.ExpandTables),
-            ShowMemberTypes = ConfigMergeHelper.Merge(ShowMemberTypes, overrideConfig.ShowMemberTypes, Defaults.ShowMemberTypes),
-            ShowRowSeparators = ConfigMergeHelper.Merge(ShowRowSeparators, overrideConfig.ShowRowSeparators, Defaults.ShowRowSeparators),
-            MaxCollectionCount = ConfigMergeHelper.Merge(MaxCollectionCount, overrideConfig.MaxCollectionCount, Defaults.MaxCollectionCount),
-            BorderStyle = ConfigMergeHelper.Merge(BorderStyle, overrideConfig.BorderStyle, Defaults.BorderStyle),
+            ShowArrayIndices = Merge(ShowArrayIndices, overrideConfig.ShowArrayIndices),
+            ShowTableHeaders = Merge(ShowTableHeaders, overrideConfig.ShowTableHeaders),
+            NoColumnWrapping = Merge(NoColumnWrapping, overrideConfig.NoColumnWrapping),
+            ExpandTables = Merge(ExpandTables, overrideConfig.ExpandTables),
+            ShowMemberTypes = Merge(ShowMemberTypes, overrideConfig.ShowMemberTypes),
+            ShowRowSeparators = Merge(ShowRowSeparators, overrideConfig.ShowRowSeparators),
+            MaxCollectionCount = Merge(MaxCollectionCount, overrideConfig.MaxCollectionCount),
+            BorderStyle = Merge(BorderStyle, overrideConfig.BorderStyle),
         };
     }
 }

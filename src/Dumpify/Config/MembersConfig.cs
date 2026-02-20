@@ -1,31 +1,24 @@
 namespace Dumpify;
 
-public class MembersConfig : IConfigMergeable<MembersConfig>
+public class MembersConfig : ConfigBase<MembersConfig>
 {
-    private static readonly MembersConfig Defaults = new();
-
-    public bool IncludePublicMembers { get; set; } = true;
-    public bool IncludeNonPublicMembers { get; set; } = false;
-    public bool IncludeVirtualMembers { get; set; } = true;
-    public bool IncludeProperties { get; set; } = true;
-    public bool IncludeFields { get; set; } = false;
+    public TrackableProperty<bool> IncludePublicMembers { get; set; } = new(true);
+    public TrackableProperty<bool> IncludeNonPublicMembers { get; set; } = new(false);
+    public TrackableProperty<bool> IncludeVirtualMembers { get; set; } = new(true);
+    public TrackableProperty<bool> IncludeProperties { get; set; } = new(true);
+    public TrackableProperty<bool> IncludeFields { get; set; } = new(false);
     public Func<MemberFilterContext, bool>? MemberFilter { get; set; }
 
     /// <inheritdoc />
-    public MembersConfig MergeWith(MembersConfig? overrideConfig)
+    protected override MembersConfig MergeOverride(MembersConfig overrideConfig)
     {
-        if (overrideConfig is null)
-        {
-            return this;
-        }
-
         return new MembersConfig
         {
-            IncludePublicMembers = ConfigMergeHelper.Merge(IncludePublicMembers, overrideConfig.IncludePublicMembers, Defaults.IncludePublicMembers),
-            IncludeNonPublicMembers = ConfigMergeHelper.Merge(IncludeNonPublicMembers, overrideConfig.IncludeNonPublicMembers, Defaults.IncludeNonPublicMembers),
-            IncludeVirtualMembers = ConfigMergeHelper.Merge(IncludeVirtualMembers, overrideConfig.IncludeVirtualMembers, Defaults.IncludeVirtualMembers),
-            IncludeProperties = ConfigMergeHelper.Merge(IncludeProperties, overrideConfig.IncludeProperties, Defaults.IncludeProperties),
-            IncludeFields = ConfigMergeHelper.Merge(IncludeFields, overrideConfig.IncludeFields, Defaults.IncludeFields),
+            IncludePublicMembers = Merge(IncludePublicMembers, overrideConfig.IncludePublicMembers),
+            IncludeNonPublicMembers = Merge(IncludeNonPublicMembers, overrideConfig.IncludeNonPublicMembers),
+            IncludeVirtualMembers = Merge(IncludeVirtualMembers, overrideConfig.IncludeVirtualMembers),
+            IncludeProperties = Merge(IncludeProperties, overrideConfig.IncludeProperties),
+            IncludeFields = Merge(IncludeFields, overrideConfig.IncludeFields),
             // MemberFilter is a delegate - if override provides one, always use it; otherwise use base
             MemberFilter = overrideConfig.MemberFilter ?? MemberFilter,
         };

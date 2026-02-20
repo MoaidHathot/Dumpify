@@ -51,7 +51,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
         var elementName = mvd.ElementsType is null ? "" : context.Config.TypeNameProvider.GetTypeName(mvd.ElementsType);
         builder.AddColumnName($"{elementName}[{obj.GetLength(0)}]", new Style(foreground: context.Config.ColorConfig.TypeNameColor.ToSpectreColor()));
 
-        if (context.Config.TableConfig.ShowTableHeaders is not true || context.Config.TypeNamingConfig.ShowTypeNames is not true)
+        if (!context.Config.TableConfig.ShowTableHeaders || !context.Config.TypeNamingConfig.ShowTypeNames)
         {
             builder.HideHeaders();
         }
@@ -111,7 +111,7 @@ internal class ArrayTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         var colorConfig = context.Config.ColorConfig;
 
-        if (context.Config.TypeNamingConfig.ShowTypeNames is true)
+        if (context.Config.TypeNamingConfig.ShowTypeNames)
         {
             var (typeName, rank) = context.Config.TypeNameProvider.GetJaggedArrayNameWithRank(descriptor.Type);
             builder.SetTitle($"{typeName}[{rowsAll},{columnsAll}]");

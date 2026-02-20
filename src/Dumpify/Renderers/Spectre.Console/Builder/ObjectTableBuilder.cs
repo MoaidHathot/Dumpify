@@ -143,7 +143,7 @@ internal class ObjectTableBuilder
     {
         var table = new Table();
 
-        if (_context.Config.TypeNamingConfig.ShowTypeNames is true)
+        if (_context.Config.TypeNamingConfig.ShowTypeNames)
         {
             var type = _descriptor.Type == _sourceObject.GetType() ? _descriptor.Type : _sourceObject.GetType();
             var typeName = _context.Config.TypeNameProvider.GetTypeName(type);
@@ -165,7 +165,7 @@ internal class ObjectTableBuilder
         {
             true => false,
             false => true,
-            null => _context.Config.TableConfig.ShowTableHeaders is false,
+            null => !_context.Config.TableConfig.ShowTableHeaders,
         };
 
         if (hideHeaders)
@@ -198,7 +198,7 @@ internal class ObjectTableBuilder
             table.AddRow(fullRow);
         }
 
-        table.Border(_context.Config.TableConfig.BorderStyle.ToSpectreBorder());
+        table.Border(_context.Config.TableConfig.BorderStyle.Value.ToSpectreBorder());
 
         if (_context.Config.TableConfig.ShowRowSeparators)
         {

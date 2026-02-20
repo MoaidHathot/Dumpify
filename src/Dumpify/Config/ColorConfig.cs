@@ -2,7 +2,7 @@ using System.Drawing;
 
 namespace Dumpify;
 
-public class ColorConfig : IColorConfig<DumpColor>, IConfigMergeable<ColorConfig>
+public class ColorConfig : ConfigBase<ColorConfig>, IColorConfig<DumpColor>
 {
     public static DumpColor? DefaultTypeNameColor { get; } = new(Color.White);
     public static DumpColor? DefaultColumnNameColor { get; } = new("#87D7D7");
@@ -42,30 +42,24 @@ public class ColorConfig : IColorConfig<DumpColor>, IConfigMergeable<ColorConfig
 
     public ColorConfig()
     {
-
     }
 
     /// <inheritdoc />
-    public ColorConfig MergeWith(ColorConfig? overrideConfig)
+    protected override ColorConfig MergeOverride(ColorConfig overrideConfig)
     {
-        if (overrideConfig is null)
-        {
-            return this;
-        }
-
         // For ColorConfig, we use the static Default* properties as the comparison baseline
         // since the parameterless constructor sets properties to these defaults
         return new ColorConfig
         {
-            TypeNameColor = ConfigMergeHelper.Merge(TypeNameColor, overrideConfig.TypeNameColor, DefaultTypeNameColor),
-            ColumnNameColor = ConfigMergeHelper.Merge(ColumnNameColor, overrideConfig.ColumnNameColor, DefaultColumnNameColor),
-            PropertyValueColor = ConfigMergeHelper.Merge(PropertyValueColor, overrideConfig.PropertyValueColor, DefaultPropertyValueColor),
-            PropertyNameColor = ConfigMergeHelper.Merge(PropertyNameColor, overrideConfig.PropertyNameColor, DefaultPropertyNameColor),
-            NullValueColor = ConfigMergeHelper.Merge(NullValueColor, overrideConfig.NullValueColor, DefaultNullValueColor),
-            IgnoredValueColor = ConfigMergeHelper.Merge(IgnoredValueColor, overrideConfig.IgnoredValueColor, DefaultIgnoredValueColor),
-            MetadataInfoColor = ConfigMergeHelper.Merge(MetadataInfoColor, overrideConfig.MetadataInfoColor, DefaultMetadataInfoColor),
-            MetadataErrorColor = ConfigMergeHelper.Merge(MetadataErrorColor, overrideConfig.MetadataErrorColor, DefaultMetadataErrorColor),
-            LabelValueColor = ConfigMergeHelper.Merge(LabelValueColor, overrideConfig.LabelValueColor, DefaultLabelValueColor),
+            TypeNameColor = Merge(TypeNameColor, overrideConfig.TypeNameColor, DefaultTypeNameColor),
+            ColumnNameColor = Merge(ColumnNameColor, overrideConfig.ColumnNameColor, DefaultColumnNameColor),
+            PropertyValueColor = Merge(PropertyValueColor, overrideConfig.PropertyValueColor, DefaultPropertyValueColor),
+            PropertyNameColor = Merge(PropertyNameColor, overrideConfig.PropertyNameColor, DefaultPropertyNameColor),
+            NullValueColor = Merge(NullValueColor, overrideConfig.NullValueColor, DefaultNullValueColor),
+            IgnoredValueColor = Merge(IgnoredValueColor, overrideConfig.IgnoredValueColor, DefaultIgnoredValueColor),
+            MetadataInfoColor = Merge(MetadataInfoColor, overrideConfig.MetadataInfoColor, DefaultMetadataInfoColor),
+            MetadataErrorColor = Merge(MetadataErrorColor, overrideConfig.MetadataErrorColor, DefaultMetadataErrorColor),
+            LabelValueColor = Merge(LabelValueColor, overrideConfig.LabelValueColor, DefaultLabelValueColor),
         };
     }
 }

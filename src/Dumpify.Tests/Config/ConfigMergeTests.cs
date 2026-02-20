@@ -38,8 +38,8 @@ public class ConfigMergeTests
         Assert.False(result.ShowTableHeaders);
         Assert.True(result.ShowMemberTypes);
         Assert.True(result.ShowRowSeparators);
-        Assert.Equal(50, result.MaxCollectionCount);
-        Assert.Equal(TableBorderStyle.Heavy, result.BorderStyle);
+        Assert.Equal(50, (int)result.MaxCollectionCount);
+        Assert.Equal(TableBorderStyle.Heavy, (TableBorderStyle)result.BorderStyle);
     }
 
     [Fact]
@@ -60,10 +60,10 @@ public class ConfigMergeTests
         // Base values should be preserved
         Assert.True(result.ShowMemberTypes);
         Assert.True(result.ShowRowSeparators);
-        Assert.Equal(TableBorderStyle.Heavy, result.BorderStyle);
+        Assert.Equal(TableBorderStyle.Heavy, (TableBorderStyle)result.BorderStyle);
 
         // Override value should be applied
-        Assert.Equal(5, result.MaxCollectionCount);
+        Assert.Equal(5, (int)result.MaxCollectionCount);
     }
 
     [Fact]
@@ -76,6 +76,54 @@ public class ConfigMergeTests
 
         Assert.NotSame(baseConfig, result);
         Assert.NotSame(overrideConfig, result);
+    }
+
+    [Fact]
+    public void TableConfig_MergeWith_ExplicitlySettingDefaultValue_OverridesBaseValue()
+    {
+        // Base config has non-default values
+        var baseConfig = new TableConfig
+        {
+            ShowArrayIndices = false,  // default is true
+            ShowTableHeaders = false,  // default is true
+        };
+
+        // Override explicitly sets properties to their default values
+        // With TrackableProperty, this should now override the base
+        var overrideConfig = new TableConfig
+        {
+            ShowArrayIndices = true,   // explicitly set to default
+            ShowTableHeaders = true,   // explicitly set to default
+        };
+
+        var result = baseConfig.MergeWith(overrideConfig);
+
+        // The override's explicit values should be used, even though they equal defaults
+        Assert.True(result.ShowArrayIndices);
+        Assert.True(result.ShowTableHeaders);
+    }
+
+    [Fact]
+    public void TrackableProperty_IsSet_FalseForConstructorDefault()
+    {
+        var config = new TableConfig();
+
+        Assert.False(config.ShowArrayIndices.IsSet);
+        Assert.False(config.ShowTableHeaders.IsSet);
+        Assert.False(config.MaxCollectionCount.IsSet);
+        Assert.False(config.BorderStyle.IsSet);
+    }
+
+    [Fact]
+    public void TrackableProperty_IsSet_TrueAfterAssignment()
+    {
+        var config = new TableConfig
+        {
+            ShowArrayIndices = true,  // same as default, but explicitly set
+        };
+
+        Assert.True(config.ShowArrayIndices.IsSet);
+        Assert.False(config.ShowTableHeaders.IsSet);  // not set
     }
 
     #endregion
@@ -292,9 +340,9 @@ public class ConfigMergeTests
         var result = baseConfig.MergeWith(overrideConfig);
 
         Assert.False(result.QuoteStringValues);
-        Assert.Equal('\'', result.StringQuotationChar);
+        Assert.Equal('\'', (char)result.StringQuotationChar);
         Assert.False(result.QuoteCharValues);
-        Assert.Equal('`', result.CharQuotationChar);
+        Assert.Equal('`', (char)result.CharQuotationChar);
     }
 
     #endregion

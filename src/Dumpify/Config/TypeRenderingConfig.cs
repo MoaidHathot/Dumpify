@@ -1,28 +1,21 @@
 namespace Dumpify;
 
-public class TypeRenderingConfig : IConfigMergeable<TypeRenderingConfig>
+public class TypeRenderingConfig : ConfigBase<TypeRenderingConfig>
 {
-    private static readonly TypeRenderingConfig Defaults = new();
-
-    public bool QuoteStringValues { get; set; } = true;
-    public char StringQuotationChar { get; set; } = '"';
-    public bool QuoteCharValues { get; set; } = true;
-    public char CharQuotationChar { get; set; } = '\'';
+    public TrackableProperty<bool> QuoteStringValues { get; set; } = new(true);
+    public TrackableProperty<char> StringQuotationChar { get; set; } = new('"');
+    public TrackableProperty<bool> QuoteCharValues { get; set; } = new(true);
+    public TrackableProperty<char> CharQuotationChar { get; set; } = new('\'');
 
     /// <inheritdoc />
-    public TypeRenderingConfig MergeWith(TypeRenderingConfig? overrideConfig)
+    protected override TypeRenderingConfig MergeOverride(TypeRenderingConfig overrideConfig)
     {
-        if (overrideConfig is null)
-        {
-            return this;
-        }
-
         return new TypeRenderingConfig
         {
-            QuoteStringValues = ConfigMergeHelper.Merge(QuoteStringValues, overrideConfig.QuoteStringValues, Defaults.QuoteStringValues),
-            StringQuotationChar = ConfigMergeHelper.Merge(StringQuotationChar, overrideConfig.StringQuotationChar, Defaults.StringQuotationChar),
-            QuoteCharValues = ConfigMergeHelper.Merge(QuoteCharValues, overrideConfig.QuoteCharValues, Defaults.QuoteCharValues),
-            CharQuotationChar = ConfigMergeHelper.Merge(CharQuotationChar, overrideConfig.CharQuotationChar, Defaults.CharQuotationChar),
+            QuoteStringValues = Merge(QuoteStringValues, overrideConfig.QuoteStringValues),
+            StringQuotationChar = Merge(StringQuotationChar, overrideConfig.StringQuotationChar),
+            QuoteCharValues = Merge(QuoteCharValues, overrideConfig.QuoteCharValues),
+            CharQuotationChar = Merge(CharQuotationChar, overrideConfig.CharQuotationChar),
         };
     }
 }
