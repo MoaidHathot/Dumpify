@@ -16,7 +16,7 @@ using System.Text;
 // (1, 2, 3, 4, ("1", "b"), 5, 6, 7, 8, 9, 10, 11, 12, 13, "14", "15", 16, 17, 18).Dump("ValueTuple");
 // Tuple.Create(1, 2, 3, 4, 5, 6, 7, Tuple.Create(8, 9, 10, 11)).Dump("System.Tuple");
 // new[] { 1, 2, 3,  4, 5, 6, 7, 8, 9, 10 }.Dump(tableConfig: new TableConfig { MaxCollectionCount = 3 });
-DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Rounded;
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Ascii;
 Console.WriteLine("---------------------");
     var moaid1 = new Person
     {
@@ -38,8 +38,9 @@ haneeni1.Spouse = moaid1;
 // moaid1.Dump("Moaid");
 
 // new [] { moaid1, haneeni1 }.Dump();
-    moaid1.Dump("Filter property Name", members: new MembersConfig { MemberFilter = ctx => ctx.Member.Name != nameof(Person.FirstName) });
-    moaid1.Dump("Filter property Value", members: new MembersConfig { MemberFilter = ctx => !object.ReferenceEquals(ctx.Value, "Moaid") });
+    moaid1.Dump("Use global");
+    moaid1.Dump("Override per dump", tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Minimal, ShowRowSeparators = true });
+    moaid1.Dump("Use globali 2");
 
 //
 // var lazy = new Lazy<int>(()=> 10);
@@ -58,7 +59,7 @@ haneeni1.Spouse = moaid1;
 // var task = Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith(_ => 10);
 var task = Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith(_ => 10);
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-task.Dump();
+// task.Dump();
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
 
