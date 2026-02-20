@@ -164,17 +164,20 @@ public static class DumpExtensions
         output ??= defaultConfig.Output;
         renderer ??= defaultConfig.Renderer;
 
-        var membersConfig = members ?? defaultConfig.MembersConfig;
-        var typeNamingConfig = typeNames ?? defaultConfig.TypeNamingConfig;
+        var membersConfig = defaultConfig.MembersConfig.MergeWith(members);
+        var typeNamingConfig = defaultConfig.TypeNamingConfig.MergeWith(typeNames);
+        var colorConfig = defaultConfig.ColorConfig.MergeWith(colors);
+        var mergedTableConfig = defaultConfig.TableConfig.MergeWith(tableConfig);
+        var mergedTypeRenderingConfig = defaultConfig.TypeRenderingConfig.MergeWith(typeRenderingConfig);
 
         var rendererConfig = new RendererConfig
         {
             Label = label ?? (defaultConfig.UseAutoLabels ? autoLabel : null),
             MaxDepth = maxDepth.MustBeGreaterThan(0) ?? defaultConfig.MaxDepth,
-            ColorConfig = colors ?? defaultConfig.ColorConfig,
-            TableConfig = tableConfig ?? defaultConfig.TableConfig,
+            ColorConfig = colorConfig,
+            TableConfig = mergedTableConfig,
             TypeNamingConfig = typeNamingConfig,
-            TypeRenderingConfig = typeRenderingConfig ?? defaultConfig.TypeRenderingConfig,
+            TypeRenderingConfig = mergedTypeRenderingConfig,
             MemberProvider = new MemberProvider(
                 membersConfig.IncludeProperties,
                 membersConfig.IncludeFields,
@@ -191,7 +194,7 @@ public static class DumpExtensions
             MemberFilter = membersConfig.MemberFilter,
         };
 
-        outputConfig ??= defaultConfig.OutputConfig;
+        var mergedOutputConfig = defaultConfig.OutputConfig.MergeWith(outputConfig);
 
         rendererConfig = output.AdjustConfig(rendererConfig);
 
@@ -201,7 +204,7 @@ public static class DumpExtensions
         {
             if (TryRenderSafely(obj, renderer, null, rendererConfig, output, out var rendered))
             {
-                OutputSafely(obj, rendered, output, outputConfig);
+                OutputSafely(obj, rendered, output, mergedOutputConfig);
             }
 
             return obj;
@@ -223,7 +226,7 @@ public static class DumpExtensions
             )
         )
         {
-            OutputSafely(obj, renderedObject, output, outputConfig);
+            OutputSafely(obj, renderedObject, output, mergedOutputConfig);
         }
 
         return obj;
