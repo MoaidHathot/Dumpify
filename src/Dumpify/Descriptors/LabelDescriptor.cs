@@ -1,4 +1,4 @@
-﻿using Dumpify.Descriptors.ValueProviders;
+using Dumpify.Descriptors.ValueProviders;
 
 namespace Dumpify.Descriptors;
 internal record LabelDescriptor(Type Type, IValueProvider? ValueProvider) : IDescriptor

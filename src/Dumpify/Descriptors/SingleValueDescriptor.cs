@@ -1,4 +1,4 @@
-﻿using Dumpify.Descriptors.ValueProviders;
+using Dumpify.Descriptors.ValueProviders;
 using System;
 using System.Collections.Generic;
 using System.Reflection;

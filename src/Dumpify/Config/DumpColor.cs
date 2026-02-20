@@ -1,4 +1,4 @@
-﻿using Dumpify.Extensions;
+using Dumpify.Extensions;
 using System.Drawing;
 
 namespace Dumpify;

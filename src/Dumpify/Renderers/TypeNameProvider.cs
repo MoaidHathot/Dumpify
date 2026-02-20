@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Dumpify.Extensions;
 using System.Runtime.CompilerServices;
 

@@ -1,4 +1,4 @@
-﻿namespace Dumpify.Tests.Generators;
+namespace Dumpify.Tests.Generators;
 
 public class ObjectDescriptorTests
 {

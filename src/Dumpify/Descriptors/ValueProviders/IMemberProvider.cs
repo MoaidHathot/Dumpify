@@ -1,4 +1,4 @@
-﻿using Dumpify;
+using Dumpify;
 
 namespace Dumpify.Descriptors.ValueProviders;
 

@@ -1,4 +1,4 @@
-﻿namespace Dumpify;
+namespace Dumpify;
 public interface IDumpOutput
 {
     public TextWriter TextWriter { get; }

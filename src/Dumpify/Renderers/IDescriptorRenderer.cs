@@ -1,4 +1,4 @@
-﻿using Dumpify.Descriptors;
+using Dumpify.Descriptors;
 using Spectre.Console.Rendering;
 
 namespace Dumpify;

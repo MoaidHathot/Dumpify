@@ -1,4 +1,4 @@
-﻿using Dumpify;
+using Dumpify;
 using Spectre.Console;
 using System;
 using System.Collections.Generic;

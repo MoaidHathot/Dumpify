@@ -1,4 +1,4 @@
-﻿using Dumpify.Descriptors.ValueProviders;
+using Dumpify.Descriptors.ValueProviders;
 using System.Collections.Concurrent;
 
 namespace Dumpify.Descriptors.Generators;
