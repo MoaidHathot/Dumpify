@@ -41,7 +41,7 @@ internal class CompositeDescriptorGenerator : IDescriptorGenerator
         IValueProvider? valueProvider,
         IMemberProvider memberProvider)
     {
-        var generating = _threadLocalGenerating.Value;
+        var generating = _threadLocalGenerating.Value!;
 
         if (generating.TryGetValue(cacheKey, out var placeholder))
         {
