@@ -26,6 +26,7 @@ public class DumpConfig
         OutputConfig = new OutputConfig();
         TypeRenderingConfig = new TypeRenderingConfig();
         ReferenceRenderingConfig = new ReferenceRenderingConfig();
+        TruncationConfig = new TruncationConfig();
     }
 
     public void AddCustomTypeHandler(Type type, Func<object, Type, IValueProvider?, IMemberProvider, object?> valueFactory)
@@ -51,4 +52,5 @@ public class DumpConfig
     public OutputConfig OutputConfig { get; }
     public TypeRenderingConfig TypeRenderingConfig { get; }
     public ReferenceRenderingConfig ReferenceRenderingConfig { get; }
+    public TruncationConfig TruncationConfig { get; }
 }

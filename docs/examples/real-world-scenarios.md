@@ -65,7 +65,9 @@ app.MapPost("/api/orders", async (CreateOrderRequest request, OrderService servi
     validationResult.Dump("Validation Result");
     
     if (!validationResult.IsValid)
+    {
         return Results.BadRequest(validationResult.Errors);
+    }
     
     var order = await service.CreateOrderAsync(request);
     order.Dump("Created Order");

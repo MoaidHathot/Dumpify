@@ -38,59 +38,58 @@ internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
     protected override IRenderable RenderSingleValue(object value, RenderContext<SpectreRendererState> context, Color? color)
         => new TextRenderableAdapter(value.ToString() ?? "", new Style(foreground: color));
 
-    protected override IRenderable RenderLabelDescriptor(object obj, LabelDescriptor descriptor, RenderContext<SpectreRendererState> context)
-        => new Markup(Markup.Escape(obj.ToString() ?? ""));
-
     protected override IRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext<SpectreRendererState> context)
     {
         var items = (IEnumerable)obj;
-
         var memberProvider = context.Config.MemberProvider;
-        var renderedItems = new List<IRenderable>();
 
-        int index = 0;
-        foreach (var item in items)
-        {
-            var renderedItem = obj switch
+        // Use the centralized truncation utility
+        var truncated = CollectionTruncator.Truncate(
+            items.Cast<object?>(),
+            context.Config.TruncationConfig);
+
+        var renderedItems = new List<string>();
+        var itemIndent = new string(' ', (context.CurrentDepth + 1) * 2);
+
+        truncated.ForEachWithMarkers(
+            onMarker: marker =>
             {
-                null => RenderNullValue(null, context),
-                not null => GetRenderedValue(item, descriptor.ElementsType, index),
-            };
-
-            renderedItems.Add(renderedItem);
-            index++;
-
-            IRenderable GetRenderedValue(object item, Type? elementType, int idx)
+                renderedItems.Add(marker.GetDefaultMessage());
+            },
+            onItem: (item, originalIndex) =>
             {
-                var itemType = descriptor.ElementsType ?? item.GetType();
-                var itemDescriptor = DumpConfig.Default.Generator.Generate(itemType, null, memberProvider);
+                var renderedItem = item switch
+                {
+                    null => RenderNullValue(null, context).ToString() ?? "null",
+                    not null => GetRenderedValue(item, descriptor.ElementsType, originalIndex).ToString() ?? ""
+                };
 
-                // Update path with index for reference tracking
-                var itemContext = context.WithIndex(idx) with { CurrentDepth = context.CurrentDepth + 1 };
-                return RenderDescriptor(item, itemDescriptor, itemContext);
-            }
-        }
+                renderedItems.Add(renderedItem);
+            });
 
-        if (renderedItems.None())
+        if (renderedItems.Count == 0)
         {
             return new TextRenderableAdapter("[]");
         }
 
-        var itemIndent = new string(' ', (context.CurrentDepth + 1) * 2);
         var itemsStr = string.Join($",{Environment.NewLine}{itemIndent}", renderedItems);
-
-        var result = $"[{Environment.NewLine}{itemIndent}{itemsStr}{Environment.NewLine}{new string(' ', (context.CurrentDepth) * 2)}]";
+        var result = $"[{Environment.NewLine}{itemIndent}{itemsStr}{Environment.NewLine}{new string(' ', context.CurrentDepth * 2)}]";
 
         return new TextRenderableAdapter(result);
+
+        IRenderable GetRenderedValue(object item, Type? elementType, int idx)
+        {
+            var itemType = elementType ?? item.GetType();
+            var itemDescriptor = DumpConfig.Default.Generator.Generate(itemType, null, memberProvider);
+            // Update path with index for reference tracking
+            var itemContext = context.WithIndex(idx) with { CurrentDepth = context.CurrentDepth + 1 };
+            return RenderDescriptor(item, itemDescriptor, itemContext);
+        }
     }
 
     protected override IRenderedObject CreateRenderedObject(IRenderable rendered)
     {
         var markup = ((TextRenderableAdapter)rendered).ToMarkup();
-
         return base.CreateRenderedObject(markup);
     }
-
-    // protected override IRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<SpectreRendererState> context) => throw new NotImplementedException();
-    // protected override IRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext<SpectreRendererState> context) => throw new NotImplementedException();
 }

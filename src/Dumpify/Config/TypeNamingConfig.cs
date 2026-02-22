@@ -1,10 +1,23 @@
-﻿namespace Dumpify;
+namespace Dumpify;
 
-public class TypeNamingConfig
+public class TypeNamingConfig : ConfigBase<TypeNamingConfig>
 {
-    public bool UseAliases { get; set; } = true;
-    public bool UseFullName { get; set; }
-    public bool ShowTypeNames { get; set; } = true;
-    public bool SimplifyAnonymousObjectNames { get; set; } = true;
-    public bool SeparateTypesWithSpace { get; set; } = true;
+    public TrackableProperty<bool> UseAliases { get; set; } = new(true);
+    public TrackableProperty<bool> UseFullName { get; set; } = new(false);
+    public TrackableProperty<bool> ShowTypeNames { get; set; } = new(true);
+    public TrackableProperty<bool> SimplifyAnonymousObjectNames { get; set; } = new(true);
+    public TrackableProperty<bool> SeparateTypesWithSpace { get; set; } = new(true);
+
+    /// <inheritdoc />
+    protected override TypeNamingConfig MergeOverride(TypeNamingConfig overrideConfig)
+    {
+        return new TypeNamingConfig
+        {
+            UseAliases = Merge(UseAliases, overrideConfig.UseAliases),
+            UseFullName = Merge(UseFullName, overrideConfig.UseFullName),
+            ShowTypeNames = Merge(ShowTypeNames, overrideConfig.ShowTypeNames),
+            SimplifyAnonymousObjectNames = Merge(SimplifyAnonymousObjectNames, overrideConfig.SimplifyAnonymousObjectNames),
+            SeparateTypesWithSpace = Merge(SeparateTypesWithSpace, overrideConfig.SeparateTypesWithSpace),
+        };
+    }
 }

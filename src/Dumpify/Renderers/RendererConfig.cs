@@ -12,6 +12,7 @@ public record RendererConfig
     public TypeNamingConfig TypeNamingConfig { get; init; } = new TypeNamingConfig();
     public TypeRenderingConfig TypeRenderingConfig { get; init; } = new TypeRenderingConfig();
     public ReferenceRenderingConfig ReferenceRenderingConfig { get; init; } = new ReferenceRenderingConfig();
+    public TruncationConfig TruncationConfig { get; init; } = new TruncationConfig();
     public required IMemberProvider MemberProvider { get; init; }
     public required ITypeNameProvider TypeNameProvider { get; init; }
 
@@ -20,4 +21,10 @@ public record RendererConfig
     /// </summary>
     public IReferenceRenderingStrategy ReferenceRenderingStrategy =>
         ReferenceRenderingStrategyFactory.Create(ReferenceRenderingConfig);
+
+    /// <summary>
+    /// Optional filter to include/exclude members during rendering.
+    /// Applied at render time, enabling value-based filtering.
+    /// </summary>
+    public Func<MemberFilterContext, bool>? MemberFilter { get; init; } = null;
 }

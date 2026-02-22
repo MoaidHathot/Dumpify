@@ -1,9 +1,21 @@
-﻿namespace Dumpify;
+namespace Dumpify;
 
-public class TypeRenderingConfig
+public class TypeRenderingConfig : ConfigBase<TypeRenderingConfig>
 {
-    public bool QuoteStringValues { get; set; } = true;
-    public char StringQuotationChar { get; set; } = '"';
-    public bool QuoteCharValues { get; set; } = true;
-    public char CharQuotationChar { get; set; } = '\'';
+    public TrackableProperty<bool> QuoteStringValues { get; set; } = new(true);
+    public TrackableProperty<char> StringQuotationChar { get; set; } = new('"');
+    public TrackableProperty<bool> QuoteCharValues { get; set; } = new(true);
+    public TrackableProperty<char> CharQuotationChar { get; set; } = new('\'');
+
+    /// <inheritdoc />
+    protected override TypeRenderingConfig MergeOverride(TypeRenderingConfig overrideConfig)
+    {
+        return new TypeRenderingConfig
+        {
+            QuoteStringValues = Merge(QuoteStringValues, overrideConfig.QuoteStringValues),
+            StringQuotationChar = Merge(StringQuotationChar, overrideConfig.StringQuotationChar),
+            QuoteCharValues = Merge(QuoteCharValues, overrideConfig.QuoteCharValues),
+            CharQuotationChar = Merge(CharQuotationChar, overrideConfig.CharQuotationChar),
+        };
+    }
 }

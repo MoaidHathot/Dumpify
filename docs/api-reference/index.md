@@ -18,6 +18,27 @@ This section provides detailed documentation for all public APIs in Dumpify.
 | [Extension Methods](./dump-extensions.md) | `Dump()`, `DumpConsole()`, `DumpDebug()`, `DumpTrace()`, `DumpText()` |
 | [DumpConfig](./dump-config.md) | Global configuration singleton |
 | [DumpColor](./dump-color.md) | Color representation for styling |
+| [DumpOutput](./dump-output.md) | Default output implementation |
+
+## Enums
+
+| Reference | Description |
+|-----------|-------------|
+| [TableBorderStyle](./table-border-style.md) | Table border styles (Rounded, Ascii, etc.) |
+| [TruncationMode](./truncation-mode.md) | Collection truncation modes (Head, Tail, HeadAndTail) |
+
+## Interfaces
+
+| Reference | Description |
+|-----------|-------------|
+| [IDumpOutput](./idump-output.md) | Interface for custom output targets |
+| [IRenderer](./irenderer.md) | Interface for custom renderers |
+
+## Structs
+
+| Reference | Description |
+|-----------|-------------|
+| [MemberFilterContext](./member-filter-context.md) | Context for member filtering callbacks |
 
 ## Extension Methods Overview
 
@@ -57,22 +78,33 @@ Configuration is handled through several specialized classes:
 | Class | Purpose | Documentation |
 |-------|---------|---------------|
 | `DumpColor` | Color representation | [DumpColor Reference](./dump-color.md) |
+| `DumpOutput` | Default output implementation | [DumpOutput Reference](./dump-output.md) |
 
-## Interfaces
+## Extensibility Interfaces
 
-Dumpify exposes several interfaces for extensibility:
+Dumpify exposes several interfaces for extensibility. See the detailed documentation for each:
+
+- [IDumpOutput](./idump-output.md) - For creating custom output targets
+- [IRenderer](./irenderer.md) - For creating custom renderers
 
 ```csharp
 // Output targets
 public interface IDumpOutput
 {
-    void WriteRenderedObject(IRenderedObject renderedObject, OutputConfig config);
+    TextWriter TextWriter { get; }
+    RendererConfig AdjustConfig(in RendererConfig config);
 }
 
 // Renderers
 public interface IRenderer
 {
-    IRenderedObject Render<T>(T? obj, IDescriptor? descriptor, RendererConfig config);
+    IRenderedObject Render(object? obj, IDescriptor? descriptor, RendererConfig config);
+}
+
+// Rendered output
+public interface IRenderedObject
+{
+    void Output(IDumpOutput output, OutputConfig config);
 }
 ```
 

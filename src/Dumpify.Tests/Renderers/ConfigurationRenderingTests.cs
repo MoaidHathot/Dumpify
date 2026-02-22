@@ -10,6 +10,29 @@ public class ConfigurationRenderingTests
     private record Person(string Name, int Age, string? Email = null);
     private record Address(string Street, string City, int ZipCode);
     private record PersonWithAddress(string Name, Address HomeAddress);
+    private record PersonWithNullables(string Name, int Age, string? Email);
+    
+    private class PersonWithDefaults
+    {
+        public string Name { get; set; } = "";
+        public int Age { get; set; }
+        public double Score { get; set; }
+    }
+    
+    private class PersonWithStrings
+    {
+        public string Name { get; set; } = "";
+        public string Nickname { get; set; } = "";
+        public string Title { get; set; } = "";
+    }
+    
+    private class PersonWithSensitive
+    {
+        public string Name { get; set; } = "";
+        public int Age { get; set; }
+        public string Password { get; set; } = "";
+        public string Token { get; set; } = "";
+    }
     
     private class ClassWithPrivateMembers
     {
@@ -101,7 +124,7 @@ public class ConfigurationRenderingTests
     public Task TableConfig_MaxCollectionCount_LimitedTo2()
     {
         var data = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        var output = data.DumpText(tableConfig: new TableConfig { MaxCollectionCount = 2 });
+        var output = data.DumpText(truncationConfig: new TruncationConfig { MaxCollectionCount = 2 });
         return Verify(output);
     }
     
@@ -109,7 +132,7 @@ public class ConfigurationRenderingTests
     public Task TableConfig_MaxCollectionCount_LimitedTo5()
     {
         var data = Enumerable.Range(1, 20).ToArray();
-        var output = data.DumpText(tableConfig: new TableConfig { MaxCollectionCount = 5 });
+        var output = data.DumpText(truncationConfig: new TruncationConfig { MaxCollectionCount = 5 });
         return Verify(output);
     }
     
@@ -117,7 +140,7 @@ public class ConfigurationRenderingTests
     public Task TableConfig_MaxCollectionCount_Unlimited()
     {
         var data = new[] { 1, 2, 3, 4, 5 };
-        var output = data.DumpText(tableConfig: new TableConfig { MaxCollectionCount = int.MaxValue });
+        var output = data.DumpText(truncationConfig: new TruncationConfig { MaxCollectionCount = int.MaxValue });
         return Verify(output);
     }
     
@@ -130,10 +153,73 @@ public class ConfigurationRenderingTests
             ShowArrayIndices = true,
             ShowTableHeaders = true,
             ShowMemberTypes = true,
-            ShowRowSeparators = true,
-            MaxCollectionCount = 2
+            ShowRowSeparators = true
         };
-        var output = data.DumpText(tableConfig: config);
+        var output = data.DumpText(tableConfig: config, truncationConfig: new TruncationConfig { MaxCollectionCount = 2 });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_Rounded()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Rounded });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_Square()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Square });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_Ascii()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Ascii });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_None()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.None });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_Heavy()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Heavy });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_Double()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Double });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_Minimal()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Minimal });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task TableConfig_BorderStyle_Markdown()
+    {
+        var data = new Person("Alice", 30);
+        var output = data.DumpText(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Markdown });
         return Verify(output);
     }
     
@@ -233,7 +319,7 @@ public class ConfigurationRenderingTests
         var data = new Person("Alice", 30, "alice@example.com");
         var output = data.DumpText(members: new MembersConfig 
         { 
-            MemberFilter = member => member.Name != "Email"
+            MemberFilter = ctx => ctx.Member.Name != "Email"
         });
         return Verify(output);
     }
@@ -244,7 +330,75 @@ public class ConfigurationRenderingTests
         var data = new Person("Alice", 30, "alice@example.com");
         var output = data.DumpText(members: new MembersConfig 
         { 
-            MemberFilter = member => member.MemberType == typeof(string)
+            MemberFilter = ctx => ctx.Member.MemberType == typeof(string)
+        });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task MembersConfig_MemberFilter_ByValue_ExcludeNulls()
+    {
+        var data = new PersonWithNullables("Alice", 30, null);
+        var output = data.DumpText(members: new MembersConfig 
+        { 
+            MemberFilter = ctx => ctx.Value is not null
+        });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task MembersConfig_MemberFilter_ByValue_ExcludeDefaults()
+    {
+        var data = new PersonWithDefaults { Name = "Bob", Age = 0, Score = 0.0 };
+        var output = data.DumpText(members: new MembersConfig 
+        { 
+            MemberFilter = ctx =>
+            {
+                var value = ctx.Value;
+                if (value is int i && i == 0) return false;
+                if (value is double d && d == 0.0) return false;
+                return true;
+            }
+        });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task MembersConfig_MemberFilter_ByValue_OnlyNonEmptyStrings()
+    {
+        var data = new PersonWithStrings { Name = "Charlie", Nickname = "", Title = "Mr." };
+        var output = data.DumpText(members: new MembersConfig 
+        { 
+            MemberFilter = ctx => ctx.Value is not string str || !string.IsNullOrEmpty(str)
+        });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task MembersConfig_MemberFilter_ByDepth_OnlyTopLevel()
+    {
+        var data = new PersonWithAddress("Dave", new Address("123 Main St", "Springfield", 12345));
+        var output = data.DumpText(members: new MembersConfig 
+        { 
+            MemberFilter = ctx => ctx.Depth == 0
+        });
+        return Verify(output);
+    }
+    
+    [Fact]
+    public Task MembersConfig_MemberFilter_Combined_NameAndValue()
+    {
+        var data = new PersonWithSensitive { Name = "Eve", Age = 25, Password = "secret123", Token = "" };
+        var output = data.DumpText(members: new MembersConfig 
+        { 
+            MemberFilter = ctx =>
+            {
+                // Exclude sensitive fields by name
+                if (ctx.Member.Name is "Password" or "Token") return false;
+                // Exclude empty strings
+                if (ctx.Value is string str && string.IsNullOrEmpty(str)) return false;
+                return true;
+            }
         });
         return Verify(output);
     }
@@ -524,9 +678,9 @@ public class ConfigurationRenderingTests
             { 
                 ShowArrayIndices = true,
                 ShowMemberTypes = true,
-                ShowRowSeparators = true,
-                MaxCollectionCount = 10
+                ShowRowSeparators = true
             },
+            truncationConfig: new TruncationConfig { MaxCollectionCount = 10 },
             typeNames: new TypeNamingConfig 
             { 
                 UseAliases = true,

@@ -1,8 +1,8 @@
-﻿using System.Drawing;
+using System.Drawing;
 
 namespace Dumpify;
 
-public class ColorConfig : IColorConfig<DumpColor>
+public class ColorConfig : ConfigBase<ColorConfig>, IColorConfig<DumpColor>
 {
     public static DumpColor? DefaultTypeNameColor { get; } = new(Color.White);
     public static DumpColor? DefaultColumnNameColor { get; } = new("#87D7D7");
@@ -42,6 +42,24 @@ public class ColorConfig : IColorConfig<DumpColor>
 
     public ColorConfig()
     {
+    }
 
+    /// <inheritdoc />
+    protected override ColorConfig MergeOverride(ColorConfig overrideConfig)
+    {
+        // For ColorConfig, we use the static Default* properties as the comparison baseline
+        // since the parameterless constructor sets properties to these defaults
+        return new ColorConfig
+        {
+            TypeNameColor = Merge(TypeNameColor, overrideConfig.TypeNameColor, DefaultTypeNameColor),
+            ColumnNameColor = Merge(ColumnNameColor, overrideConfig.ColumnNameColor, DefaultColumnNameColor),
+            PropertyValueColor = Merge(PropertyValueColor, overrideConfig.PropertyValueColor, DefaultPropertyValueColor),
+            PropertyNameColor = Merge(PropertyNameColor, overrideConfig.PropertyNameColor, DefaultPropertyNameColor),
+            NullValueColor = Merge(NullValueColor, overrideConfig.NullValueColor, DefaultNullValueColor),
+            IgnoredValueColor = Merge(IgnoredValueColor, overrideConfig.IgnoredValueColor, DefaultIgnoredValueColor),
+            MetadataInfoColor = Merge(MetadataInfoColor, overrideConfig.MetadataInfoColor, DefaultMetadataInfoColor),
+            MetadataErrorColor = Merge(MetadataErrorColor, overrideConfig.MetadataErrorColor, DefaultMetadataErrorColor),
+            LabelValueColor = Merge(LabelValueColor, overrideConfig.LabelValueColor, DefaultLabelValueColor),
+        };
     }
 }

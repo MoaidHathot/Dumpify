@@ -1,13 +1,26 @@
-﻿using Dumpify.Descriptors.ValueProviders;
-
 namespace Dumpify;
 
-public class MembersConfig
+public class MembersConfig : ConfigBase<MembersConfig>
 {
-    public bool IncludePublicMembers { get; set; } = true;
-    public bool IncludeNonPublicMembers { get; set; } = false;
-    public bool IncludeVirtualMembers { get; set; } = true;
-    public bool IncludeProperties { get; set; } = true;
-    public bool IncludeFields { get; set; } = false;
-    public Func<IValueProvider, bool>? MemberFilter { get; set; }
+    public TrackableProperty<bool> IncludePublicMembers { get; set; } = new(true);
+    public TrackableProperty<bool> IncludeNonPublicMembers { get; set; } = new(false);
+    public TrackableProperty<bool> IncludeVirtualMembers { get; set; } = new(true);
+    public TrackableProperty<bool> IncludeProperties { get; set; } = new(true);
+    public TrackableProperty<bool> IncludeFields { get; set; } = new(false);
+    public Func<MemberFilterContext, bool>? MemberFilter { get; set; }
+
+    /// <inheritdoc />
+    protected override MembersConfig MergeOverride(MembersConfig overrideConfig)
+    {
+        return new MembersConfig
+        {
+            IncludePublicMembers = Merge(IncludePublicMembers, overrideConfig.IncludePublicMembers),
+            IncludeNonPublicMembers = Merge(IncludeNonPublicMembers, overrideConfig.IncludeNonPublicMembers),
+            IncludeVirtualMembers = Merge(IncludeVirtualMembers, overrideConfig.IncludeVirtualMembers),
+            IncludeProperties = Merge(IncludeProperties, overrideConfig.IncludeProperties),
+            IncludeFields = Merge(IncludeFields, overrideConfig.IncludeFields),
+            // MemberFilter is a delegate - if override provides one, always use it; otherwise use base
+            MemberFilter = overrideConfig.MemberFilter ?? MemberFilter,
+        };
+    }
 }

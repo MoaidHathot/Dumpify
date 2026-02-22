@@ -80,13 +80,22 @@ new Dictionary<string, string>
 ```
 ![image](https://user-images.githubusercontent.com/8770486/232251913-add4a0d8-3355-44f6-ba94-5dfbf8d8e2ac.png)
 
-You can ensure that arrays, dictionaries and collections don't output too much by allowing results to be truncated. Do this by setting the `MaxCollectionCount` property in the tableConfig.
+You can ensure that arrays, dictionaries and collections don't output too much by allowing results to be truncated. Do this by setting the `MaxCollectionCount` property in the `TruncationConfig`.
 
 ```csharp
-int[] arr = [1, 2, 3, 4];
+int[] arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-// Outputs only the first two elements and a message that says: ... truncated 2 items
-arr.Dump(tableConfig: new () { MaxCollectionCount = 2 });
+// Outputs only the first 5 elements with a truncation marker
+arr.Dump(truncationConfig: new TruncationConfig { MaxCollectionCount = 5 });
+// Shows: 1, 2, 3, 4, 5, [... 5 more]
+
+// You can also truncate from the tail (last N elements)
+arr.Dump(truncationConfig: new TruncationConfig { MaxCollectionCount = 5, Mode = TruncationMode.Tail });
+// Shows: [... 5 more], 6, 7, 8, 9, 10
+
+// Or show both head and tail with truncation in the middle
+arr.Dump(truncationConfig: new TruncationConfig { MaxCollectionCount = 6, Mode = TruncationMode.HeadAndTail });
+// Shows: 1, 2, 3, [... 4 more], 9, 10
 ```
 
 ### You can turn on or off fields and private members
@@ -120,11 +129,29 @@ public class Person
     public string SensitiveData { get; set; }
 }
 
+// Filter by attribute - exclude members with [JsonIgnore]
 new Person()
 {
     Name = "Moaid",
     SensitiveData = "We don't want this to show up"
-}.Dump(members: new MembersConfig { MemberFilter = member => !member.Info.CustomAttributes.Any(a => a.AttributeType == typeof(JsonIgnoreAttribute)) });
+}.Dump(members: new MembersConfig { MemberFilter = ctx => !ctx.Member.Info.CustomAttributes.Any(a => a.AttributeType == typeof(JsonIgnoreAttribute)) });
+
+// Filter by value - exclude null or empty values (NEW!)
+new Person()
+{
+    Name = "Moaid",
+    SensitiveData = null
+}.Dump(members: new MembersConfig { MemberFilter = ctx => ctx.Value is not null });
+
+// Filter by depth - only show top-level properties (NEW!)
+myNestedObject.Dump(members: new MembersConfig { MemberFilter = ctx => ctx.Depth == 0 });
+```
+
+The `MemberFilter` receives a `MemberFilterContext` which provides:
+- `ctx.Member` - Access to member metadata (Name, Type, Attributes)
+- `ctx.Value` - The actual value of the member (lazily evaluated)
+- `ctx.Source` - The parent object containing the member
+- `ctx.Depth` - The current nesting depth during rendering
 ```
 
 ### You can turn on or off row separators and a type column
@@ -139,6 +166,18 @@ new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
 new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump(tableConfig: new TableConfig { ShowRowSeparators = true, ShowMemberTypes = true });
 ```
 ![image](https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/screenshots/row-separator.png)
+
+### Customize table border style
+If tables look garbled in your terminal (VS Code, Windows Terminal, etc.), you can change the border style:
+```csharp
+// Use ASCII borders for maximum compatibility
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Ascii;
+
+// Or use Square borders (simpler Unicode characters)
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Square;
+
+// Available styles: Rounded (default), Square, Ascii, None, Heavy, Double, Minimal, Markdown
+```
 
 ### You can set custom labels or auto-labels
 ```csharp
@@ -191,7 +230,9 @@ DumpConfig.Default.AddCustomTypeHandler(typeof(byte[]), (obj, type, valueProvide
 {
     var bytes = (byte[])obj;
     if (bytes.Length <= 8)
+    {
         return bytes;
+    }
     
     // Return a summary for large byte arrays
     return $"byte[{bytes.Length}]: {BitConverter.ToString(bytes.Take(8).ToArray())}...";

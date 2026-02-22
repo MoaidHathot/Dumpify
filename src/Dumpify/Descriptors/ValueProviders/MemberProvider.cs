@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 
 namespace Dumpify.Descriptors.ValueProviders;
 
@@ -9,25 +9,22 @@ internal sealed record MemberProvider : IMemberProvider
     private readonly bool _includePublicMembers;
     private readonly bool _includeNonPublicMembers;
     private readonly bool _includeVirtualMembers;
-    private readonly Func<IValueProvider, bool>? _memberFilter;
 
     public MemberProvider()
-        : this(includeProperties: true, includeFields: false, includePublicMembers: true, includeNonPublicMembers: false, includeVirtualMembers: true, memberFilter: null) { }
+        : this(includeProperties: true, includeFields: false, includePublicMembers: true, includeNonPublicMembers: false, includeVirtualMembers: true) { }
 
     public MemberProvider(
         bool includeProperties,
         bool includeFields,
         bool includePublicMembers,
         bool includeNonPublicMembers,
-        bool includeVirtualMembers,
-        Func<IValueProvider, bool>? memberFilter)
+        bool includeVirtualMembers)
     {
         _includeProperties = includeProperties;
         _includeFields = includeFields;
         _includePublicMembers = includePublicMembers;
         _includeNonPublicMembers = includeNonPublicMembers;
         _includeVirtualMembers = includeVirtualMembers;
-        _memberFilter = memberFilter;
     }
 
     public IEnumerable<IValueProvider> GetMembers(Type type)
@@ -57,11 +54,6 @@ internal sealed record MemberProvider : IMemberProvider
             members = members.Concat(fields);
         }
 
-        if (_memberFilter is not null)
-        {
-            members = members.Where(member => _memberFilter(member));
-        }
-
         return members;
     }
 
@@ -76,8 +68,7 @@ internal sealed record MemberProvider : IMemberProvider
                && _includeFields == other._includeFields
                && _includePublicMembers == other._includePublicMembers
                && _includeNonPublicMembers == other._includeNonPublicMembers
-               && _includeVirtualMembers == other._includeVirtualMembers
-               && Equals(_memberFilter, other._memberFilter);
+               && _includeVirtualMembers == other._includeVirtualMembers;
     }
 
     public override int GetHashCode() =>
@@ -86,8 +77,7 @@ internal sealed record MemberProvider : IMemberProvider
             _includeFields,
             _includePublicMembers,
             _includeNonPublicMembers,
-            _includeVirtualMembers,
-            _memberFilter
+            _includeVirtualMembers
         ).GetHashCode();
 
     private bool IsVirtualProperty(PropertyInfo property)

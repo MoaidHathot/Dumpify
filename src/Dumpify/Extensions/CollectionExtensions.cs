@@ -1,4 +1,4 @@
-﻿namespace Dumpify.Extensions;
+namespace Dumpify.Extensions;
 
 internal static class CollectionExtensions
 {

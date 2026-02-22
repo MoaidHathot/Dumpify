@@ -117,11 +117,14 @@ new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
 
 ## Target Frameworks
 
-Dumpify supports:
+Dumpify is designed to support almost all versions of .NET, providing broad compatibility across the entire .NET ecosystem:
 
-- .NET 9.0
-- .NET Standard 2.1
-- .NET Standard 2.0
+- **.NET 10.0** - Latest .NET version with full feature support
+- **.NET 6.0** - Long-Term Support (LTS) version
+- **.NET Standard 2.1** - Compatible with .NET Core 3.0+, .NET 5+
+- **.NET Standard 2.0** - Maximum compatibility including .NET Framework 4.6.1+, .NET Core 2.0+, Mono, Xamarin, and Unity
+
+By targeting .NET Standard 2.0, Dumpify works with a wide range of platforms including .NET Framework, .NET Core, .NET 5+, Mono, Xamarin, and Unity. This means you can use Dumpify in virtually any .NET project, from legacy .NET Framework applications to the latest .NET 10 projects.
 
 ---
 

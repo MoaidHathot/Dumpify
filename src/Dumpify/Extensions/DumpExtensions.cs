@@ -22,6 +22,7 @@ public static class DumpExtensions
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
         ReferenceRenderingConfig? referenceRendering = null,
+        TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
     {
@@ -39,6 +40,7 @@ public static class DumpExtensions
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
             referenceRendering: referenceRendering,
+            truncationConfig: truncationConfig,
             autoLabel: autoLabel
         );
     }
@@ -57,6 +59,7 @@ public static class DumpExtensions
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
         ReferenceRenderingConfig? referenceRendering = null,
+        TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
     {
@@ -74,6 +77,7 @@ public static class DumpExtensions
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
             referenceRendering: referenceRendering,
+            truncationConfig: truncationConfig,
             autoLabel: autoLabel
         );
     }
@@ -92,6 +96,7 @@ public static class DumpExtensions
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
         ReferenceRenderingConfig? referenceRendering = null,
+        TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     ) =>
         obj.Dump(
@@ -107,6 +112,7 @@ public static class DumpExtensions
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
             referenceRendering: referenceRendering,
+            truncationConfig: truncationConfig,
             autoLabel: autoLabel
         );
 
@@ -123,6 +129,7 @@ public static class DumpExtensions
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
         ReferenceRenderingConfig? referenceRendering = null,
+        TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
     {
@@ -144,6 +151,7 @@ public static class DumpExtensions
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
             referenceRendering: referenceRendering,
+            truncationConfig: truncationConfig,
             autoLabel: autoLabel
         );
 
@@ -165,6 +173,7 @@ public static class DumpExtensions
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
         ReferenceRenderingConfig? referenceRendering = null,
+        TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
     {
@@ -173,26 +182,30 @@ public static class DumpExtensions
         output ??= defaultConfig.Output;
         renderer ??= defaultConfig.Renderer;
 
-        var membersConfig = members ?? defaultConfig.MembersConfig;
-        var typeNamingConfig = typeNames ?? defaultConfig.TypeNamingConfig;
+        var membersConfig = defaultConfig.MembersConfig.MergeWith(members);
+        var typeNamingConfig = defaultConfig.TypeNamingConfig.MergeWith(typeNames);
+        var colorConfig = defaultConfig.ColorConfig.MergeWith(colors);
+        var mergedTableConfig = defaultConfig.TableConfig.MergeWith(tableConfig);
+        var mergedTypeRenderingConfig = defaultConfig.TypeRenderingConfig.MergeWith(typeRenderingConfig);
+        var mergedTruncationConfig = defaultConfig.TruncationConfig.MergeWith(truncationConfig);
         var referenceRenderingConfig = referenceRendering ?? defaultConfig.ReferenceRenderingConfig;
 
         var rendererConfig = new RendererConfig
         {
             Label = label ?? (defaultConfig.UseAutoLabels ? autoLabel : null),
             MaxDepth = maxDepth.MustBeGreaterThan(0) ?? defaultConfig.MaxDepth,
-            ColorConfig = colors ?? defaultConfig.ColorConfig,
-            TableConfig = tableConfig ?? defaultConfig.TableConfig,
+            ColorConfig = colorConfig,
+            TableConfig = mergedTableConfig,
             TypeNamingConfig = typeNamingConfig,
-            TypeRenderingConfig = typeRenderingConfig ?? defaultConfig.TypeRenderingConfig,
+            TypeRenderingConfig = mergedTypeRenderingConfig,
+            TruncationConfig = mergedTruncationConfig,
             ReferenceRenderingConfig = referenceRenderingConfig,
             MemberProvider = new MemberProvider(
                 membersConfig.IncludeProperties,
                 membersConfig.IncludeFields,
                 membersConfig.IncludePublicMembers,
                 membersConfig.IncludeNonPublicMembers,
-                membersConfig.IncludeVirtualMembers,
-                membersConfig.MemberFilter
+                membersConfig.IncludeVirtualMembers
             ),
             TypeNameProvider = new TypeNameProvider(
                 typeNamingConfig.UseAliases,
@@ -200,9 +213,10 @@ public static class DumpExtensions
                 typeNamingConfig.SimplifyAnonymousObjectNames,
                 typeNamingConfig.SeparateTypesWithSpace
             ),
+            MemberFilter = membersConfig.MemberFilter,
         };
 
-        outputConfig ??= defaultConfig.OutputConfig;
+        var mergedOutputConfig = defaultConfig.OutputConfig.MergeWith(outputConfig);
 
         rendererConfig = output.AdjustConfig(rendererConfig);
 
@@ -212,7 +226,7 @@ public static class DumpExtensions
         {
             if (TryRenderSafely(obj, renderer, null, rendererConfig, output, out var rendered))
             {
-                OutputSafely(obj, rendered, output, outputConfig);
+                OutputSafely(obj, rendered, output, mergedOutputConfig);
             }
 
             return obj;
@@ -234,7 +248,7 @@ public static class DumpExtensions
             )
         )
         {
-            OutputSafely(obj, renderedObject, output, outputConfig);
+            OutputSafely(obj, renderedObject, output, mergedOutputConfig);
         }
 
         return obj;

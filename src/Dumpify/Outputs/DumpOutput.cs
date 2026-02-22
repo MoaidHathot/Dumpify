@@ -1,4 +1,4 @@
-﻿namespace Dumpify;
+namespace Dumpify;
 
 public class DumpOutput : IDumpOutput
 {

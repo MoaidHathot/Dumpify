@@ -55,6 +55,22 @@ new Dictionary<string, string>
 ```
 ![image](https://user-images.githubusercontent.com/8770486/232251913-add4a0d8-3355-44f6-ba94-5dfbf8d8e2ac.png)
 
+### Truncate Large Collections
+```csharp
+var largeArray = Enumerable.Range(1, 1000).ToArray();
+
+// Show first 10 items
+largeArray.Dump(truncationConfig: new TruncationConfig { MaxCollectionCount = 10 });
+// Output: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, [... 990 more]
+
+// Show head and tail
+largeArray.Dump(truncationConfig: new TruncationConfig 
+{ 
+    MaxCollectionCount = 10, 
+    Mode = TruncationMode.HeadAndTail 
+});
+```
+
 
 ### You can turn on or off fields and private members
 ```csharp

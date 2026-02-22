@@ -1,5 +1,6 @@
-﻿using Dumpify.Descriptors;
+using Dumpify.Descriptors;
 using Dumpify.Extensions;
+using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections;
 using System.Reflection;
@@ -30,40 +31,40 @@ internal class DictionaryTypeRenderer : ICustomTypeRenderer<IRenderable>
 
         var pairs = ((IEnumerable<(object? key, object? value)>)handleContext!).ToList();
 
-        int maxCollectionCount = context.Config.TableConfig.MaxCollectionCount;
-        int length = pairs.Count > maxCollectionCount ? maxCollectionCount : pairs.Count;
+        // Use centralized truncation
+        var truncated = CollectionTruncator.Truncate(
+            pairs,
+            context.Config.TruncationConfig);
 
-        foreach (var pair in pairs.Take(length))
-        {
-            var keyType = pair.key?.GetType();
-            var keyDescriptor = keyType is null ? null : DumpConfig.Default.Generator.Generate(keyType, null, context.Config.MemberProvider);
-            var keyRenderable = _handler.RenderDescriptor(pair.key, keyDescriptor, context);
-
-            var value = pair.value;
-
-            if (value is not null && valueType is null)
+        truncated.ForEachWithMarkers(
+            onMarker: marker =>
             {
-                valueType = value.GetType();
-            }
-
-            (IDescriptor? valueDescriptor, IRenderable renderedValue) = value switch
+                var color = context.State.Colors.MetadataInfoColor;
+                var markerRenderable = new Markup(Markup.Escape(marker.GetDefaultMessage()), new Style(foreground: color));
+                var emptyRenderable = new Markup("");
+                tableBuilder.AddRow(null, null, emptyRenderable, markerRenderable);
+            },
+            onItem: (pair, _) =>
             {
-                null => (null, _handler.RenderNullValue(null, context)),
-                not null => GetDescriptorAndRender(value, context),
-            };
+                var keyType = pair.key?.GetType();
+                var keyDescriptor = keyType is null ? null : DumpConfig.Default.Generator.Generate(keyType, null, context.Config.MemberProvider);
+                var keyRenderable = _handler.RenderDescriptor(pair.key, keyDescriptor, context);
 
-            tableBuilder.AddRow(valueDescriptor, value, keyRenderable, renderedValue);
-        }
+                var value = pair.value;
 
-        if (pairs.Count > maxCollectionCount)
-        {
-            string truncatedNotificationText = $"... truncated {pairs.Count - maxCollectionCount} items";
+                if (value is not null && valueType is null)
+                {
+                    valueType = value.GetType();
+                }
 
-            var labelDescriptor = new LabelDescriptor(typeof(string), null);
-            var renderedValue = _handler.RenderDescriptor(truncatedNotificationText, labelDescriptor, context);
-            var keyRenderable = _handler.RenderDescriptor(string.Empty, labelDescriptor, context);
-            tableBuilder.AddRow(labelDescriptor, truncatedNotificationText, keyRenderable, renderedValue);
-        }
+                (IDescriptor? valueDescriptor, IRenderable renderedValue) = value switch
+                {
+                    null => (null, _handler.RenderNullValue(null, context)),
+                    not null => GetDescriptorAndRender(value, context),
+                };
+
+                tableBuilder.AddRow(valueDescriptor, value, keyRenderable, renderedValue);
+            });
 
         return tableBuilder.Build();
     }

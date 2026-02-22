@@ -14,8 +14,11 @@ nav_order: 4
 ## Table of Contents
 
 - [Properties](#properties)
+- [MemberFilterContext](#memberfiltercontext)
 - [Examples](#examples)
 - [Custom Member Filtering](#custom-member-filtering)
+- [Value-Based Filtering](#value-based-filtering)
+- [Depth-Based Filtering](#depth-based-filtering)
 
 ---
 
@@ -28,7 +31,22 @@ nav_order: 4
 | `IncludeVirtualMembers` | `bool` | `true` | Include virtual members |
 | `IncludeProperties` | `bool` | `true` | Include properties |
 | `IncludeFields` | `bool` | `false` | Include fields |
-| `MemberFilter` | `Func<IValueProvider, bool>?` | `null` | Custom filter function |
+| `MemberFilter` | `Func<MemberFilterContext, bool>?` | `null` | Custom filter function |
+
+---
+
+## MemberFilterContext
+
+The `MemberFilterContext` struct is passed to your filter function and provides rich context for filtering decisions:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `Member` | `IValueProvider` | The member metadata (Name, Info, MemberType) |
+| `Value` | `object?` | The actual value of the member (lazy-evaluated) |
+| `Source` | `object` | The parent object containing this member |
+| `Depth` | `int` | Current rendering depth (0 = root level) |
+
+This enables powerful filtering scenarios including value-based filtering, depth-aware filtering, and conditional display based on parent object state.
 
 ---
 
@@ -142,7 +160,7 @@ var person = new Person
 
 person.Dump(members: new MembersConfig 
 { 
-    MemberFilter = member => !member.Info.CustomAttributes
+    MemberFilter = ctx => !ctx.Member.Info.CustomAttributes
         .Any(a => a.AttributeType == typeof(JsonIgnoreAttribute)) 
 });
 ```
@@ -154,7 +172,7 @@ Exclude members with specific names:
 ```csharp
 obj.Dump(members: new MembersConfig 
 { 
-    MemberFilter = member => !member.Info.Name.StartsWith("_")
+    MemberFilter = ctx => !ctx.Member.Info.Name.StartsWith("_")
 });
 ```
 
@@ -165,7 +183,7 @@ Only include string properties:
 ```csharp
 obj.Dump(members: new MembersConfig 
 { 
-    MemberFilter = member => member.MemberType == typeof(string)
+    MemberFilter = ctx => ctx.Member.MemberType == typeof(string)
 });
 ```
 
@@ -174,9 +192,9 @@ obj.Dump(members: new MembersConfig
 ```csharp
 obj.Dump(members: new MembersConfig 
 { 
-    MemberFilter = member => 
-        !member.Info.Name.StartsWith("_") &&
-        !member.Info.CustomAttributes.Any(a => 
+    MemberFilter = ctx => 
+        !ctx.Member.Info.Name.StartsWith("_") &&
+        !ctx.Member.Info.CustomAttributes.Any(a => 
             a.AttributeType == typeof(JsonIgnoreAttribute))
 });
 ```
@@ -185,9 +203,107 @@ obj.Dump(members: new MembersConfig
 
 ```csharp
 // Never show properties marked with [JsonIgnore]
-DumpConfig.Default.MembersConfig.MemberFilter = member => 
-    !member.Info.CustomAttributes
+DumpConfig.Default.MembersConfig.MemberFilter = ctx => 
+    !ctx.Member.Info.CustomAttributes
         .Any(a => a.AttributeType == typeof(JsonIgnoreAttribute));
+```
+
+---
+
+## Value-Based Filtering
+
+Filter members based on their actual runtime values:
+
+### Hide Null Values
+
+```csharp
+obj.Dump(members: new MembersConfig 
+{ 
+    MemberFilter = ctx => ctx.Value is not null
+});
+```
+
+### Hide Empty Collections
+
+```csharp
+obj.Dump(members: new MembersConfig 
+{ 
+    MemberFilter = ctx => ctx.Value is not ICollection { Count: 0 }
+});
+```
+
+### Hide Default Values
+
+```csharp
+obj.Dump(members: new MembersConfig 
+{ 
+    MemberFilter = ctx =>
+    {
+        var value = ctx.Value;
+        if (value is null) return false;
+        if (value is 0 or 0L or 0.0 or 0.0f) return false;
+        if (value is string s && string.IsNullOrEmpty(s)) return false;
+        return true;
+    }
+});
+```
+
+### Conditional Display Based on Sibling Values
+
+```csharp
+public class Order
+{
+    public string Status { get; set; }
+    public string InternalNotes { get; set; }
+}
+
+// Only show InternalNotes when Status is "Review"
+obj.Dump(members: new MembersConfig 
+{ 
+    MemberFilter = ctx =>
+    {
+        if (ctx.Member.Name == "InternalNotes" && ctx.Source is Order order)
+            return order.Status == "Review";
+        return true;
+    }
+});
+```
+
+---
+
+## Depth-Based Filtering
+
+Control member visibility based on nesting depth:
+
+### Show Less Detail at Nested Levels
+
+```csharp
+obj.Dump(members: new MembersConfig 
+{ 
+    MemberFilter = ctx =>
+    {
+        // At root (depth 0), show everything
+        if (ctx.Depth == 0) return true;
+        
+        // At nested levels, only show key identifiers
+        return ctx.Member.Name is "Id" or "Name";
+    }
+});
+```
+
+### Hide Internal Properties When Nested
+
+```csharp
+obj.Dump(members: new MembersConfig 
+{ 
+    MemberFilter = ctx =>
+    {
+        // Hide "Internal" suffix properties when not at root
+        if (ctx.Depth > 0 && ctx.Member.Name.EndsWith("Internal"))
+            return false;
+        return true;
+    }
+});
 ```
 
 ---
@@ -202,7 +318,20 @@ var membersConfig = new MembersConfig
     IncludeVirtualMembers = true,
     IncludeProperties = true,
     IncludeFields = true,
-    MemberFilter = member => !member.Info.Name.Contains("Password")
+    MemberFilter = ctx => 
+    {
+        // Exclude password fields
+        if (ctx.Member.Info.Name.Contains("Password")) return false;
+        
+        // Exclude null values
+        if (ctx.Value is null) return false;
+        
+        // At nested levels, only show essential properties
+        if (ctx.Depth > 1)
+            return ctx.Member.Name is "Id" or "Name" or "Title";
+        
+        return true;
+    }
 };
 
 sensitiveObject.Dump(members: membersConfig);

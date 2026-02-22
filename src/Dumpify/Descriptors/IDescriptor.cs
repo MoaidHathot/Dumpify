@@ -1,4 +1,4 @@
-﻿using Dumpify.Descriptors.ValueProviders;
+using Dumpify.Descriptors.ValueProviders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +11,6 @@ namespace Dumpify.Descriptors;
 public interface IDescriptor
 {
     Type Type { get; }
-    IValueProvider? ValueProvider{ get; }
+    IValueProvider? ValueProvider { get; }
     string Name { get; }
 }

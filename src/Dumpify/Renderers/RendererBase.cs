@@ -134,7 +134,6 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
             SingleValueDescriptor singleDescriptor => TryRenderCustomTypeDescriptor(@object, singleDescriptor, context, RenderSingleValueDescriptor),
             ObjectDescriptor objDescriptor => TryRenderCustomTypeDescriptor(@object, objDescriptor, context, TryRenderObjectDescriptor),
             MultiValueDescriptor multiDescriptor => TryRenderCustomTypeDescriptor(@object, multiDescriptor, context, RenderMultiValueDescriptor),
-            LabelDescriptor labelDescriptor => TryRenderCustomTypeDescriptor(@object, labelDescriptor, context, RenderLabelDescriptor),
             CustomDescriptor customDescriptor => TryRenderCustomTypeDescriptor(@object, customDescriptor, context, RenderCustomDescriptor),
             _ => RenderUnsupportedDescriptor(@object, descriptor, context),
         };
@@ -160,8 +159,26 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
 
     private TRenderable TryRenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<TState> context)
     {
-        // Cycle check is now handled in RenderDescriptor for all reference types
-        return RenderObjectDescriptor(obj, descriptor, context);
+        var filteredDescriptor = ApplyMemberFilter(obj, descriptor, context);
+        return RenderObjectDescriptor(obj, filteredDescriptor, context);
+    }
+
+    private ObjectDescriptor ApplyMemberFilter(object obj, ObjectDescriptor descriptor, RenderContext<TState> context)
+    {
+        var filter = context.Config.MemberFilter;
+
+        if (filter is null)
+        {
+            return descriptor;
+        }
+
+        var filteredProperties = descriptor.Properties.Where(property =>
+        {
+            var filterContext = new MemberFilterContext(property.ValueProvider!, obj, context.CurrentDepth);
+            return filter(filterContext);
+        });
+
+        return descriptor with { Properties = filteredProperties };
     }
 
     private TRenderable TryRenderCustomTypeDescriptor<TDescriptor>(object obj, TDescriptor descriptor, in RenderContext<TState> context, Func<object, TDescriptor, RenderContext<TState>, TRenderable> defaultRenderer)
@@ -244,6 +261,6 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
     protected abstract TRenderable RenderUnsupportedDescriptor(object obj, IDescriptor descriptor, RenderContext<TState> context);
     protected abstract TRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<TState> context);
     protected abstract TRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext<TState> context);
-    protected abstract TRenderable RenderLabelDescriptor(object obj, LabelDescriptor descriptor, RenderContext<TState> context);
+    protected abstract TRenderable RenderTruncationMarker(TruncationMarker marker, RenderContext<TState> context);
     protected abstract TState CreateState(object? obj, IDescriptor? descriptor, RendererConfig config);
 }

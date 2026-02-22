@@ -7,7 +7,7 @@ nav_order: 3
 
 # TableConfig
 
-`TableConfig` controls how tables are displayed when rendering objects, including headers, separators, indices, and collection truncation.
+`TableConfig` controls how tables are displayed when rendering objects, including headers, separators, indices, and border styles.
 
 ---
 
@@ -28,11 +28,51 @@ nav_order: 3
 | `ExpandTables` | `bool` | `false` | Expand tables to full width |
 | `ShowMemberTypes` | `bool` | `false` | Show a column with member types |
 | `ShowRowSeparators` | `bool` | `false` | Show separator lines between rows |
-| `MaxCollectionCount` | `int` | `int.MaxValue` | Maximum number of collection items to display |
+| `BorderStyle` | `TableBorderStyle` | `Rounded` | Border style for tables (see below) |
+
+> **Note:** Collection truncation is now configured via [TruncationConfig](truncation-config.md).
+
+### Border Styles
+
+The `BorderStyle` property controls the characters used for table borders. This is useful for terminals that don't properly render Unicode box-drawing characters.
+
+| Style | Description | Example Characters |
+|-------|-------------|-------------------|
+| `Rounded` | Rounded corners (default) | `╭─╮│╰─╯` |
+| `Square` | Square corners | `┌─┐│└─┘` |
+| `Ascii` | ASCII only (maximum compatibility) | `+-+\|+-+` |
+| `None` | No borders | |
+| `Heavy` | Heavy/bold lines | `┏━┓┃┗━┛` |
+| `Double` | Double lines | `╔═╗║╚═╝` |
+| `Minimal` | Minimal with horizontal lines | `─` |
+| `Markdown` | Markdown-compatible format | `\|---\|` |
 
 ---
 
 ## Examples
+
+### Change Border Style
+
+Fix terminal rendering issues by changing the border style:
+
+```csharp
+// For terminals with Unicode issues (VS Code, some Windows Terminal fonts)
+// Use ASCII for maximum compatibility
+obj.Dump(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Ascii });
+
+// Use Square instead of Rounded if only corners are broken
+obj.Dump(tableConfig: new TableConfig { BorderStyle = TableBorderStyle.Square });
+```
+
+Set globally to fix all dumps:
+
+```csharp
+// Fix for entire application
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Ascii;
+
+// All dumps now use ASCII borders
+myObject.Dump();
+```
 
 ### Show Row Separators
 
@@ -75,18 +115,6 @@ var arr = new[] { "a", "b", "c" };
 arr.Dump(tableConfig: new TableConfig { ShowArrayIndices = false });
 ```
 
-### Truncate Large Collections
-
-Limit the number of items displayed from large collections:
-
-```csharp
-var largeArray = Enumerable.Range(1, 1000).ToArray();
-
-// Only show first 10 items
-largeArray.Dump(tableConfig: new TableConfig { MaxCollectionCount = 10 });
-// Output includes: "... truncated 990 items"
-```
-
 ### Expand Tables
 
 Make tables expand to fill available width:
@@ -109,7 +137,6 @@ obj.Dump(tableConfig: new TableConfig { NoColumnWrapping = true });
 // Set globally
 DumpConfig.Default.TableConfig.ShowRowSeparators = true;
 DumpConfig.Default.TableConfig.ShowMemberTypes = true;
-DumpConfig.Default.TableConfig.MaxCollectionCount = 100;
 
 // All dumps now use these settings
 myObject.Dump();
@@ -124,9 +151,9 @@ var tableConfig = new TableConfig
     ShowTableHeaders = true,
     ShowRowSeparators = true,
     ShowMemberTypes = true,
-    MaxCollectionCount = 50,
     ExpandTables = false,
-    NoColumnWrapping = false
+    NoColumnWrapping = false,
+    BorderStyle = TableBorderStyle.Rounded
 };
 
 obj.Dump(tableConfig: tableConfig);
@@ -135,16 +162,6 @@ obj.Dump(tableConfig: tableConfig);
 ---
 
 ## Use Cases
-
-### Debugging Large Collections
-
-When debugging large collections, use `MaxCollectionCount` to avoid overwhelming output:
-
-```csharp
-// Only show first 20 items from a large dataset
-database.GetAllUsers()
-    .Dump(tableConfig: new TableConfig { MaxCollectionCount = 20 });
-```
 
 ### Detailed Object Inspection
 
@@ -175,8 +192,44 @@ obj.Dump(tableConfig: new TableConfig
 
 ---
 
+## Troubleshooting Terminal Display Issues
+
+If table borders appear as garbled characters or question marks, your terminal or font may not support the Unicode box-drawing characters used by the default `Rounded` border style.
+
+### VS Code Terminal
+
+VS Code's integrated terminal may not render rounded corners correctly with some fonts:
+
+```csharp
+// Option 1: Use ASCII borders (maximum compatibility)
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Ascii;
+
+// Option 2: Use Square borders (works with most fonts)
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Square;
+```
+
+### Windows Terminal
+
+If corners display incorrectly but other borders are fine:
+
+```csharp
+// Square borders use simpler Unicode characters
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Square;
+```
+
+### CI/CD Logs
+
+For build logs and CI environments where rendering may vary:
+
+```csharp
+DumpConfig.Default.TableConfig.BorderStyle = TableBorderStyle.Ascii;
+```
+
+---
+
 ## See Also
 
 - [Configuration Overview](index.md)
 - [Global Configuration](global-configuration.md)
+- [TruncationConfig](truncation-config.md) - Configure collection truncation
 - [Collections Feature](../features/collections.md)

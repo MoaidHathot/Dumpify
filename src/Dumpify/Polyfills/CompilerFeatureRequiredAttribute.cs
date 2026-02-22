@@ -1,4 +1,4 @@
-﻿namespace System.Runtime.CompilerServices;
+namespace System.Runtime.CompilerServices;
 
 /// <summary>
 /// Indicates that compiler support for a particular feature is required for the location where this attribute is applied.

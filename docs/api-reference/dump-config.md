@@ -47,6 +47,7 @@ public class DumpConfig
     public TypeNamingConfig TypeNamingConfig { get; }
     public OutputConfig OutputConfig { get; }
     public TypeRenderingConfig TypeRenderingConfig { get; }
+    public TruncationConfig TruncationConfig { get; }
     
     // Methods
     public void AddCustomTypeHandler(Type type, Func<...> valueFactory);
@@ -315,6 +316,22 @@ public TypeRenderingConfig TypeRenderingConfig { get; }
 ```
 
 Controls custom type rendering. See [Type Rendering Configuration](../configuration/type-rendering-config.md).
+
+### TruncationConfig
+
+```csharp
+public TruncationConfig TruncationConfig { get; }
+```
+
+Controls collection truncation. See [Truncation Configuration](../configuration/truncation-config.md).
+
+```csharp
+// Limit collections to 50 items
+DumpConfig.Default.TruncationConfig.MaxCollectionCount = 50;
+
+// Show head and tail with truncation in the middle
+DumpConfig.Default.TruncationConfig.Mode = TruncationMode.HeadAndTail;
+```
 
 ---
 

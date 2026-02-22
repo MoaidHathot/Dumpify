@@ -87,6 +87,7 @@ Dumpify provides several configuration classes, each controlling different aspec
 | [TypeNamingConfig](type-naming-config.md) | Type name display | [TypeNamingConfig](type-naming-config.md) |
 | [TypeRenderingConfig](type-rendering-config.md) | Value rendering | [TypeRenderingConfig](type-rendering-config.md) |
 | [OutputConfig](output-config.md) | Output dimensions | [OutputConfig](output-config.md) |
+| [TruncationConfig](truncation-config.md) | Collection truncation | [TruncationConfig](truncation-config.md) |
 
 ---
 
@@ -135,7 +136,7 @@ obj.Dump(typeNames: new TypeNamingConfig { ShowTypeNames = false });
 ### Limit Collection Size
 
 ```csharp
-largeArray.Dump(tableConfig: new TableConfig { MaxCollectionCount = 10 });
+largeArray.Dump(truncationConfig: new TruncationConfig { MaxCollectionCount = 10 });
 ```
 
 ---
@@ -146,3 +147,4 @@ largeArray.Dump(tableConfig: new TableConfig { MaxCollectionCount = 10 });
 - [ColorConfig](color-config.md) - Customize colors
 - [TableConfig](table-config.md) - Configure table display
 - [MembersConfig](members-config.md) - Filter members
+- [TruncationConfig](truncation-config.md) - Configure collection truncation

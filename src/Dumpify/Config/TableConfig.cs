@@ -1,12 +1,32 @@
-﻿namespace Dumpify;
+namespace Dumpify;
 
-public class TableConfig
+public class TableConfig : ConfigBase<TableConfig>
 {
-    public bool ShowArrayIndices { get; set; } = true;
-    public bool ShowTableHeaders { get; set; } = true;
-    public bool NoColumnWrapping { get; set; } = false;
-    public bool ExpandTables { get; set; } = false;
-    public bool ShowMemberTypes { get; set; } = false;
-    public bool ShowRowSeparators { get; set; } = false;
-    public int MaxCollectionCount { get; set; } = int.MaxValue;
+    public TrackableProperty<bool> ShowArrayIndices { get; set; } = new(true);
+    public TrackableProperty<bool> ShowTableHeaders { get; set; } = new(true);
+    public TrackableProperty<bool> NoColumnWrapping { get; set; } = new(false);
+    public TrackableProperty<bool> ExpandTables { get; set; } = new(false);
+    public TrackableProperty<bool> ShowMemberTypes { get; set; } = new(false);
+    public TrackableProperty<bool> ShowRowSeparators { get; set; } = new(false);
+
+    /// <summary>
+    /// The border style for tables. Default is Rounded.
+    /// Use Ascii or Square for better terminal compatibility.
+    /// </summary>
+    public TrackableProperty<TableBorderStyle> BorderStyle { get; set; } = new(TableBorderStyle.Rounded);
+
+    /// <inheritdoc />
+    protected override TableConfig MergeOverride(TableConfig overrideConfig)
+    {
+        return new TableConfig
+        {
+            ShowArrayIndices = Merge(ShowArrayIndices, overrideConfig.ShowArrayIndices),
+            ShowTableHeaders = Merge(ShowTableHeaders, overrideConfig.ShowTableHeaders),
+            NoColumnWrapping = Merge(NoColumnWrapping, overrideConfig.NoColumnWrapping),
+            ExpandTables = Merge(ExpandTables, overrideConfig.ExpandTables),
+            ShowMemberTypes = Merge(ShowMemberTypes, overrideConfig.ShowMemberTypes),
+            ShowRowSeparators = Merge(ShowRowSeparators, overrideConfig.ShowRowSeparators),
+            BorderStyle = Merge(BorderStyle, overrideConfig.BorderStyle),
+        };
+    }
 }
