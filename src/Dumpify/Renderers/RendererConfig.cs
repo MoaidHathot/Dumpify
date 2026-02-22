@@ -11,10 +11,17 @@ public record RendererConfig
     public TableConfig TableConfig { get; init; } = new TableConfig();
     public TypeNamingConfig TypeNamingConfig { get; init; } = new TypeNamingConfig();
     public TypeRenderingConfig TypeRenderingConfig { get; init; } = new TypeRenderingConfig();
+    public ReferenceRenderingConfig ReferenceRenderingConfig { get; init; } = new ReferenceRenderingConfig();
     public TruncationConfig TruncationConfig { get; init; } = new TruncationConfig();
     public required IMemberProvider MemberProvider { get; init; }
     public required ITypeNameProvider TypeNameProvider { get; init; }
-    
+
+    /// <summary>
+    /// Gets the reference rendering strategy based on the current configuration.
+    /// </summary>
+    public IReferenceRenderingStrategy ReferenceRenderingStrategy =>
+        ReferenceRenderingStrategyFactory.Create(ReferenceRenderingConfig);
+
     /// <summary>
     /// Optional filter to include/exclude members during rendering.
     /// Applied at render time, enabling value-based filtering.

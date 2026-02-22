@@ -1,4 +1,5 @@
 using Dumpify.Descriptors;
+using Dumpify.Descriptors.ValueProviders;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
@@ -68,14 +69,16 @@ internal class ArrayTypeRenderer(IRendererHandler<IRenderable, SpectreRendererSt
                 builder.AddRow(null, null, renderedMarker);
                 currentRow++;
             },
-            onItem: (item, _) =>
+            onItem: (item, originalIndex) =>
             {
                 var type = item?.GetType() ?? mvd.ElementsType;
                 IDescriptor? itemsDescriptor = type is not null
                     ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider)
                     : null;
 
-                var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
+                // Update path with index for reference tracking
+                var itemContext = context.WithIndex(originalIndex);
+                var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, itemContext);
                 builder.AddRow(itemsDescriptor, item, renderedItem);
                 currentRow++;
             });
@@ -198,7 +201,9 @@ internal class ArrayTypeRenderer(IRendererHandler<IRenderable, SpectreRendererSt
                     ? DumpConfig.Default.Generator.Generate(type, null, context.Config.MemberProvider)
                     : null;
 
-                var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, context);
+                // Update path with 2D index for reference tracking (e.g., [0,1])
+                var itemContext = context.WithIndex2D(row, col);
+                var renderedItem = _handler.RenderDescriptor(item, itemsDescriptor, itemContext);
                 rowCells.Add(renderedItem);
             }
 

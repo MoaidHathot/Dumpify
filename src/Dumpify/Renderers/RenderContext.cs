@@ -9,7 +9,10 @@ public record class RenderContext(
     int CurrentDepth,
     object? RootObject,
     object? RootObjectTransform,
-    ImmutableHashSet<object> Ancestors
+    ImmutableHashSet<object> Ancestors,
+    string CurrentPath,
+    ImmutableDictionary<object, int> ObjectIds,
+    ImmutableDictionary<object, string> ObjectPaths
 );
 
 public record class RenderContext<TState>(
@@ -19,5 +22,8 @@ public record class RenderContext<TState>(
     object? RootObject,
     object? RootObjectTransform,
     TState State,
-    ImmutableHashSet<object> Ancestors
-) : RenderContext(Config, ObjectTracker, CurrentDepth, RootObject, RootObjectTransform, Ancestors);
+    ImmutableHashSet<object> Ancestors,
+    string CurrentPath,
+    ImmutableDictionary<object, int> ObjectIds,
+    ImmutableDictionary<object, string> ObjectPaths
+) : RenderContext(Config, ObjectTracker, CurrentDepth, RootObject, RootObjectTransform, Ancestors, CurrentPath, ObjectIds, ObjectPaths);

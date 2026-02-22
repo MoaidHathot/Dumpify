@@ -21,6 +21,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        ReferenceRenderingConfig? referenceRendering = null,
         TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
@@ -38,6 +39,7 @@ public static class DumpExtensions
             tableConfig: tableConfig,
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
+            referenceRendering: referenceRendering,
             truncationConfig: truncationConfig,
             autoLabel: autoLabel
         );
@@ -56,6 +58,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        ReferenceRenderingConfig? referenceRendering = null,
         TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
@@ -73,6 +76,7 @@ public static class DumpExtensions
             tableConfig: tableConfig,
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
+            referenceRendering: referenceRendering,
             truncationConfig: truncationConfig,
             autoLabel: autoLabel
         );
@@ -91,6 +95,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        ReferenceRenderingConfig? referenceRendering = null,
         TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     ) =>
@@ -106,6 +111,7 @@ public static class DumpExtensions
             tableConfig: tableConfig,
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
+            referenceRendering: referenceRendering,
             truncationConfig: truncationConfig,
             autoLabel: autoLabel
         );
@@ -122,6 +128,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        ReferenceRenderingConfig? referenceRendering = null,
         TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
@@ -143,6 +150,7 @@ public static class DumpExtensions
             tableConfig: tableConfig,
             outputConfig: outputConfig,
             typeRenderingConfig: typeRenderingConfig,
+            referenceRendering: referenceRendering,
             truncationConfig: truncationConfig,
             autoLabel: autoLabel
         );
@@ -164,6 +172,7 @@ public static class DumpExtensions
         TableConfig? tableConfig = null,
         OutputConfig? outputConfig = null,
         TypeRenderingConfig? typeRenderingConfig = null,
+        ReferenceRenderingConfig? referenceRendering = null,
         TruncationConfig? truncationConfig = null,
         [CallerArgumentExpression(nameof(obj))] string? autoLabel = null
     )
@@ -179,6 +188,7 @@ public static class DumpExtensions
         var mergedTableConfig = defaultConfig.TableConfig.MergeWith(tableConfig);
         var mergedTypeRenderingConfig = defaultConfig.TypeRenderingConfig.MergeWith(typeRenderingConfig);
         var mergedTruncationConfig = defaultConfig.TruncationConfig.MergeWith(truncationConfig);
+        var referenceRenderingConfig = referenceRendering ?? defaultConfig.ReferenceRenderingConfig;
 
         var rendererConfig = new RendererConfig
         {
@@ -189,6 +199,7 @@ public static class DumpExtensions
             TypeNamingConfig = typeNamingConfig,
             TypeRenderingConfig = mergedTypeRenderingConfig,
             TruncationConfig = mergedTruncationConfig,
+            ReferenceRenderingConfig = referenceRenderingConfig,
             MemberProvider = new MemberProvider(
                 membersConfig.IncludeProperties,
                 membersConfig.IncludeFields,

@@ -1,4 +1,4 @@
-﻿using Dumpify.Descriptors.Generators;
+using Dumpify.Descriptors.Generators;
 using Dumpify.Descriptors.ValueProviders;
 using Dumpify.Extensions;
 using System.Collections.Concurrent;
@@ -25,6 +25,7 @@ public class DumpConfig
         TypeNamingConfig = new TypeNamingConfig();
         OutputConfig = new OutputConfig();
         TypeRenderingConfig = new TypeRenderingConfig();
+        ReferenceRenderingConfig = new ReferenceRenderingConfig();
         TruncationConfig = new TruncationConfig();
     }
 
@@ -50,5 +51,6 @@ public class DumpConfig
     public TypeNamingConfig TypeNamingConfig { get; }
     public OutputConfig OutputConfig { get; }
     public TypeRenderingConfig TypeRenderingConfig { get; }
+    public ReferenceRenderingConfig ReferenceRenderingConfig { get; }
     public TruncationConfig TruncationConfig { get; }
 }
