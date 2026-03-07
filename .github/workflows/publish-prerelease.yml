@@ -1,0 +1,63 @@
+name: Publish Pre-Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Pre-release version (e.g., 0.8.0-beta.1, 0.8.0-rc.1)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run (build and pack only, do not publish)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  publish-prerelease:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Validate pre-release version
+      run: |
+        if [[ ! "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+-[a-zA-Z]+(\.[0-9]+)?$ ]]; then
+          echo "Error: Version must be a valid pre-release format (e.g., 0.8.0-beta.1, 0.8.0-rc.1)"
+          echo "Stable versions should use the regular publish workflow via GitHub releases."
+          exit 1
+        fi
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore ./src
+
+    - name: Build
+      run: dotnet build ./src -c Release --no-restore
+
+    - name: Run tests
+      run: dotnet test ./src -c Release --no-build --verbosity normal
+
+    - name: Create NuGet Package
+      run: dotnet pack -c Release --no-build /p:Version=${{ inputs.version }} /p:PackageReleaseNotes="Pre-release version ${{ inputs.version }}" ./src/Dumpify
+
+    - name: Archive NuGet Package
+      uses: actions/upload-artifact@v4
+      with:
+        name: prerelease-package
+        path: "./src/Dumpify/bin/Release/Dumpify.${{ inputs.version }}.nupkg"
+
+    - name: Publish NuGet Package
+      if: ${{ inputs.dry_run == false }}
+      run: dotnet nuget push ./src/Dumpify/bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+
+    - name: Dry run summary
+      if: ${{ inputs.dry_run == true }}
+      run: |
+        echo "Dry run completed successfully!"
+        echo "Package created: Dumpify.${{ inputs.version }}.nupkg"
+        echo "Package was NOT published to NuGet.org"
