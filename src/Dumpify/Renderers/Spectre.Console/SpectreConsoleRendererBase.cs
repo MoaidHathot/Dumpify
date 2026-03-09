@@ -58,6 +58,9 @@ internal abstract class SpectreConsoleRendererBase : RendererBase<IRenderable, S
     protected override IRenderable RenderCircularDependency(object @object, IDescriptor? descriptor, RenderContext<SpectreRendererState> context)
             => RenderSingleValue($"[Circular Reference #{context.Config.TypeNameProvider.GetTypeName(@object.GetType())}]", context, context.State.Colors.MetadataInfoColor);
 
+    public IRenderable RenderNoMembers(RenderContext<SpectreRendererState> context)
+            => RenderSingleValue("[No members]", context, context.State.Colors.MetadataInfoColor);
+
     protected override IRenderable RenderNullDescriptor(object obj, RenderContext<SpectreRendererState> context)
             => RenderSingleValue($"[null descriptor] {obj}", context, context.State.Colors.MetadataErrorColor);
 

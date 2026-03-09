@@ -66,6 +66,16 @@ internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
 
     protected override IRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<SpectreRendererState> context)
     {
+        // Check if there are no members to render
+        if (!descriptor.Properties.Any())
+        {
+            var emptyBuilder = new ObjectTableBuilder(context, descriptor, obj);
+            emptyBuilder.AddColumnName(" ");
+            emptyBuilder.HideHeaders();
+            emptyBuilder.AddRow(descriptor, obj, RenderNoMembers(context));
+            return emptyBuilder.Build();
+        }
+
         // Resolve the layout strategy for the object type
         var (strategy, layoutResult) = TableLayoutResolver.Resolve(descriptor.Type, context);
 

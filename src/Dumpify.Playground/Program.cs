@@ -3,22 +3,28 @@ using System.Collections;
 using System.Data;
 using System.Text;
 
-typeof(string).Dump("Single string");
 // Use the new IsCollectionElement property to set horizontal layout for all collection elements
-DumpConfig.Default.TableConfig.SetLayoutWhen(context => context.IsCollectionElement, TableLayout.Horizontal);
+// DumpConfig.Default.TableConfig.SetLayoutWhen(context => context.IsCollectionElement, TableLayout.Horizontal);
+
+// typeof(string).Dump("Single string");
+
+var memberConfig = new MembersConfig
+{
+    MemberFilter = ctx => ctx.Member.Name == "Employees1",
+};
 
 var msft = new { Name = "Microsoft", Employees = new[]
 {
     new Employee { Salary = 1, Name = "Alice", Department = "HR" },
     new Employee { Salary = 2, Name = "Bob", Department = "IT" },
     new Employee { Salary = 3, Name = "Charlie", Department = "Finance" }
-}}.Dump("Company with Employees");
+}}.Dump("Company with Employees", members: memberConfig);
 
-msft.Dump("Company with Employees - Show Types", tableConfig: new TableConfig { TableLayout = TableLayout.Horizontal });
+msft.Dump("Company with Employees - Show Types", members: memberConfig, tableConfig: new TableConfig { TableLayout = TableLayout.Horizontal });
 
 // employees.Dump();
 
-new []{ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" }.Dump();
+// new []{ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" }.Dump();
 // DemoTableLayoutFeatures();
 
 // =============================================================================

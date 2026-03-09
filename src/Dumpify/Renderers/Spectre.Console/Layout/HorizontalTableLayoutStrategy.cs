@@ -26,14 +26,6 @@ internal class HorizontalTableLayoutStrategy : ITableLayoutStrategy
     {
         var properties = descriptor.Properties.ToList();
 
-        if (properties.Count == 0)
-        {
-            // No properties - fall back to vertical-like single cell
-            builder.AddColumnName(context.Config.TypeNameProvider.GetTypeName(descriptor.Type));
-            builder.AddRow(descriptor, obj, new Markup(Markup.Escape(obj.ToString() ?? "")));
-            return;
-        }
-
         // Add columns for each property
         foreach (var property in properties)
         {
