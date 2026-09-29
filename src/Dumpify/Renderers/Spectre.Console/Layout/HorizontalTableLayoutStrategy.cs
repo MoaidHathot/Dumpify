@@ -83,7 +83,18 @@ internal class HorizontalTableLayoutStrategy : ITableLayoutStrategy
             builder.HideHeaders();
         }
 
-        var properties = elementDescriptor.Properties.ToList();
+        // Apply MemberFilter to determine which properties to show as columns
+        var properties = ApplyMemberFilter(elementDescriptor.Properties, items, context).ToList();
+
+        if (properties.Count == 0)
+        {
+            // No properties after filtering, render "no members" message
+            builder.AddColumnName(" ");
+            builder.HideHeaders();
+            var noMembersMessage = new Markup(Markup.Escape("[No members]"), new Style(foreground: context.State.Colors.MetadataInfoColor));
+            builder.AddMarkerRow(new[] { noMembersMessage });
+            return;
+        }
 
         // Add columns for each property
         foreach (var property in properties)
@@ -185,5 +196,44 @@ internal class HorizontalTableLayoutStrategy : ITableLayoutStrategy
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Applies the MemberFilter from the context to filter which properties should be displayed as columns.
+    /// Uses the first non-null item in the collection as a prototype for value-based filtering.
+    /// When the collection has no non-null items there is no object to evaluate the filter against,
+    /// so all properties are kept. This mirrors the vertical layout, where the filter is evaluated
+    /// per item and therefore never runs for an empty collection.
+    /// </summary>
+    private static IEnumerable<IDescriptor> ApplyMemberFilter(
+        IEnumerable<IDescriptor> properties,
+        TruncatedEnumerable<object?> items,
+        RenderContext<SpectreRendererState> context)
+    {
+        var filter = context.Config.MemberFilter;
+
+        if (filter is null)
+        {
+            return properties;
+        }
+
+        // Find the first non-null item to use as a prototype for value-based filtering
+        var prototypeItem = items.Items.FirstOrDefault(item => item is not null);
+
+        if (prototypeItem is null)
+        {
+            return properties;
+        }
+
+        return properties.Where(property =>
+        {
+            if (property.ValueProvider is not IValueProvider valueProvider)
+            {
+                return true;
+            }
+
+            var filterContext = new MemberFilterContext(valueProvider, prototypeItem, context.CurrentDepth);
+            return filter(filterContext);
+        });
     }
 }

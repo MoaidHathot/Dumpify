@@ -355,4 +355,133 @@ public class TableLayoutTests
     }
 
     #endregion
+
+    #region MemberFilter with Horizontal Layout Tests
+
+    [Fact]
+    public Task HorizontalLayout_Collection_MemberFilter_ShouldFilterColumns()
+    {
+        // This test reproduces the bug: MemberFilter does not work with horizontal layout for collections
+        // The user reported that filtering columns via MemberFilter has no effect on horizontal layout
+        var products = new[]
+        {
+            new Product { Id = 1, Name = "Widget", Price = 19.99m, InStock = true },
+            new Product { Id = 2, Name = "Gadget", Price = 29.99m, InStock = false },
+            new Product { Id = 3, Name = "Gizmo", Price = 9.99m, InStock = true }
+        };
+
+        // Filter to only show Name and Price columns
+        var limitColumns = new MembersConfig
+        {
+            MemberFilter = ctx => ctx.Member.Name == "Name" || ctx.Member.Name == "Price"
+        };
+
+        var output = products.DumpText(
+            members: limitColumns,
+            tableConfig: new TableConfig { TableLayout = TableLayout.Horizontal });
+
+        return Verify(output);
+    }
+
+    [Fact]
+    public Task HorizontalLayout_SingleObject_MemberFilter_ShouldFilterColumns()
+    {
+        // MemberFilter should work for single objects in horizontal layout
+        var product = new Product { Id = 1, Name = "Widget", Price = 19.99m, InStock = true };
+
+        var limitColumns = new MembersConfig
+        {
+            MemberFilter = ctx => ctx.Member.Name == "Name" || ctx.Member.Name == "Price"
+        };
+
+        var output = product.DumpText(
+            members: limitColumns,
+            tableConfig: new TableConfig { TableLayout = TableLayout.Horizontal });
+
+        return Verify(output);
+    }
+
+    [Fact]
+    public Task HorizontalLayout_Collection_MemberFilter_AllFiltered_ShowsNoMembers()
+    {
+        // When MemberFilter filters out ALL properties, should show "No members" message
+        var products = new[]
+        {
+            new Product { Id = 1, Name = "Widget", Price = 19.99m, InStock = true },
+            new Product { Id = 2, Name = "Gadget", Price = 29.99m, InStock = false }
+        };
+
+        // Filter that matches no properties
+        var filterAll = new MembersConfig
+        {
+            MemberFilter = ctx => ctx.Member.Name == "NonExistentProperty"
+        };
+
+        var output = products.DumpText(
+            members: filterAll,
+            tableConfig: new TableConfig { TableLayout = TableLayout.Horizontal });
+
+        return Verify(output);
+    }
+
+    [Fact]
+    public Task HorizontalLayout_Collection_MemberFilter_ByValue_UsesFirstItemAsPrototype()
+    {
+        // Value-based filters are evaluated against the first non-null item to decide the columns
+        var people = new[]
+        {
+            new Person("Alice", 30, Email: null),
+            new Person("Bob", 25, Email: "bob@example.com")
+        };
+
+        var hideNulls = new MembersConfig
+        {
+            MemberFilter = ctx => ctx.Value is not null
+        };
+
+        var output = people.DumpText(
+            members: hideNulls,
+            tableConfig: new TableConfig { TableLayout = TableLayout.Horizontal });
+
+        return Verify(output);
+    }
+
+    [Fact]
+    public Task HorizontalLayout_EmptyCollection_MemberFilter_ByValue_KeepsAllColumns()
+    {
+        // With no items there is nothing to evaluate a value-based filter against,
+        // so all columns are kept instead of failing to render
+        var people = Array.Empty<Person>();
+
+        var hideNulls = new MembersConfig
+        {
+            MemberFilter = ctx => ctx.Value is not null
+        };
+
+        var output = people.DumpText(
+            members: hideNulls,
+            tableConfig: new TableConfig { TableLayout = TableLayout.Horizontal });
+
+        return Verify(output);
+    }
+
+    [Fact]
+    public Task HorizontalLayout_AllNullItems_MemberFilter_ByValue_KeepsAllColumns()
+    {
+        // Same as the empty case: null items cannot serve as a prototype for value-based filtering
+        var people = new Person?[] { null, null };
+
+        var hideNulls = new MembersConfig
+        {
+            MemberFilter = ctx => ctx.Value is not null
+        };
+
+        var output = people.DumpText(
+            members: hideNulls,
+            tableConfig: new TableConfig { TableLayout = TableLayout.Horizontal });
+
+        return Verify(output);
+    }
+
+    #endregion
 }
